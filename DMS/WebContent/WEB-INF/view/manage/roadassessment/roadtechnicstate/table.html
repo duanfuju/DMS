@@ -1,0 +1,305 @@
+
+<style>
+   .table th, .table td { 
+		text-align: center; 
+		height:38px;
+		width:100px;
+	}
+ </style>
+	<div class="tabbable">
+	
+		<ul id="myTab" class="nav nav-tabs">
+			<li class="active">
+				<a aria-expanded="true" onclick="" href="#myTab_example1" data-toggle="tab">汇总</a>
+			</li>
+			<li class="">
+				<a  aria-expanded="false" onclick="" href="#myTab_example2" data-toggle="tab">明细</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane fade active in" id="myTab_example1">
+	<!-- -----------------------------汇总---------------------------------------------- -->
+				<div class="row">
+					<div class="col-md-12">
+						<!-- start: BORDERED TABLE PANEL -->
+						<div class="panel panel-white">
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-12 space20">
+										<button type="button" class="btn btn-success add-row" onclick="exportExeclHZ()">
+											导出 汇总<i class="fa fa-hospital-o"> </i>
+										</button>
+									</div>
+								</div>
+								
+								<table class="table table-bordered table-hover" id="dataTable">
+									<thead>
+										<tr>
+											<th colspan="7" width="100%">公路技术状况评定汇总表</th>
+										</tr>
+										<tr>
+											<th colspan="7" width="33%">年月：${endTime!}</th>
+										</tr>
+										<tr>
+											<th colspan="7" width="33%">基本信息</th>
+										</tr>
+										<tr>
+											<th colspan="2">所属省市</th>
+											<th colspan="5">${resultHZBaseData.belongCity!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">路线名称（编码）</th>
+											<th colspan="5">${luXian!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">技术等级</th>
+											<th colspan="5">${resultHZBaseData.technicLevel!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">路面类型</th>
+											<th colspan="5">${resultHZBaseData.roadType!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">评定长度（km）</th>
+											<th colspan="5">${resultHZBaseData.dAllAvgLength!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">养管单位</th>
+											<th colspan="5">${resultHZBaseData.feedUnit!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">主管单位</th>
+											<th colspan="5">${resultHZBaseData.competentUnit!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">平均MQI</th>
+											<th colspan="2">${resultHZBaseData.dAllAvgMQI!}</th>
+											<th colspan="2">评定等级</th>
+											<th>${resultHZBaseData.dAllLevel!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">平均MQI(${direction1!})</th>
+											<th colspan="2">${resultHZBaseData.d1AvgMQI!}</th>
+											<th colspan="2">评定等级</th>
+											<th>${resultHZBaseData.d1level!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">平均MQI(${direction2!})</th>
+											<th colspan="2">${resultHZBaseData.d2AvgMQI!}</th>
+											<th colspan="2">评定等级</th>
+											<th>${resultHZBaseData.d2level!}</th>
+										</tr>
+										<tr>
+											<th colspan="2">${direction1!}评定长度(KM)</th>
+											<th colspan="2">${resultHZBaseData.d1Length!}</th>
+											<th colspan="2">${direction2!}评定长度(KM)</th>
+											<th>${resultHZBaseData.d2Length!}</th>
+										</tr>
+										<tr>
+											<th colspan="7">统 计 信 息</th>
+										</tr>
+										<tr>
+											<th></th>
+											<th colspan="2">${direction1!}丶${direction2!}</th>
+											<th colspan="2">${direction1!}</th>
+											<th colspan="2">${direction2!}</th>
+										</tr>
+										<tr>
+											<th></th>
+											<th>长度（km）</th>
+											<th>比例（%）</th>
+											<th>长度（km）</th>
+											<th>比例（%）</th>
+											<th>长度（km）</th>
+											<th>比例（%）</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% for(item in resultHZData){ %>
+											<tr>
+												<td class="hidden-xs">${item.V!}</td>
+												<td class="hidden-xs">${item.CD!}</td>
+												<td class="hidden-xs">${item.BL!}</td>
+												<td class="hidden-xs">${item.FX1!}</td>
+												<td class="hidden-xs">${item.FX1BL!}</td>
+												<td class="hidden-xs">${item.FX2!}</td>
+												<td class="hidden-xs">${item.FX2BL!}</td>
+											</tr>
+										<% } %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+	<!-- -----------------------------汇总---------------------------------------------- -->
+			</div>
+			<div class="tab-pane fade" id="myTab_example2">
+	<!-- -----------------------------明细---------------------------------------------- -->
+				<div class="row">
+					<div class="col-md-12">
+						<!-- start: BORDERED TABLE PANEL -->
+						<div class="panel panel-white">
+	<!-- 						<div class="panel-heading"> -->
+	<!-- 							<h4 class="panel-title"> -->
+	<!-- 								<span class="text-bold"></span> -->
+	<!-- 							</h4> -->
+	<!-- 						</div> -->
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-12 space20">
+										<button type="button" class="btn btn-success add-row" onclick="exportExeclMX()">
+											导出 明细<i class="fa fa-hospital-o"> </i>
+										</button>
+									</div>
+								</div>
+								
+								<table class="table table-bordered table-hover" id="dataTable">
+									<thead>
+										<tr>
+											<th align="center" colspan="12" width="100%">公路技术状况评定明细</th>
+										</tr>
+										<tr>
+											<th style="text-align: left;" colspan="4" width="33%">路线名称：${luXian!}</th>
+											<th style="text-align: left;" colspan="4" width="34%">技术等级:${resultHZBaseData.technicLevel!}</th>
+											<th style="text-align: left;" colspan="4" width="33%">路面类型:${resultHZBaseData.roadType!}</th>
+										</tr>
+										<tr>
+											<th style="text-align: left;" colspan="8" width="33%">检测方向：${fangXiang!}</th>
+											<th style="text-align: left;" colspan="4" width="33%">年月:${endTime!}</th>
+										</tr>
+										<tr>
+											<th rowspan="2">桩号</th>
+											<th rowspan="2">路段长度(m)</th>
+											<th rowspan="2">MQI</th>
+											<th rowspan="2">路面PQI</th>
+											<th colspan="5">路面分项指标</th>
+											<th rowspan="2">路基SCI</th>
+											<th rowspan="2">桥隧构造物BCI</th>
+											<th rowspan="2">沿线设施TCI</th>
+										</tr>
+										<tr>
+											<th>PCI</th>
+											<th>RQI</th>
+											<th>RDI</th>
+											<th>SRI</th>
+											<th>PSSI</th>
+										</tr>		
+									</thead>
+									<tbody>
+									<% for(item in resultMXData){ %>
+											<tr>
+												<td class="hidden-xs">${item.ZH!}</td>
+												<td class="hidden-xs">${item.CD!}</td>
+												<td class="hidden-xs">${item.MQI!}</td>
+												<td class="hidden-xs">${item.PQI!}</td>
+												<td class="hidden-xs">${item.PCI!}</td>
+												<td class="hidden-xs">${item.RQI!}</td>
+												<td class="hidden-xs">${item.RDI!}</td>
+												<td class="hidden-xs">${item.SRI!}</td>
+												<td class="hidden-xs">${item.PSSI!}</td>
+												<td class="hidden-xs">${item.SCI!}</td>
+												<td class="hidden-xs">${item.BCI!}</td>
+												<td class="hidden-xs">${item.TCI!}</td>
+											</tr>
+										<% } %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+	<!-- -----------------------------明细---------------------------------------------- -->
+			</div>
+		</div>
+	</div>					
+
+ 
+<script type="text/javascript">
+function exportExeclMX(){
+	var startTime = "${startTime!}";
+	var endTime = "${endTime!}";
+	var luXian = "${luXian!}";
+	var fangXiang = "${fangXiang!}";
+	var jishudengji = "${resultHZBaseData.technicLevel!}";
+	var roadType = "${resultHZBaseData.roadType!}";
+	$.ajax({
+		url:cxt+'/jf/manage/weixiurecord/exportExecl',
+		type:'post',
+		data:{"type":"roadtechnicstateMX","startTime":startTime,"endTime":endTime,"luXian":luXian,"fangXiang":fangXiang,"jishudengji":jishudengji,"roadType":roadType},
+		dataType:'JSON',
+		async: false,
+		success:function(data){
+			if(data.isSuccess)
+			{
+				if(data.isData == false)
+				{
+					layer.msg("没有数据");
+				}
+				else
+				{
+					window.location.href=cxt+"/"+data.downloadPath;
+				}
+			}
+			else
+			{
+				layer.msg("请求失败！");
+			}
+		}
+	});
+}
+
+function exportExeclHZ(){
+	var startTime = "${startTime!}";
+	var endTime = "${endTime!}";
+	var luXian = "${luXian!}";
+	var fangXiang = "${fangXiang!}";
+	var jishudengji = "${resultHZBaseData.technicLevel!}";
+	var roadType = "${resultHZBaseData.roadType!}";
+	var belongCity = "${resultHZBaseData.belongCity!}";
+	var dAllAvgLength = "${resultHZBaseData.dAllAvgLength!}";
+	var feedUnit = "${resultHZBaseData.feedUnit!}";
+	var competentUnit = "${resultHZBaseData.competentUnit!}";
+	var technicLevel = "${resultHZBaseData.technicLevel!}";
+	var dAllAvgMQI = "${resultHZBaseData.dAllAvgMQI!}";
+    var dAllLevel = "${resultHZBaseData.dAllLevel!}";
+    var direction1 = "${direction1!}";
+    var d1AvgMQI = "${resultHZBaseData.d1AvgMQI!}";
+    var d1level = "${resultHZBaseData.d1level!}";
+	var direction2 = "${direction2!}";                                           
+	var d2AvgMQI = "${resultHZBaseData.d2AvgMQI!}";       
+	var d2level = "${resultHZBaseData.d2level!}";                           
+	var d1Length = "${resultHZBaseData.d1Length!}";    
+	var d2Length = "${resultHZBaseData.d2Length!}";
+	
+	$.ajax({
+		url:cxt+'/jf/manage/weixiurecord/exportExecl',
+		type:'post',
+		data:{"type":"roadtechnicstateHZ","startTime":startTime,"endTime":endTime,
+			  "luXian":luXian,"fangXiang":fangXiang,"jishudengji":jishudengji,"roadType":roadType,
+			  "belongCity":belongCity,"dAllAvgLength":dAllAvgLength,"feedUnit":feedUnit,"competentUnit":competentUnit,
+			  "technicLevel":technicLevel,"dAllAvgMQI":dAllAvgMQI,"dAllLevel":dAllLevel,"direction1":direction1,
+			  "d1AvgMQI":d1AvgMQI,"d1level":d1level,"direction2":direction2,"d2AvgMQI":d2AvgMQI,"d2level":d2level,"d1Length":d1Length,
+			  "d2Length":d2Length},
+		dataType:'JSON',
+		async: false,
+		success:function(data){
+			if(data.isSuccess)
+			{
+				if(data.isData == false)
+				{
+					layer.msg("没有数据");
+				}
+				else
+				{
+					window.location.href=cxt+"/"+data.downloadPath;
+				}
+			}
+			else
+			{
+				layer.msg("请求失败！");
+			}
+		}
+	});
+}
+</script>

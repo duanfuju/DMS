@@ -1,0 +1,113 @@
+<style>
+	<!--
+	.fix{width:500px; height:200px;position: absolute;top:0;left:0;width:100%;height:100%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+	.table-hover > tbody > .pad:hover > td{
+	background: #fff;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	}
+
+	-->
+</style>
+<div id="divModel">
+	<form id="splitPageModel" action="${cxt}/jf/manage/yanghulog/choose" method="POST" role="form" class="form-horizontal">
+		<div class="panel panel-white">
+			<div class="panel-body">	
+				<table class="table table-bordered table-hover" id="dataTable" style="font-size: 13px" >
+					<thead>
+						<tr>
+							<td class="hidden-xs" width="5%"></td>
+							<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'planMonth')">
+								日期 	${orderBy("planMonth")}
+	      					</th>
+	      					<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'planNumber')">
+								计划数	${orderBy("planNumber")}
+	      					</th>
+	      					<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'state')">
+								状态 	${orderBy("state")}
+	      					</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(monthplan in splitPage.list){ %>
+							<tr class="trDom${monthplan.ids!}">
+								<td class="hidden-xs">
+									<i class="fa fa-arrow-circle-down td_i" id="${monthplan.ids!}"></i>
+								</td>
+								<td class="hidden-xs">${monthplan.planMonth!,dateFormat="yyyy-MM"}</td>
+								<td class="hidden-xs">${monthplan.planNumber!}</td>
+								<td class="hidden-xs">${monthplan.state!}</td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+				
+				<div class="row"  style="font-size: 13px;" id="splitPageDivModel">
+					<% include("/common/splitPage.html", {"divId" : "divModel", "formId" : "splitPageModel", "splitPageDiv" : "splitPageDivModel"}){} %>
+				</div>
+				
+			</div>
+		
+		</div>	
+	</form>
+</div>			
+
+<script type="text/javascript">
+$('.td_i').on('click', function () {
+	var expandId=$(this).attr("id");
+	var tr=$(".trDom"+expandId);
+	if($(this).hasClass("fa-arrow-circle-down")){
+		$(this).removeClass("fa-arrow-circle-down");
+		$(this).addClass("fa-arrow-circle-up");
+		
+		if(!tr.next().hasClass('pad')){
+			  $.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/monthplan/findDayPlanByMonthIds',
+			    cache:false,  
+			    data:{'monthIds':expandId},
+			    dataType:'json',  
+			    success:function(entity){
+			    	if(!entity.flag){
+			    		layer.msg("日计划不存在");
+			    		return;
+			    	}
+			       html=' <table style="width:100%;border:1px;">';
+			       var _tr="<tr><th width='5%'></th><th  width='10%'>日期 </th><th  width='20%'>工作地点</th>"+
+			       				"<th width='10%'>负责人</th><th width='20%'>工作内容</th><th width='20%'>机械设备</th><th>备注</th></tr>";
+			       $.each(entity.result,function(i,dayplan){
+			    	   _tr+="<tr id='"+dayplan.ids+"'> "+
+								"<td width='5%'><input type='checkbox'  onclick='checkCanel(this)' value='"+dayplan.ids+"' class='flat-grey foocheck'></td> "+
+								"<td width='10%'>"+dayplan.planTime+"</td> "+
+								"<td width='20%'>"+dayplan.workPlace+"</td> "+
+								"<td width='10%'>"+dayplan.fuZePeople+"</td> "+
+								"<td width='20%'>"+dayplan.content+"</td> "+
+								"<td width='20%'>"+dayplan.jiXieSheBei+"</td> "+
+								"<td>"+dayplan.remarks+"</td> "+
+							"</tr> ";
+			       });
+			       html	+= _tr+' </table>';
+			       tr.after("<tr class='pad'><td colspan='7'>"+html+"</td></tr>"); 
+			    }
+			});  
+		}else{
+			tr.next().show();
+		}
+	}else{
+		$(this).addClass("fa-arrow-circle-down");
+		$(this).removeClass("fa-arrow-circle-up");
+		if(tr.next().hasClass("pad")){
+			tr.next().hide();
+		}
+	}
+});
+function checkCanel(Obj){   
+	$('[type="checkbox"]').each(function(){
+		$(this).attr("checked",false);
+	});  
+	Obj.checked=true;
+	//alert(Obj.value);
+	window.getDayPlanIds=Obj.value;
+}
+</script>

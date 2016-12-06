@@ -1,0 +1,13 @@
+package com.junl.dms.mvc.systemhelp.mobileClientDownload;
+
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/systemhelp/mobileClientDownload")
+public class MobileClienDownloadController extends BaseController {
+
+	public void index()
+	{
+		render("/manage/systemhelp/mobileClientDownload/index.html");
+	}
+}

@@ -1,0 +1,955 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.weixiurecord">
+	
+	<sql id="seachlist">
+		<![CDATA[ 
+			SELECT
+				yw.wzName,yw.startZHK,yw.startZHM,yw.endZHK,yw.endZHM,yw.wzMiaoShu,yw.mianJi,yw.foundTime,yw.disposeTime,yw.shiGongJiXie,yw.shiGongRenYuan weiXiuRenYuan,yw.anQuanYuan,yw.fuZeRen,yw.luXian,yw.wzType
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yw.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachlistaa">
+		<![CDATA[ 
+			SELECT
+				yw.wzName,yw.startZHK,yw.startZHM,yw.endZHK,yw.endZHM,yw.wzMiaoShu,yw.mianJi,yw.foundTime,yw.disposeTime,yw.shiGongJiXie,yw.shiGongRenYuan weiXiuRenYuan,yw.anQuanYuan,yw.fuZeRen,yw.luXian,yw.wzType
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yw.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachtime">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yw.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachlist2">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachlist2q">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="liefengsize">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_lieFengDispose lf
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON lf.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND lf.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachtime6">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_lieFengDispose lf
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON lf.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),lf.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachlist2aa">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachlist2bb">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachtime2">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachlist3">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND jt.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachlist3aa">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),jt.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachtime3">
+		<![CDATA[ 
+			SELECT
+				*
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),jt.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachjx">
+		<![CDATA[ 
+			SELECT
+				distinct yw.shiGongJiXie
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yw.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachsgry">
+		<![CDATA[ 
+			SELECT
+				distinct yw.shiGongRenYuan
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yw.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachaqy">
+		<![CDATA[ 
+			SELECT
+				distinct yw.anQuanYuan
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yw.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachfzr">
+		<![CDATA[ 
+			SELECT
+				distinct yw.fuZeRen
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yw.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachjxaa">
+		<![CDATA[ 
+			SELECT
+				distinct yw.shiGongJiXie
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yw.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachsgryaa">
+		<![CDATA[ 
+			SELECT
+				distinct yw.shiGongRenYuan
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yw.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachaqyaa">
+		<![CDATA[ 
+			SELECT
+				distinct yw.anQuanYuan
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yw.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachfzraa">
+		<![CDATA[ 
+			SELECT
+				distinct yw.fuZeRen
+			FROM
+				DMS_WX_youWuDispose yw
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yw.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yw.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachsgjx2">
+		<![CDATA[ 
+			SELECT
+				distinct yh.shiGongJiXie
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachwxry2">
+		<![CDATA[ 
+			SELECT
+				distinct yh.weiXiuRenYuan
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachaqy2">
+		<![CDATA[ 
+			SELECT
+				distinct yh.anQuanYuan
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachfzr2">
+		<![CDATA[ 
+			SELECT
+				distinct yh.fuZeRen
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachyhxm2">
+		<![CDATA[ 
+			SELECT
+				distinct yh.yangHuProject
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachyhfw2">
+		<![CDATA[ 
+			SELECT
+				yh.startZHK,yh.startZHM,yh.endZHK,yh.endZHM
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachreason2">
+		<![CDATA[ 
+			SELECT
+				distinct yh.sunHuaiMiaoShu
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachsgjx2q">
+		<![CDATA[ 
+			SELECT
+				distinct yh.shiGongJiXie
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachwxry2q">
+		<![CDATA[ 
+			SELECT
+				distinct yh.weiXiuRenYuan
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachaqy2q">
+		<![CDATA[ 
+			SELECT
+				distinct yh.anQuanYuan
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachfzr2q">
+		<![CDATA[ 
+			SELECT
+				distinct yh.fuZeRen
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND yh.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachsgjx2aa">
+		<![CDATA[ 
+			SELECT
+				distinct yh.shiGongJiXie
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachwxry2aa">
+		<![CDATA[ 
+			SELECT
+				distinct yh.weiXiuRenYuan
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachaqy2aa">
+		<![CDATA[ 
+			SELECT
+				distinct yh.anQuanYuan
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachfzr2aa">
+		<![CDATA[ 
+			SELECT
+				distinct yh.fuZeRen
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachyhxm2aa">
+		<![CDATA[ 
+			SELECT
+				distinct yh.yangHuProject
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachreason2aa">
+		<![CDATA[ 
+			SELECT
+				distinct yh.sunHuaiMiaoShu
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachyhfw2aa">
+		<![CDATA[ 
+			SELECT
+				yh.startZHK,yh.startZHM,yh.endZHK,yh.endZHM
+			FROM
+				DMS_WX_yangHuTongYongWeiXiu yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachsgjx2bb">
+		<![CDATA[ 
+			SELECT
+				distinct yh.shiGongJiXie
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachwxry2bb">
+		<![CDATA[ 
+			SELECT
+				distinct yh.weiXiuRenYuan
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachaqy2bb">
+		<![CDATA[ 
+			SELECT
+				distinct yh.anQuanYuan
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachfzr2bb">
+		<![CDATA[ 
+			SELECT
+				distinct yh.fuZeRen
+			FROM
+				DMS_WX_lieFengDispose yh
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON yh.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),yh.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachsgjx3">
+		<![CDATA[ 
+			SELECT
+				distinct jt.shiGongJiXie
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND jt.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachwxry3">
+		<![CDATA[ 
+			SELECT
+				distinct jt.weiXiuRenYuan
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND jt.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachaqy3">
+		<![CDATA[ 
+			SELECT
+				distinct jt.anQuanYuan
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND jt.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachfzr3">
+		<![CDATA[ 
+			SELECT
+				distinct jt.fuZeRen
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND jt.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="seachsgjx3aa">
+		<![CDATA[ 
+			SELECT
+				distinct jt.shiGongJiXie
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),jt.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachwxry3aa">
+		<![CDATA[ 
+			SELECT
+				distinct jt.weiXiuRenYuan
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),jt.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachaqy3aa">
+		<![CDATA[ 
+			SELECT
+				distinct jt.anQuanYuan
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),jt.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachfzr3aa">
+		<![CDATA[ 
+			SELECT
+				distinct jt.fuZeRen
+			FROM
+				DMS_WX_jtaqssWeiXiu jt
+			LEFT JOIN 
+				DMS_RW_task_info_relate tir ON jt.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),jt.createTime,23)=?
+    	]]>
+	</sql>
+	
+	
+	<sql id="lumianbinghai">
+		<![CDATA[ 
+			SELECT
+				lx.*
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu lx
+			
+			LEFT JOIN
+				DMS_RW_task_info_relate tir ON lx.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND lx.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="searchlumianbinghai">
+		<![CDATA[ 
+			SELECT
+				lx.*
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu lx
+			
+			LEFT JOIN
+				DMS_RW_task_info_relate tir ON lx.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),lx.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachtime4">
+		<![CDATA[ 
+			SELECT
+				lx.*
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu lx
+			
+			LEFT JOIN
+				DMS_RW_task_info_relate tir ON lx.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),lx.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="ceng">
+		<![CDATA[ 
+			SELECT
+				lcr.*
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu lx
+			LEFT JOIN
+				DMS_WX_luMianBingHaiWeiXiu_ceng_relate lcr ON lcr.weiXiuId=lx.ids
+			WHERE
+				lx.ids=? AND lcr.cengType=?
+    	]]>
+	</sql>
+	
+	
+	<sql id="fhzlsize">
+		<![CDATA[ 
+			SELECT
+				fzhl.*
+			FROM
+				DMS_WX_fzhlWeiXiu fzhl
+			
+			LEFT JOIN
+				DMS_RW_task_info_relate tir ON fzhl.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND fzhl.createTime>CONVERT(varchar(100),GETDATE(),23)
+    	]]>
+	</sql>
+	<sql id="searchfhzlsize">
+		<![CDATA[ 
+			SELECT
+				fzhl.*
+			FROM
+				DMS_WX_fzhlWeiXiu fzhl
+			
+			LEFT JOIN
+				DMS_RW_task_info_relate tir ON fzhl.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),fzhl.createTime,23)=?
+    	]]>
+	</sql>
+	<sql id="seachtime5">
+		<![CDATA[ 
+			SELECT
+				fzhl.*
+			FROM
+				DMS_WX_fzhlWeiXiu fzhl
+			
+			LEFT JOIN
+				DMS_RW_task_info_relate tir ON fzhl.taskInfoRelate=tir.ids
+			LEFT JOIN 
+				DMS_XC_xunChaInfo xi ON xi.ids=tir.xunChaInfoId
+			LEFT JOIN
+				DMS_PZ_chooseInfo ci ON ci.ids=xi.wxmkId
+			WHERE
+				ci.name=? AND CONVERT(varchar(100),fzhl.createTime,23)=?
+    	]]>
+	</sql>
+	
+	
+	<sql id="fzhllist">
+		<![CDATA[ 
+			SELECT
+				fir.*
+			FROM
+				DMS_WX_fzhlWeiXiu fzhl
+			
+			LEFT JOIN
+				DMS_WX_fzhlWeiXiu_item_relate fir ON fir.weiXiuId=fzhl.ids
+			WHERE
+				fzhl.ids=?
+    	]]>
+	</sql>
+</sql-statement>

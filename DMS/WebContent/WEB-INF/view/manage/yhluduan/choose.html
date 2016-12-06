@@ -1,0 +1,59 @@
+<div id="myModel">
+	<form id="splitPageModel" action="${cxt}/jf/manage/yhluduan/choose" method="POST" role="form" class="form-horizontal">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			<div class="panel-body">		
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="center hidden-xs" width="5%">
+						
+							</th>
+							<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'lx.luXianName')">
+								路线名称 	${orderBy("lx.luXianName")}
+	      					</th>
+							<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'name')">
+								养护路段名称  ${orderBy("name")}
+	      					</th>
+							<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'startZHK')">
+								开始桩号  ${orderBy("startZHK")}
+							</th>
+							<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'endZHK')">
+								结束桩号  ${orderBy("endZHK")}
+							</th>
+							
+						</tr>
+					</thead>
+					<tbody>
+						<% for(yhluduan in splitPage.list){ %>
+							<tr  onclick="trDomClick(this)" >
+								<td class="center hidden-xs">
+									<input type="checkbox" value="${yhluduan.ids!}" name="yhluduanRadio"> 
+								</td>
+								<td class="hidden-xs">${yhluduan.luXianName!}</td>
+								<td class="hidden-xs" id="name${yhluduan.ids!}">${yhluduan.name!}</td>
+								<td class="hidden-xs">K${yhluduan.startZHK!}+${yhluduan.startZHM!}</td>
+								<td class="hidden-xs">K${yhluduan.endZHK!}+${yhluduan.endZHM!}</td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+				
+				<div class="row" id="splitPageDivModel">
+					<% include("/common/splitPage.html", {"divId" : "myModel", "formId" : "splitPageModel", "splitPageDiv" : "splitPageDivModel"}){} %>
+				</div>
+				
+			</div>
+		
+		</div>
+		<!-- end: BORDERED TABLE PANEL -->
+		
+	</form>			
+</div>
+<script type="text/javascript">
+	function trDomClick(obj){
+		$("input[type='radio']").removeAttr("checked"); 
+		$(obj).find("input[type='radio']").prop('checked',true); ; 
+
+	}
+</script>

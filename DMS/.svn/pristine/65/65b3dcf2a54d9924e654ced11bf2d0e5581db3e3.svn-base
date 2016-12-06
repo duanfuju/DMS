@@ -1,0 +1,52 @@
+package com.junl.dms.mvc.dayplan;
+
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.platform.mvc.base.BaseService;
+
+public class DayPlanService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(DayPlanService.class);
+
+	public static final DayPlanService service = new DayPlanService();
+
+	public boolean save(DayPlan dayplan) {
+		dayplan.set("state", 0);
+		dayplan.set("createTime", new Timestamp(System.currentTimeMillis()));
+		return dayplan.save();
+	}
+
+	public boolean delete(String ids) {
+		return DayPlan.dao.deleteById(ids);
+	}
+
+	public DayPlan findById(String ids) {
+		DayPlan dayplan = DayPlan.dao.findById(ids);
+		return dayplan;
+	}
+	
+	public boolean update(DayPlan dayplan){
+		return dayplan.update();
+	}
+	public List<DayPlan> findByDate(){
+		List<DayPlan> list = DayPlan.dao.findByDate();
+		return list;
+	}
+
+	public List<DayPlan> findByMonthIds(String ids) {
+		List<DayPlan> list = DayPlan.dao.findByMonthIds(ids);
+		return list;
+	}
+
+	public List<DayPlan> findByDate1(String date) {
+		List<DayPlan> list = DayPlan.dao.findByDate1(date);
+		return list;
+	}
+
+	
+}

@@ -1,0 +1,128 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+}
+var start;
+var end;
+function mySelect(){
+	//设置查询条件
+	 start = $("#sdate").val();
+	 end = $("#edate").val();
+	common_ajax.ajaxFormMainPanel("splitPage");
+	set();
+}
+
+function set(){
+	 $("#sdate").val(start);
+	 $("#edate").val(end);
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">日常养护汇总</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/yanghuyhuizong" method="POST" role="form" class="form-horizontal">
+
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<!--<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">日常养护汇总</span>
+					</h4>
+					
+				</div>
+				
+				<div class="panel-body">
+					<div class="form-group">
+						
+						<label class="col-sm-1 control-label">汇总 </label>
+						<div class="col-sm-2">
+					  		<input id="wzMiaoShu_hidden" class="form-control" name="_query.wzMiaoShu" value="" maxlength="40" >
+					  	</div>
+						
+						<label class="col-sm-3 control-label">明细</label>
+						<div class="col-sm-2">
+					  		<input id="1111" class="form-control focused" type="hidden" name="1111" value='111' maxlength="20" >
+					  		<select	id="333" name="222" value="" style="width: 280px;" class="form-control">
+								<option p="" value=""   >请选择</option>
+								<option value="1">总价承包部分</option>
+								<option value="2">单价承包项目-路基 </option>
+								<option value="3">单价承包项目-路面 </option>
+								<option value="3">单价承包项目-桥梁 </option>
+								<option value="3">单价承包项目-涵洞通道 </option>
+								<option value="3">单价承包项目-防撞护栏等维修 </option>
+								<option value="3">单价承包项目-隔离栅 )</option>
+								<option value="3">单价承包项目-标识清洁、维修及更换 </option>
+								<option value="3">单价承包项目-局部标线补划 </option>
+								<option value="3">单价承包项目-沿线设施 </option>
+								<option value="3">单价承包项目-计时工 </option>
+							</select>
+						</div>
+				  	</div>
+				</div> -->
+				<div class="panel panel-white">
+					<div class="tabbable">
+						<ul id="myTab" class="nav nav-tabs">
+							<li class="active">
+								<a aria-expanded="true" href="#myTab_exampleHome" data-toggle="tab">
+									<i class="green fa fa-home"></i> 计量汇总
+								</a>
+							</li>
+							<li class="">
+								<a aria-expanded="true" href="#myTab_exampleZCB" data-toggle="tab">
+									总承包
+								</a>
+							</li>
+							
+							<% for(tlist in tabList){ %>
+							<li class="tab-pane">
+								<a aria-expanded="true" href="#myTab_example${tlist.index!}" data-toggle="tab">
+									${tlist.firstLevelNumberDetail!}
+								</a>
+							</li>
+							<%}%>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active in" id="myTab_exampleHome">
+								
+							</div>
+							<div class="tab-pane" id="myTab_exampleZCB">
+									
+								</div>
+							<% for(tlist in tabList){ %>
+								<div class="tab-pane" id="myTab_example${tlist.index!}">
+									${tlist.firstLevelNumberDetail!}
+								</div>
+							<%}%>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	<script type="text/javascript">
+	function exportword(ids){
+		$.ajax({
+			url:cxt+'/jf/manage/yanghuyhuizong/exportword',
+			type:'post',
+			data : {"ids":ids},
+			async: false,
+			success:function(){
+				window.location.href=cxt+'/uploadword/'+ids+'.doc';
+			}
+		});
+	}
+</script>
+</form>			
+
+

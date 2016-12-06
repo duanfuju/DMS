@@ -1,0 +1,27 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">操作手册</li>
+		</ol>
+	</div>
+</div>
+
+<div>
+	<h4><b style="color:block;">操作手册下载:</b><a onclick="downloadOperationManual()" href="#">锡张高速公路管理平台操作手册.doc</a></h4>
+</div>
+<style type="text/css">
+	a{
+		cursor: pointer;
+	}
+	
+</style>
+
+<script type="text/javascript">
+	
+	function downloadOperationManual()
+	{
+		window.location.href=cxt+"/files/systemHelp/锡张高速公路管理平台操作手册.doc";		
+	}
+	
+</script>

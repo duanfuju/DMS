@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.taskinforelate">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_luXian order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_luXian) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_luXian where ids not in ( select top {1, number, #.#} ids from DMS_PZ_luXian )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_luXian ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				*
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_RW_task_info_relate 
+			where 1=1
+			
+			
+    	]]>
+	</sql>
+<!-- 动态SQL处理 -->
+	<sql id="findListByTaskId">
+		<![CDATA[ 
+        	select * FROM DMS_RW_task_info_relate 
+        	WHERE
+				taskId = ?
+    	]]>
+	</sql>
+	
+	
+</sql-statement>

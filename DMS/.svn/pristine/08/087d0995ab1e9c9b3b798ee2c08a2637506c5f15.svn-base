@@ -1,0 +1,169 @@
+<script type="text/javascript">
+function resetDate(){
+	$("input[name='_query.wzName']").attr("value","");
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">交通安全设施维修</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/jiaotong" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">交通安全设施维修查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+					  		<input class="form-control focused" type="text" name="_query.wzName" value='${escapeXml(paramMap["_query.wzName"])}' maxlength="20" >				  		
+						</div>												
+				  	</div>													  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='common_ajax.ajaxFormMainPanel("splitPage");'>查询</button>
+							<button type="reset" class="btn" onclick="resetDate()">重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">交通安全设施维修列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<div class="row">
+						<div class="col-md-12 space20">
+							<% if(authUrl("/manage/jiaotong/add.html")){ %>
+							<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/jiaotong/toUrl?toUrl=/manage/jiaotong/add.html');">
+								新增 <i class="fa fa-plus"></i>
+							</button>
+							<% } %>	
+							
+			
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuProject')">
+									维修项目 ${orderBy("weiXiuProject")}
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzName')">
+									方向/互通/收费站/服务区${orderBy("wzName")}
+		      					</th>
+		      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'fuZeRen')">
+									现场施工负责人 ${orderBy("fuZeRen")}
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'startZHK')">
+									开始桩号 ${orderBy("startZHK")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'endZHK')">
+									结束桩号 ${orderBy("endZHK")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuTime')">
+									维修时间 ${orderBy("weiXiuTime")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'createTime')">
+									创建时间 ${orderBy("createTime")}
+								</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(jiaoTong in splitPage.list){ %>
+								<tr id="trDom${jiaoTong.ids}">
+									
+									<td class="hidden-xs">${jiaoTong.weiXiuProject!}</td>
+									<td class="hidden-xs">${jiaoTong.wzName!}</td>
+									<td class="hidden-xs">${jiaoTong.fuZeRen!}</td>
+									<td class="hidden-xs">K${jiaoTong.startZHK!}+${jiaoTong.startZHM!}</td>
+									<td class="hidden-xs">K${jiaoTong.endZHK!}+${jiaoTong.endZHM!}</td>
+									<td class="hidden-xs">${jiaoTong.wxtime!}</td>
+									<td class="hidden-xs">${jiaoTong.ctime!}</td>
+									<td class="hidden-xs">
+										<% if(authUrl("/jf/manage/jiaotong/view")){ %>
+										<button type="button" title='查看' class="btn btn-dark-yellow add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/jiaotong/view',{ids:'${jiaoTong.ids}',pageNumber:'${splitPage.pageNumber!}'});">
+												 <i class="fa fa-eye"></i>
+										</button>
+										<% } %>	
+										<% if(authUrl("/jf/manage/jiaotong/showUpdate")){ %>
+										<button type="button" title='修改' class="btn btn-green edit-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/jiaotong/showUpdate',{ids:'${jiaoTong.ids}',pageNumber:'${splitPage.pageNumber!}'});" > 
+											<i class="fa fa-edit"></i>
+										</button>
+										<% } %>
+										<% if(authUrl("/jf/manage/jiaotong/delete")){ %>	
+										<button type="button" title='删除' class="btn btn-red delete-row" onClick="luXianDelete('${jiaoTong.ids}')" > 
+											<i class="fa fa-trash-o"></i>
+										</button>
+										<% } %>
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+	function luXianDelete(ids){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var resultData=common_ajax.ajaxFunc("/jf/manage/jiaotong/delete",{"ids":ids},"JSON");
+			if(resultData==""){
+				layer.msg("请求失败！")
+			}else{
+				layer.msg(resultData.result_desc);
+				if(resultData.result){
+					$("#trDom"+ids).fadeOut('fast',function(){
+						$("#trDom"+ids).remove()();
+					});
+				}
+				
+			}
+		});
+	}
+</script>

@@ -1,0 +1,109 @@
+						
+<form id="splitPage" action="" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">沥青路面状况列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<div class="row">
+						<div class="col-md-12 space20">
+							<button type="button" class="btn btn-success add-row" onclick="exportExecl()">
+								导出 <i class="fa fa-hospital-o"> </i>
+							</button>
+			
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th align="center" colspan="9" width="100%">高速公路沥青路面状况表</th>
+							</tr>
+							<tr>
+								<th style="text-align: left;" colspan="3" width="33%">路线名称：${luXian!}</th>
+								<th style="text-align: left;" colspan="3" width="34%">方向：${fangXiang!}</th>
+								<th style="text-align: left;" colspan="3" width="33%">年月：${endTime!}</th>
+							</tr>
+							<tr>
+								<th rowspan="2">桩号</th>
+								<th rowspan="2">路段长度(m)</th>
+								<th colspan="2">防护设施缺损</th>
+								<th rowspan="2">隔离栅损坏</th>
+								<th rowspan="2">标志缺损</th>
+								<th rowspan="2">标线缺损</th>
+								<th rowspan="2">绿化管护不善</th>
+								<th rowspan="2">TCI</th>
+							</tr>
+							<tr>
+								<th>轻</th>
+								<th>重</th>
+							</tr>		
+						</thead>
+						<tbody>
+							<% for(item in resultData){ %>
+								<tr id="trDom${item}">
+									<td class="hidden-xs">${item.KSZH!}</td>
+									<td class="hidden-xs">${item.CD!}</td>
+									<td class="hidden-xs">${item.FHSSQS1!}</td>
+									<td class="hidden-xs">${item.FHSSQS3!}</td>
+									<td class="hidden-xs">${item.GLSSH!}</td>
+									<td class="hidden-xs">${item.BZQS!}</td>
+									<td class="hidden-xs">${item.BXQS!}</td>
+									<td class="hidden-xs">${item.LHGHBS!}</td>
+									<td class="hidden-xs">${item.TCI!}</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	
+</form>			
+
+ <style>
+   .table th, .table td { 
+		text-align: center; 
+		height:38px;
+		width:100px;
+		}
+ </style>
+<script type="text/javascript">
+function exportExecl(){
+	var startTime = "${startTime!}";
+	var endTime = "${endTime!}";
+	var luXian = "${luXian!}";
+	var fangXiang = "${fangXiang!}";
+	$.ajax({
+		url:cxt+'/jf/manage/weixiurecord/exportExecl',
+		type:'post',
+		data:{"type":"linestate","startTime":startTime,"endTime":endTime,"luXian":luXian,"fangXiang":fangXiang},
+		dataType:'JSON',
+		async: false,
+		success:function(data){
+			if(data.isData == false)
+			{
+				layer.msg("没有数据");
+			}
+			else
+			{
+				window.location.href=cxt+"/"+data.downloadPath;
+			}
+		}
+	});
+}
+</script>

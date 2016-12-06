@@ -1,0 +1,164 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/yhluduan');">方向配置</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增位置信息</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" action="${cxt!}/jf/manage/yhluduan/update" method="POST" role="form" class="form-horizontal">
+					<input type="hidden" name="yhLuDuan.ids" value="${yhLuDuan.ids!}"/>	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线名称</label>
+						<div class="col-sm-7">
+							<select name="yhLuDuan.luXianId" class="form-control">
+								<%for(luXian in luXianList){%>
+									<option ${luXian.ids==yhLuDuan.luXianId?'selected="selected"'}   value="${luXian.ids!}" >${luXian.luXianName!}</option>
+								<%}%>
+							</select>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向名称</label>
+						<div class="col-sm-3">
+							<input type="text" id="idcardId" name="yhLuDuan.name" value="${yhLuDuan.name!}" class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yhLuDuan.startZHK" value="${yhLuDuan.startZHK!}" class="form-control"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yhLuDuan.startZHM" value="${yhLuDuan.startZHM!}" class="form-control"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yhLuDuan.endZHK" value="${yhLuDuan.endZHK!}" class="form-control"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yhLuDuan.endZHM" value="${yhLuDuan.endZHM!}" class="form-control"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+					</div>
+					
+					
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-3">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	function mySubmit(){
+		var name = $("[name='yhLuDuan.name']").val();
+		if(name==""){
+			layer.msg("养护路段名称不能为空");
+			return;
+		}
+		var startzhk=$("[name='yhLuDuan.startZHK']").val();
+		if(startzhk==""){
+			layer.msg("开始桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhk)){
+				if(startzhk<=0){
+					layer.msg("开始桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var startzhm=$("[name='yhLuDuan.startZHM']").val();
+		if(startzhm==""){
+			layer.msg("开始桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhm)){
+				if(startzhm<=0){
+					layer.msg("开始桩号M不能小于等于零！");
+					return false;
+				}else if(startzhm>999){
+					layer.msg("开始桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var endzhk = $("[name='yhLuDuan.endZHK']").val();
+		if(endzhk==""){
+			layer.msg("结束桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhk)){
+				if(endzhk<=0){
+					layer.msg("结束桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var endzhm = $("[name='yhLuDuan.endZHM']").val();
+		if(endzhm==""){
+			layer.msg("结束桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhm)){
+				if(endzhm<=0){
+					layer.msg("结束桩号M不能小于等于零！");
+					return false;
+				}else if(endzhm>999){
+					layer.msg("结束桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！");
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/yhluduan",{"pageNumber":${pageNumber!}});
+			}
+		}
+		
+	}
+</script>	

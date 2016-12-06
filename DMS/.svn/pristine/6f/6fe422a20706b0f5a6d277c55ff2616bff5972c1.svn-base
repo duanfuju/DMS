@@ -1,0 +1,502 @@
+<style>
+	<!--
+	.fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+	.table-hover > tbody > .pad:hover > td{
+	background: #fff;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	}
+
+	-->
+</style>
+<script src="${cxt!}/jsFile/webuploader/js/upload.js"></script>
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+<script type="text/javascript">
+	function delMode_h(taskRelateIds) {
+		layer.confirm('确定删除此条数据？', {
+			btn : ['确定', '取消'], //按钮
+			scrollbar : false
+		}, function() {
+			var baoYanIds = $("#baoYanIds").val();
+			$.ajax({
+				type : 'post',
+				url : '${cxt}/jf/manage/baoyan/deleteTaskRelateInUpdate',
+				cache : false,
+				data : {
+					"taskRelateIds" : taskRelateIds,
+					"baoYanIds" : baoYanIds
+				},
+				dataType : 'json',
+				success : function(data) {
+					if (data.result_desc) {
+						//删除
+						$(".trDom" + taskRelateIds).remove();
+						//重新设置隐藏域的值
+						resetHidden();
+
+					}
+				}
+			});
+			layer.closeAll();
+		});
+
+	}
+
+</script>
+
+<img src="" class='fix' alt="图片损坏，点击返回" style="display: none">
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a>
+			</li>
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/baoyan');">维修报验</a>
+			</li>
+			<li class="active">
+				修改维修报验
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">修改维修报验</span></h4>
+
+			</div>
+
+			<div class="panel-body">
+				<table class="table table-bordered table-hover" id="showSelectTable"  style="font-size: 13px" >
+					<thead>
+						<tr>
+							<td class="hidden-xs" width="5%" >
+								位置
+							</td>
+							<td class="hidden-xs" width="5%" >
+								桩号范围
+							</td>
+							<td class="hidden-xs" width="5%" >
+								病害类型
+							</td>
+							<td class="hidden-xs" width="5%" >
+								气温 
+							</td>
+							<td class="hidden-xs" width="10%" >
+								施工机械
+							</td>
+							<td class="hidden-xs" width="10%" >
+								维修人员
+							</td>
+							<td class="hidden-xs" width="10%" >
+								现场专职安全员
+							</td>
+							<td class="hidden-xs" width="10%" >
+								现场施工负责人
+							</td>
+							<td class="hidden-xs" width="10%" >
+								质量评价
+							</td>
+							<td class="hidden-xs" width="10%" >
+								损害类型
+							</td>
+							<td class="hidden-xs" width="10%" >
+								图片
+							</td>
+						
+						</tr>
+					</thead>
+						<tbody id="tr_checked">
+							<% if(byrListSize>0){for(wx in byrList){ %>
+								<tr class="trDom${wx.ids}">
+									<td class="hidden-xs">${wx.luXian!}/${wx.wzType!}/${wx.wzName!}/${wx.wzMiaoShu!}</td>
+									<td class="hidden-xs">K${wx.startZHK!}  +  ${wx.startZHM!}		~		K${wx.endZHK!}  +  ${wx.endZHM!}</td>
+									<td class="hidden-xs">${wx.diseaseType!}</td>
+									<td class="hidden-xs">${wx.qiWen!}℃</td>
+									<td class="hidden-xs">${wx.shiGongJiXie!}</td>
+									<td class="hidden-xs">${wx.weiXiuRenYuan!}</td>
+									<td class="hidden-xs">${wx.anQuanYuan!}</td>
+									<td class="hidden-xs">${wx.fuZeRen!}</td>
+									<td class="hidden-xs">${wx.pingJia!}</td>
+									<td class="hidden-xs">${wx.sunHuaiCauseType!}</td>
+									<td class="hidden-xs" id="td${wx.ids!}"></td>
+									<script type="text/javascript">
+										//图片存在多个
+										var a = "";
+										var img = "${wx.imgs!}".split(",");
+										$.each(img, function(i, imgs) {
+											a += '<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\'' + imgs + '\')">图片' + (i + 1) + '</a>';
+										});
+										$("#td${wx.ids!}").append(a);
+									</script>
+								</tr>
+							<% }} %>
+						</tbody>
+					</table>
+
+				<form id="editForm" action="${cxt!}/jf/manage/baoyan/update" method="POST" role="form" class="form-horizontal">
+					<input type="hidden" id="baoYanIds" name="baoYan.ids" value="${baoYan.ids!}" />
+					<input type="hidden" name="baoYan.byPre" value="${baoYan.byPre}">
+					<input type="hidden" name="baoYan.byNum" value="${baoYan.byNum}">
+					<!-- 查询条件 -->
+					<input type="hidden" id="taskIds" name="taskIds" class="form-control">
+					<!-- 需要带到后台的值-->
+					<input type="hidden" id="taskIds_h" name="taskIds_h" class="form-control">
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> 维修中心 </label>
+						<div class="col-sm-2"   >
+							<select id="byu" name="baoYan.byu"  maxlength="20" class="form-control">
+								<% for(by in byList){ %>
+								<option value="${by.name}" ${by.name==baoYan.byu?'selected="selected"'} >${by.name }</option>
+								<% } %>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label"> 维修报验单序列 </label>
+						<div class="col-sm-2">
+							<input type="text" id="byNo" name="baoYan.byNo" readonly="readonly" value="${baoYan.byNo!}" class="form-control">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修记录</label>
+						<span class="help-inline col-sm-2"> <a href="#"  class="btn btn-blue" onclick="showEditChildrenMenu()" >选择</a> </span>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label">报验人</label>
+						<div class="col-sm-2">
+							<input type="text" name="baoYan.baoYanPeople" value="${baoYan.baoYanPeople!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">报验日期</label>
+						<div class="col-sm-2">
+							<input type="text"  name="baoYan.baoYanTime" value="${baoYan.baoYanTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label">审核人</label>
+						<div class="col-sm-2">
+							<input type="text" name="baoYan.shenHePeople" value="${baoYan.shenHePeople!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">审核日期</label>
+						<div class="col-sm-2">
+							<input type="text"  name="baoYan.shenHeTime" value="${baoYan.shenHeTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label">验收人</label>
+						<div class="col-sm-2">
+							<input type="text" name="baoYan.yanShouPeople" value="${baoYan.yanShouPeople!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">验收日期</label>
+						<div class="col-sm-2">
+							<input type="text"  name="baoYan.yanShouTime" value="${baoYan.yanShouTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="baoYan.remark" class="form-control" rows="4" cols="20" >${baoYan.remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1"> 图片 </label>
+						<div class="col-sm-3" id="imgsDiv"></div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1"> 图片 </label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+								<div id="container">
+
+									<div id="uploader">
+										<div class="queueList">
+											<div id="dndArea" class="placeholder">
+												<div id="filePicker"></div>
+												<p>
+													或将照片拖到这里，单次最多可选3张
+												</p>
+											</div>
+										</div>
+										<div class="statusBar" style="display:none;">
+											<div class="progress">
+												<span class="text">0%</span>
+												<span class="percentage"></span>
+											</div><div class="info"></div>
+											<div class="btns">
+												<div id="filePicker2"></div>
+												<div class="uploadBtn">
+													开始上传
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回 <i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$('.td_ii').on('click', function() {
+		var expandId = $(this).attr("id");
+		var tr = $(".trDom" + expandId);
+
+		if ($(this).hasClass("fa-arrow-circle-down")) {
+			$(this).removeClass("fa-arrow-circle-down");
+			$(this).addClass("fa-arrow-circle-up");
+
+			if (!tr.next().hasClass('pad')) {
+				$.ajax({
+					type : 'post',
+					url : '${cxt}/jf/manage/rwtask/getWeiXiuJiLuByTaskIdFromTables',
+					cache : false,
+					data : {
+						ids : expandId
+					},
+					dataType : 'json',
+					success : function(entity) {
+						if (!entity.flag) {
+							layer.msg("维修记录不存在或被删除");
+							return;
+						}
+						html = ' <table style="width:100%;border:1px">';
+						var _tr = "";
+						$.each(entity.result, function(i, data) {
+							//图片存在多个
+							var a = "";
+							var img = data.imgs.split(",");
+							$.each(img, function(i, imgs) {
+								a += '<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\'' + imgs + '\')">附件' + (i + 1) + '</a>';
+							});
+
+							_tr += ' <tr>' + '<td rowspan=3>' + (i + 1) + '</td>' + ' <td style="text-align:right">桩号范围  ：  </td>' + ' <td> K' + data.startZHK + ' + ' + data.startZHM + '  ~  K  ' + data.endZHK + ' + ' + data.endZHM + '</td>' + ' <td style="text-align:right">位置  ：  </td>' + ' <td> ' + data.luXian + '/' + data.wzType + '/' + data.wzName + '/' + data.wzMiaoShu + '</td>' + ' <td style="text-align:right">天气  ：  </td>' + ' <td>' + data.weatherState + '</td>' + ' <td style="text-align:right">气温  ：  </td>' + ' <td>' + data.qiWen + '℃</td>' + ' </tr>' + ' <tr>' + ' <td style="text-align:right">施工机械  ：  </td>' + ' <td>' + data.shiGongJiXie + '</td>' + ' <td style="text-align:right">维修人员  ：  </td>' + ' <td>' + data.weiXiuRenYuan + '</td>' + ' <td style="text-align:right">现场专职安全员  ：  </td>' + ' <td>' + data.anQuanYuan + '</td>' + ' <td style="text-align:right">现场施工负责人  ：  </td>' + ' <td>' + data.fuZeRen + '</td>' + ' </tr>' + ' <tr>' + ' <td style="text-align:right">质量评价  ：  </td>' + ' <td> ' + data.pingJia + '</td>' + ' <td style="text-align:right">图片  ：  </td><td>' + a + '</td>' + ' </tr>';
+						});
+
+						html += _tr + ' </table>';
+						tr.after("<tr class='pad'><td colspan='10'>" + html + "</td></tr>");
+					}
+				});
+			} else {
+				tr.next().show();
+			}
+		} else {
+			$(this).addClass("fa-arrow-circle-down");
+			$(this).removeClass("fa-arrow-circle-up");
+			if (tr.next().hasClass("pad")) {
+				tr.next().hide();
+			}
+		}
+	});
+	function showImg(path) {
+		layer.photos({
+			photos : {
+				"data" : [{
+					"src" : path//原图地址
+				}]
+			},
+			tab : function(pic, layero) {
+				var css = {
+					width : window.width,
+					height : window.height
+				};
+				$(layero.selector).find('img').css(css);
+
+			}
+		});
+
+	}
+
+	//删除当前选中的需要报验的
+	function delMode(id) {
+		layer.confirm('确定删除此条数据？', {
+			btn : ['确定', '取消'], //按钮
+			scrollbar : false
+		}, function() {
+			//删除
+			$(".trDom" + id).remove();
+			//重新设置隐藏域的值
+			resetHidden();
+			layer.closeAll();
+		});
+
+	}
+
+	//重新设置隐藏域的值
+	function resetHidden() {
+		var taskIds = "";
+		$(".eachTd").each(function(i, n) {
+			taskIds += $(this).attr("p") + "\',\'";
+		});
+
+		taskIds = taskIds.substring(0, taskIds.length - 3);
+		$("#taskIds").val(taskIds);
+	}
+
+	function mySubmit() {
+		var baoYanPeople = $("[name='baoYan.baoYanPeople']").val();
+		if (baoYanPeople == "") {
+			layer.msg("报验人不能为空");
+			return;
+		}
+		var baoYanTime = $("[name='baoYan.baoYanTime']").val();
+		if (baoYanTime == "") {
+			layer.msg("报验日期不能为空");
+			return;
+		}
+
+		var shenHePeople = $("[name='baoYan.shenHePeople']").val();
+		if (shenHePeople == "") {
+			layer.msg("审核人不能为空");
+			return;
+		}
+		var shenHeTime = $("[name='baoYan.shenHeTime']").val();
+		if (shenHeTime == "") {
+			layer.msg("审核日期不能为空");
+			return;
+		}
+
+		var yanShouPeople = $("[name='baoYan.yanShouPeople']").val();
+		if (yanShouPeople == "") {
+			layer.msg("报验收人不能为空");
+			return;
+		}
+		var yanShouTime = $("[name='baoYan.yanShouTime']").val();
+		if (yanShouTime == "") {
+			layer.msg("验收日期不能为空");
+			return;
+		}
+		//showSelectTable
+		var taskIds_h = $("#taskIds_h").val();
+		if(taskIds_h == ""){
+			$("#showSelectTable").find("[name=wxjl_table]").each(function(){
+				//var tabIds = $(this).attr("tabname");
+				taskIds_h += "'"+$(this).attr("tabname")+"',";
+			});
+			$("#taskIds_h").val(taskIds_h);
+		}
+
+		var resultData = common_ajax.ajaxForm("editForm", "JSON");
+		if (resultData == "") {
+			layer.msg("请求失败！");
+		} else {
+			layer.msg(resultData.result_desc);
+			if (resultData.result) {
+				common_ajax.ajaxMainPanel("/jf/manage/baoyan", {
+					"pageNumber" : 2
+				});
+			}
+		}
+
+	}
+
+	//显示子级菜单编辑弹出层
+	function showEditChildrenMenu() {
+		var taskIds = $("#taskIds").val();
+		var url = "/jf/manage/rwtask/choose_checkBox";
+		var width = 1500;
+		var height = 780;
+		var title = "选择报验任务";
+		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + url)),
+			data : {
+				"_query.taskRelateState" : 1,
+				"_query.notInTaskIds" : taskIds
+			},
+			dataType : "HTML",
+			contentType : "application/x-www-form-urlencoded; charset=UTF-8",
+			async : false,
+			cache : false,
+			success : function(response) {
+				result = response;
+				layer.open({
+					type : 1, //page层
+					area : [width + 'px', height + 'px'],
+					title : title,
+					shade : 0.6, //遮罩透明度
+					moveType : 1, //拖拽风格，0是默认，1是传统拖动
+					shift : 0, //0-6的动画形式，-1不开启
+					content : result,
+					btn : ['确定'],
+					btn1 : function() {
+						 //设置需要传到后台的值
+						  var taskIds_h="";
+						  $("#tr_checked").html("");
+						  var wxjlIds = window.getTaskIds.split(",");
+						  for(var i=0;i<wxjlIds.length;i++){
+							  var wxjlId=wxjlIds[i];
+							  var trObj=$(".trDom"+wxjlId);
+							  trObj.find("td:eq(0)").remove();
+							  $("#tr_checked").append(trObj);  
+							  
+							  taskIds_h+=wxjlIds[i]+"\',\'";
+						  }
+						  //将巡查信息的编号放到隐藏域中
+						  wxjl_str=taskIds_h.substring(0,taskIds_h.length-2);
+						  wxjl_str="'"+wxjl_str;
+						  $("#taskIds_h").val(wxjl_str);
+						  $("#showSelectTable").show();
+						  layer.closeAll();
+					}
+				});
+			}
+		});
+	}
+
+	$(function() {
+		//循环遍历图片
+		var imgs = '${baoYan.imgs!}';
+
+		if (imgs == '' || imgs == null)
+			return;
+		var arr = imgs.split(',');
+		$.each(arr, function(i, n) {
+
+			var imgobj = $('<img style="width:200px;height:200px;" src="' + arr[i] + '"><br>' + '<div id="delbtn' + i + '"><button type="button" style="margin-left:60px;margin-top:10px;" class="fa fa-trash-o delimg-btn">删除</button></div><br>' + '<input type="hidden" value="' + arr[i] + '" name="uploadImgs"/>');
+			$("#imgsDiv").append(imgobj);
+			imgobj.find('.delimg-btn').on('click', function() {
+				layer.confirm('确定删除此条数据？', {
+					btn : ['确定', '取消'], //按钮
+					scrollbar : false
+				}, function() {
+					imgobj.remove();
+					layer.closeAll();
+				});
+			});
+		});
+	});
+	$("#showSelectTable").find("[name=wxjl_table]").each(function(){
+		taskIds_h += "'"+$(this).attr("tabname")+"',";
+	});
+	$("#taskIds_h").val(taskIds_h);
+</script>

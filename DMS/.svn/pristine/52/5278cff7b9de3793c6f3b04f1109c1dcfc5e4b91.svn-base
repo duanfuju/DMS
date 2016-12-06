@@ -1,0 +1,143 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">维修报验</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/baoyanlist" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">维修报验查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label">创建日期</label>
+						<div class="col-sm-2">
+							<input type="text" id="createTime" name="_query.sdate" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+						<label class="col-sm-1 control-label" style="text-align: left;width: 1%" for="form-field-1">
+							~
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaEndTime" name="_query.edate"  value='${escapeXml(paramMap["_query.edate"])}'   class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" >
+						</div>												
+				  	</div>													  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='common_ajax.ajaxFormMainPanel("splitPage");'>查询</button>
+							<button type="reset" class="btn" onclick="resetCondition()">重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">维修报验列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'byNo')">
+									维修报验序列 ${orderBy("byNo")}
+		      					</th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'byu')">
+									维修中心 ${orderBy("byu")}
+		      					</th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'baoYanPeople')">
+									报验人 ${orderBy("baoYanPeople")}
+		      					</th>
+		      					<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'baoYanTime')">
+									报验日期 ${orderBy("baoYanTime")}
+		      					</th>
+		      					<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'byFNum')">
+									报验个数${orderBy("byFNum")}
+		      					</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(baoYan in splitPage.list){ %>
+								<tr id="trDom${baoYan.ids}">
+									
+									<td class="hidden-xs">${baoYan.byNo!}</td>
+									<td class="hidden-xs">${baoYan.byu!}</td>
+									<td class="hidden-xs">${baoYan.baoYanPeople!}</td>
+									<td class="hidden-xs">${baoYan.baoYanTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+									<td class="hidden-xs">${baoYan.byFNum!}</td>
+									
+									
+									<td class="hidden-xs">
+										
+										<button type="button"   id="bt${baoYan.ids}" title='导出' onclick="exportword('${baoYan.ids}');" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+												<i class="fa fa-arrow-circle-o-down"></i>
+											</button>
+										
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+function exportword(ids){
+	$.ajax({
+		url:cxt+'/jf/manage/baoyanlist/exportword',
+		type:'post',
+		data : {"ids":ids},
+		async: false,
+		success:function(){
+			window.location.href=cxt+'/uploadword/'+ids+'.doc';
+		}
+	});
+	
+}
+</script>

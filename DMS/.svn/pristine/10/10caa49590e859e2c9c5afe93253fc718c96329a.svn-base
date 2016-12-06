@@ -1,0 +1,255 @@
+package com.junl.dms.mvc.jiling;
+
+
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.plugin.activerecord.Record;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/jiliang")
+public class JiLiangController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(JiLiangController.class);
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * /jf/manage/jiliang/showCounts
+	 */
+	public void showCounts(){
+		String  byanIds = getPara("ids");
+		String state=getPara("state");
+		List<Record> list= JiLiangService.service.showCounts(byanIds,state);
+		setAttr("byrList",list);
+		render("/manage/baoyan/showBaoYan.html");
+	}
+	
+	
+	
+	
+	
+	/**
+	 *  根据计量ids和维修ids获取细目的数据	/jf/manage/jiliang/getXiMuByJlIdsAndWeiXiuIds
+	 */
+	public void getXiMuByJlIdsAndWeiXiuIds(){
+		String  weiXiuIds = getPara("weiXiuIds");
+		String  jlIds = getPara("jlIds");
+		List<Map<String, Object>> list = JiLiangService.service.getXiMuByJlIdsAndWeiXiuIds(weiXiuIds,jlIds);
+		setAttr("list", list);
+		render("/manage/jiliang/show.html");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 获取验收细目的数据			/jf/manage/jiliang/getYanShouXiMu
+	 */
+	public void getYanShouXiMu(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String  yanShouXiMu = getPara("yanShouXiMu");
+			List<Map<String, Object>> result = JiLiangService.service.getYanShouXiMu(yanShouXiMu);
+			jsonObject.put("result", result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", 0);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 首页
+	 */
+	public void index() {
+		if((splitPage.getOrderColunm() == null || ("").equals(splitPage.getOrderColunm()))
+				&& (splitPage.getOrderMode() == null || ("").equals(splitPage.getOrderMode()))) {
+			splitPage.setOrderColunm("byan.createTime");
+			splitPage.setOrderMode("desc");
+		}
+		paging(ConstantInit.db_dataSource_main, splitPage, JiLiang.sqlId_splitPageSelect, JiLiang.sqlId_splitPageFrom);
+		render("/manage/jiliang/list.html");
+	}
+	
+	/**
+	 * 跳转查看页面
+	 */
+	public void view(){
+		String ids = getPara("ids");
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据计量数据所关联的报验编号查询维修数量
+		int weiXiuNum=JiLiangService.service.getWeiXiuNum(jiliang.getStr("byanIds"));
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord(jiliang.getStr("byanIds"));
+		setAttr("list",list);
+		setAttr("jiliang",jiliang);
+		setAttr("weiXiuNum",weiXiuNum);
+		render("/manage/jiliang/view.html");
+	}
+	
+	
+	/**
+	 * 跳转计量操作页面
+	 */
+	public void meterage(){
+		String ids = getPara("ids");
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据计量数据所关联的报验编号查询维修数量
+		int weiXiuNum=JiLiangService.service.getWeiXiuNum(jiliang.getStr("byanIds"));
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord(jiliang.getStr("byanIds"));
+		setAttr("list",list);
+		setAttr("jiliang",jiliang);
+		setAttr("weiXiuNum",weiXiuNum);
+		render("/manage/jiliang/meterage.html");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 获取维修数	
+	 */
+	public void getWeiXiuNum(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String  ids = getPara("ids");
+			int num = JiLiangService.service.getWeiXiuNum(ids);
+			jsonObject.put("result", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", 0);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	/**
+	 * 弹出计量细目
+	 */
+	public void tomItems(){
+		String  ids = getPara("ids");
+		String  jlIds = getPara("jlIds");
+		setAttr("ids",ids);
+		setAttr("jlIds",jlIds);
+		render("/manage/jiliang/mitems.html");
+	}
+	/**
+	 * 弹出退回
+	 */
+	public void toReturn(){
+		String  ids = getPara("ids");
+		String  jlIds = getPara("jlIds");
+		setAttr("ids",ids);
+		setAttr("jlIds",jlIds);
+		render("/manage/jiliang/return.html");
+	}
+	
+	/**
+	 * 计量细目的新增	/jf/manage/jiliang/saveItems
+	 */
+	public void saveItems(){
+		JSONObject jsonObject=new JSONObject();
+		try{
+			JiLiangXiMu jiLiangXiMu = getModel(JiLiangXiMu.class);
+			String[] paras = getParas("uploadImgs");
+			boolean result=JiLiangService.service.saveItems(jiLiangXiMu, paras);
+			String result_desc="计量失败！";
+			if(result){
+				result_desc="计量成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		}catch(Exception e){
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	/**
+	 * 退回的新增	/jf/manage/jiliang/saveReturn
+	 */
+	public void saveReturn(){
+		JSONObject jsonObject=new JSONObject();
+		try{
+			jiLingTuiHui jiLingTuiHui = getModel(jiLingTuiHui.class);
+			String[] paras = getParas("uploadImgs");
+			boolean result=JiLiangService.service.saveReturn(jiLingTuiHui, paras);
+			String result_desc="退回失败！";
+			if(result){
+				result_desc="退回成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		}catch(Exception e){
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	/**
+	 * 改变计量的状态和确认时间	/jf/manage/jiliang/changeJiLiangState
+	 */
+	public void changeJiLiangState(){
+		JSONObject jsonObject=new JSONObject();
+		try{
+			String ids = getPara("ids");
+			boolean result=JiLiangService.service.changeJiLiangState(ids);
+			String result_desc="修改计量状态失败！";
+			if(result){
+				result_desc="修改计量状态成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		}catch(Exception e){
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

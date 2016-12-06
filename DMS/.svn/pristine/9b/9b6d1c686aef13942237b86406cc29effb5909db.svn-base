@@ -1,0 +1,180 @@
+package com.junl.dms.mvc.rwtask;
+
+
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.bycenter.ByCenterService;
+import com.junl.dms.mvc.chooseinfo.ChooseInfo;
+import com.junl.dms.mvc.chooseinfo.ChooseInfoService;
+import com.junl.dms.mvc.xunchainfo.XunChaInfo;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/renwudanList")
+public class RwTaskController2 extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(RwTaskController2.class);
+	
+	
+	/**
+	 * 首页
+	 * @throws Exception 
+	 */
+	public void index() throws Exception {
+		if((splitPage.getOrderColunm() == null || ("").equals(splitPage.getOrderColunm()))
+				&& (splitPage.getOrderMode() == null || ("").equals(splitPage.getOrderMode()))) {
+			splitPage.setOrderColunm("tcreateTime");
+			splitPage.setOrderMode("desc");
+		}
+		
+		String basePath = getRequest().getScheme()
+				+ "://" + getRequest().getServerName() + ":" 
+				+ getRequest().getServerPort();
+		setAttr("basePath",basePath);
+	
+		paging(ConstantInit.db_dataSource_main, splitPage, RwTask.sqlId_splitPageSelect_d, RwTask.sqlId_splitPageFrom_d);
+		
+		render("/manage/rwtask/renwudanList.html");
+	}
+	
+	
+	/**
+	 * 查询巡查信息（state！=1）没有关联任务的记录
+	 */
+	public void bindingXunChaInfo() {	
+		String  xunChaInofType = getPara("xunChaInofType");
+		splitPage.getQueryParam().put("state", "0");
+		splitPage.getQueryParam().put("xunChaInofType", xunChaInofType);
+		splitPage.setOrderColunm("createTime");
+		splitPage.setOrderMode("desc");
+
+		paging(ConstantInit.db_dataSource_main, splitPage, XunChaInfo.sqlId_splitPageSelect, XunChaInfo.sqlId_splitPageFrom);
+		render("/manage/rwtask/select.html");
+	}
+	
+	
+	public void getXunChaInfoByIds(){
+		String  ids = getPara("ids");
+		List<Record> list  = RwTaskService.service.getXunChaInfoByIds(ids);
+		setAttr("list",list);
+		render("/manage/rwtask/show.html");
+	}
+
+	/**
+	 * 导出word
+	 * @throws Exception 
+	 */
+	public void chakan() throws Exception{
+		String ids = getPara("ids");
+		Integer pageNumber = getParaToInt("pageNumber");
+		RwTask rwtask = RwTaskService.service.findById(ids);
+		List<ChooseInfo> chooseInfo=ChooseInfoService.service.findListByType(2);
+		List<RwTask> xcInfoList = RwTaskService.service.findByTaskId(ids);
+		List<Map<String, String>> bcList=ByCenterService.service.findList();
+		setAttr("chooseInfo", chooseInfo);
+		setAttr("rwTask", rwtask);
+		setAttr("taskNo", rwtask.getStr("taskNo"));
+		setAttr("pageNumber", pageNumber);
+		setAttr("xcInfoList", xcInfoList);
+		setAttr("bcList", bcList);
+		
+		Map<String, Object> map = new HashMap<>();
+		String date = rwtask.getDate("paidandate" ).toString();
+		map.put("y", date.substring(0,4));
+		map.put("m", date.substring(5,7));
+		map.put("d", date.substring(8, 10));
+		map.put("h", date.substring(11,13));
+		map.put("min", date.substring(14,16));
+		int count = xcInfoList.size()%13;
+		List<Integer> countList = new ArrayList<>();
+		count = count>0?(13-count):0;
+		if(xcInfoList.size() == 0){
+			count =13;
+		}
+		for (int i=0;i<count;i++) {
+			countList.add(1);
+		}
+		map.put("r", rwtask);
+		map.put("size", xcInfoList.size() );
+		map.put("dataList", xcInfoList);
+		map.put("count", count);
+		map.put("countList", countList);
+		String fileName = ids + ".doc";
+		
+//		setAttr("basePath",basePath);
+//		String path = getRequest().getContextPath();
+//		path = getRequest().getSession().getServletContext().getRealPath("");
+//		fileName = path.substring(0,path.lastIndexOf("/")) +File.separator+ "uploadword"+File.separator + "renwudan-" + fileName;
+//		WordUtil.create(map , "renwudan.ftl", fileName );
+		baseCreateWord(map, "renwudan.ftl", "renwudan-" + fileName);
+		render("/manage/rwtask/renwudan.html");
+	}
+	
+	/**  
+     * 下载远程文件并保存到本地  
+     * @param remoteFilePath 远程文件路径   
+     * @param localFilePath 本地文件路径  
+     */
+    public void downloadFile(String remoteFilePath, String localFilePath)
+    {
+        URL urlfile = null;
+        HttpURLConnection httpUrl = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        File f = new File(localFilePath);
+        try
+        {
+            urlfile = new URL(remoteFilePath);
+            httpUrl = (HttpURLConnection)urlfile.openConnection();
+            httpUrl.connect();
+            bis = new BufferedInputStream(httpUrl.getInputStream());
+            bos = new BufferedOutputStream(new FileOutputStream(f));
+            int len = 2048;
+            byte[] b = new byte[len];
+            while ((len = bis.read(b)) != -1)
+            {
+                bos.write(b, 0, len);
+            }
+            bos.flush();
+            bis.close();
+            httpUrl.disconnect();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                bis.close();
+                bos.close();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    
+}
+
+

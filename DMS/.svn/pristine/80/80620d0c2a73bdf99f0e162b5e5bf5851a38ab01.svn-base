@@ -1,0 +1,409 @@
+
+<style>
+	.losttable td {
+		padding: 8px 8px 8px 8px;
+	}
+</style>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/shenqingzhifubiao');">支付申请</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">支付申请表</span></h4>
+				
+			</div>
+			
+			<div class="panel-body" style="padding-left: 40px;">	
+				<form id="editForm" action="${cxt!}/jf/manage/shenqingzhifubiao/save" method="POST" role="form" class="form-horizontal">
+					<table class="form-group">
+				  		<tr>
+				  			<td style="width: 750px;"></td>
+				  			<td style="height: 35px;">填报单位(盖章)：</td>
+				  			<td style="height: 35px;">
+				  				<!-- <input class="form-control" name="shenqingzhifubiao.tianXieCompany"> -->
+				  			</td>
+				  		</tr>
+				  	</table>	
+					<table style="width: 90%;" class="table table-bordered losttable" border="1">
+				  		<tr style="height: 35px; ">
+				  			<td colspan="1" style="border-top: 0xp;">申请季度</td>
+				  			<td colspan="2" >申请数额(元)</td>
+				  			<td>拨付数额(元)</td>
+				  			<td>累计拨付额(元)</td>
+				  			<td>拨付日期</td>
+				  		</tr>
+				  		<tr>
+				  			<td>
+								<input type="text" id="sdate" name="shenqingzhifubiao.startTime" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"class="form-control" >
+								~<input type="text" id="edate" name="shenqingzhifubiao.endTime"  value='${escapeXml(paramMap["_query.edate"])}'   class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" >
+							</td>
+				  			<td colspan="2"><input class="form-control"  name="shenqingzhifubiao.sh1"></td>
+				  			<td><input class="form-control"  name="shenqingzhifubiao.bf1"></td>
+				  			<td><input class="form-control"  name="shenqingzhifubiao.lj1"></td>
+		<!-- 		  			<td rowspan="4"><input class="form-control"  name="datetime"></td> -->
+				  			<td rowspan="4">
+								<input type="text" id="sdate" name="shenqingzhifubiao.datetime" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"class="form-control" >
+								
+							</td>
+				  		</tr>
+				  		<tr>
+				  			<td rowspan="4">本期资金说明</td>
+				  			<td colspan="2"><input  class="form-control" name="shenqingzhifubiao.sh2"></td>
+				  			<td><input class="form-control"  name="shenqingzhifubiao.bf2"></td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.lj2"></td>
+				  		</tr>
+				  		<tr>
+				  			<td colspan="2"><input class="form-control"  name="shenqingzhifubiao.sh3"></td>
+				  			<td><input class="form-control"  name="shenqingzhifubiao.bf3"></td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.lj3"></td>
+				  		</tr>
+				  		<tr>
+				  			<td colspan="2"><input class="form-control"  name="shenqingzhifubiao.sh4"></td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.bf4"></td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.lj4"></td>
+				  		</tr>
+				  		<tr>
+				  			<td colspan="2">合计</td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.hj1"></td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.hj2"></td>
+				  			<td><input  class="form-control" name="shenqingzhifubiao.hj3"></td>
+				  		</tr>
+				  		<tr>
+				  			<td colspan="2">养护主管意见</td>
+				  			<td colspan="4"><input name="shenqingzhifubiao.yangHuRemark"  class="form-control"></td>
+				  		</tr>
+				  		<tr>
+				  			<td colspan="2">管理中心分管领导意见</td>
+				  			<td colspan="4"><input class="form-control" name="shenqingzhifubiao.guanLiFenRemark"></td>
+				  		</tr>
+				  		<tr>
+				  			<td style="width: 40px;" colspan="2">管理中心领导意见</td>
+				  			<td colspan="4"><input class="form-control" name="shenqingzhifubiao.guanLiRemark"></td>
+				  		</tr>
+				  		<tr>
+				  			<td rowspan="2">部门意见</td>
+				  			<td colspan="2">工程部</td>
+				  			<td colspan="4"><input class="form-control"  name="shenqingzhifubiao.gongChengBuRemark"></td>
+				  		</tr>
+				  		<tr>
+				  			<td colspan="2">财务部</td>
+				  			<td colspan="4"><input  class="form-control" name="shenqingzhifubiao.caiWuBuRemark"></td>
+				  		</tr>
+				  		<tr>
+				  			<td>公司领导意见</td>
+				  			<td colspan="5"><input class="form-control"  name="shenqingzhifubiao.gongSiLingDaoRemark"></td>
+				  		</tr>
+				  	</table>
+  	
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+    
+    $("#planTime").val(currentdate)
+}
+getNowFormatDate();
+	
+
+
+
+
+
+
+
+
+
+	function mySubmit(){
+		var v = 1;
+		$("#editForm input").each(function(index, element) {
+			if($(this).val() == ""){
+				$(this).focus();
+				layer.msg("内容不能为空！");
+				v = 0;
+				return false;
+			} else {
+				v =1;
+			}
+		});
+		if(v==0)
+			return false;
+		
+		
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/shenqingzhifubiao");
+			}
+		}
+		
+	}
+</script>	
+<script type="text/javascript">
+$(function(){//第一次加载时所要做的加载默认值的操作
+	//根据路线 选择位置 
+	var luXianId = $("#luXian").find("option:selected").attr("p");
+	var wzTypeId = "";
+	var wzName="";
+	$.ajax({  
+	    type:'post',      
+	    url:'${cxt}/jf/manage/weizhi/getWzType',  
+	    data:{"luXianId":luXianId},  
+	    cache:false,  
+	    dataType:'json',  
+        success:function(data){  
+        	//定义位置的options
+        	var option_wzType="";
+        	$.each(data.result,function(i,dataObj){
+        		if(i==0){
+        			wzTypeId=dataObj.value;
+        		}
+        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+        	});
+        	$("#wzType").append(option_wzType);
+        	
+        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+        	$.ajax({  
+        	    type:'post',      
+        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+        	    cache:false,  
+        	    dataType:'json',  
+                success:function(data){  
+                	//定义位置的options
+                	var option_wzName="";
+                	$.each(data.result,function(i,dataObj){
+                		if(i==0){
+                			wzName=dataObj.value;
+                		}
+                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                	});
+                	$("#wzName").append(option_wzName);
+                	
+                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+                	$.ajax({  
+                	    type:'post',      
+                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+                	    cache:false,  
+                	    dataType:'json',  
+                        success:function(data){  
+                        	//定义位置的options
+                        	var option_wzMiaoShu="";
+                        	$.each(data.result,function(i,dataObj){
+                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                        	});
+                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+                        }
+                	});
+                }
+        	});
+        }
+	});
+	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	//路线改变时
+	$("#luXian").change(function(){
+		
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId = "";
+		var wzName="";
+		$("#wzType").children().remove(); 
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzType',  
+		    data:{"luXianId":luXianId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzType="";
+	        	$.each(data.result,function(i,dataObj){
+	        		if(i==0){
+	        			wzTypeId=dataObj.value;
+	        		}
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzType").append(option_wzType);
+	        	
+	        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+	        	$.ajax({  
+	        	    type:'post',      
+	        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+	        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+	        	    cache:false,  
+	        	    dataType:'json',  
+	                success:function(data){  
+	                	//定义位置的options
+	                	var option_wzName="";
+	                	$.each(data.result,function(i,dataObj){
+	                		if(i==0){
+	                			wzName=dataObj.value;
+	                		}
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                	});
+	                	$("#wzName").append(option_wzName);
+	                	
+	                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+	                	$.ajax({  
+	                	    type:'post',      
+	                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+	                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+	                	    cache:false,  
+	                	    dataType:'json',  
+	                        success:function(data){  
+	                        	//定义位置的options
+	                        	var option_wzMiaoShu="";
+	                        	$.each(data.result,function(i,dataObj){
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                        	});
+	                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	                        }
+	                	});
+	                }
+	        	});
+	        }
+		});
+	});
+	
+	//位置的选择事件
+	$("#wzType").change(function(){
+		var wzTypeVal=$(this).val();
+		var zhk="";
+		var zhm="";
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		//清除子选项的option
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+    	    type:'post',      
+    	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+    	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+    	    cache:false,  
+    	    dataType:'json',  
+            success:function(data){  
+            	//定义位置的options
+            	var option_wzName="";
+            	$.each(data.result,function(i,dataObj){
+            		if(i==0){
+            			wzName=dataObj.value;
+            			zhk=dataObj.zhk;
+            			zhm=dataObj.zhm;
+            		}
+            		option_wzName+="<option p="+dataObj.value+" zhk="+zhk+" zhm="+zhm+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+            	});
+            	if(wzTypeVal!="主线"){
+            		$("#startZHK").val(zhk);
+            		$("#startZHM").val(zhm);
+            	}else{
+            		$("#startZHK").val('');
+            		$("#startZHM").val('');
+            	}
+            	$("#wzName").append(option_wzName);
+            	
+            	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+            	$.ajax({  
+            	    type:'post',      
+            	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+            	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+            	    cache:false,  
+            	    dataType:'json',  
+                    success:function(data){  
+                    	//定义位置的options
+                    	var option_wzMiaoShu="";
+                    	$.each(data.result,function(i,dataObj){
+                    		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                    	});
+                    	$("#wzMiaoShu").append(option_wzMiaoShu);
+                    }
+            	});
+            }
+    	});
+	});
+
+
+	//方向/互通/收费站/服务区 选择事件
+	$("#wzName").change(function(){
+		var wzTypeVal=$("#wzType").val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		$("#wzMiaoShu").children().remove(); 
+		if(wzTypeVal!="主线"){
+			var zhk=$("#wzName").find("option:selected").attr("zhk");
+			var zhm=$("#wzName").find("option:selected").attr("zhm");
+    		$("#startZHK").val(zhk);
+    		$("#startZHM").val(zhm);
+    	}else{
+    		$("#startZHK").val('');
+    		$("#startZHM").val('');
+    	}
+		
+		//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+		    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzMiaoShu="";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	        }
+		});
+	});
+});
+</script>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.chooseinfo">
+	
+	<!-- 根据类型查询 -->
+	<sql id="findListByType">
+		<![CDATA[ 
+        	SELECT
+				*
+			FROM
+				DMS_PZ_chooseInfo
+			WHERE
+				type = ?
+			ORDER BY
+				sort	
+    	]]>
+	</sql>
+	
+	
+</sql-statement>

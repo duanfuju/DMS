@@ -1,0 +1,159 @@
+<script>
+
+function show(name){
+	var time = $("[name='searchtime']").val();
+	
+	var url = "/jf/manage/weixiurecord/youwuxinfo";
+	var width=850;
+		var height=500;
+		var title="维修信息";
+	$.ajax({
+		url:encodeURI(encodeURI(cxt + url)),
+		type:'post',
+		data:{'name':name,"time":time},
+		dataType : "HTML",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		async: false,
+		cache: false,
+		success:function(response){
+			result = response;
+			
+			layer.open({
+				type: 1, //page层
+				  area: [width+'px', height+'px'],
+				  title: title,
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  content: result,
+				  btn:['确定'],
+				  btn1:function(){
+					  layer.closeAll();
+				  }
+			});
+		}
+	});
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">维修记录表</li>
+		</ol>
+	</div>
+</div>
+<form id="splitPage" action="${cxt}/jf/manage/weixiurecord" method="POST" role="form" class="form-horizontal">
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">维修记录查询</span></h4>
+					
+				</div>
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-1 control-label">时间</label>
+						<div class="col-sm-2">
+					  		<input class="form-control focused" type="text" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" name="searchtime"  maxlength="20" value="${searchtime!}">			  		
+						</div>												
+				  	</div>													  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick="search();">查询</button>
+							<button type="reset" class="btn"  onclick="resetDate()">重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">维修记录列表</span>
+					</h4>
+					
+				</div>
+				<div class="panel-body">
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="30%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzName')">
+									维修类型
+		      					</th>
+								<th class="hidden-xs" width="50%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuRenYuan')">
+									维修数量
+		      					</th>
+		      					
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+							
+							<% for(weixiu in weixiuList){ %>
+									<tr>
+										<td>
+											${weixiu.name!}
+										</td>
+										<td ><span  name="weixiuSize"  class="label <% if(weixiu.size==0){ %>label-danger <% }else{ %>label-success<% } %>" onclick="show('${weixiu.name!}');" style="cursor: pointer;">${weixiu.size!}</span></td>
+										<td>
+											<button type="button" title='导出' onclick="exportZip('${weixiu.key!}',this);" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+												<i class="fa fa-arrow-circle-o-down"> </i>
+											</button>
+										</td>
+									</tr>
+							
+							<% } %>
+						</thead>
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+<script>
+function search(){
+	 var searchtime = $("[name='searchtime']").val();
+	 common_ajax.ajaxMainPanel("/jf/manage/weixiurecord",{"searchtime":searchtime});
+}
+</script>
+<script>
+ function exportZip(type,obj){
+ 	var searchtime = $("[name='searchtime']").val();
+ 	var weixiuSize = $(obj).parent("td").prev("td").find("[name=weixiuSize]").html();
+	 if(weixiuSize==0){
+		 layer.msg("维修数量为0,不可导出");
+		 return;
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportword',
+				type:'post',
+				data:{"type":type,"searchtime":searchtime},
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					if(data.isSuccess)
+					{
+						window.location.href=cxt+"/"+data.downloadPath;
+					}
+					else
+					{
+						layer.msg("请求失败！");
+					}
+					//console.log(data.downloadPath);
+				}
+			});
+	 }
+	 
+ }
+</script>	
+</form>		

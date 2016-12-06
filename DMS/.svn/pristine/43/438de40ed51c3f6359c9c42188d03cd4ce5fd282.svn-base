@@ -1,0 +1,508 @@
+<style>
+<!--
+.fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+-->
+</style>
+<script src="${cxt!}/jsFile/webuploader/js/upload.js"></script>
+
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/youwu');">油污处理</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	<img src="" class='fix' alt="图片损坏,点击返回" style="display: none;">	
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<div class="panel panel-white">
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">维修任务</span></h4>
+			</div>
+			<div id="weixiurenwuDIV" class="panel-body">
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增油污处理</span></h4>
+				
+			</div>
+			
+			
+			<div class="panel-body">
+			
+				<table class="table table-bordered table-hover" id="dataTable" style="display:none">
+					<thead>
+						<tr>
+							<td class="hidden-xs" width="5%">
+							</td>
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+						</tr>
+					</thead>
+					<tbody id="tbodyDom"> 
+						
+							
+						
+					</tbody>
+				</table>	
+			
+				<form id="editForm" action="${cxt!}/jf/manage/youwu/save" method="POST" role="form" class="form-horizontal">	
+					<input type="hidden" name="youwu.ids" value="${youwu.ids!}" />
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="hidden" id="taskInfoRelateId"  name="youwu.taskInfoRelate" />
+							<input type="text" id="taskInfoRelate"   
+								class="form-control focused" readonly="readonly"   maxlength="100">
+						</div>
+					</div>	
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="luXian" name="youwu.luXian" readonly="readonly" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzType" name="youwu.wzType" readonly="readonly" class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzName" name="youwu.wzName" readonly="readonly" class="form-control">
+						</div>
+
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="youwu.wzMiaoShu"  class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="lblx" name="youwu.luBingType" class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="startZHK" name="youwu.startZHK" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="startZHM" name="youwu.startZHM" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="endZHK" name="youwu.endZHK" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="endZHM" name="youwu.endZHM" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<select  id="wzMiaoShu" name="youwu.weatherState"  class="form-control">
+								<option value="晴">晴</option>
+										<option value="阴">阴</option>
+										<option value="多云">多云</option>
+										<option value="小雨">小雨</option>
+										<option value="中雨">中雨</option>
+										<option value="大雨">大雨</option>
+										<option value="雷阵雨">雷阵雨</option>
+										<option value="小雪">小雪</option>
+										<option value="中雪">中雪</option>
+										<option value="大雪">大雪</option>
+										<option value="冰冻">冰冻</option>
+										<option value="下雪/积雪">下雪/积雪</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="qiWen" name="youwu.qiWen"  class="form-control" onkeyup="return ValidateFloat($(this),value)" >
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">面积</label>
+						<div class="col-sm-2">
+							<input type="text" name="youwu.mianji"  class="form-control" onkeyup="return ValidateFloat($(this),value)" >
+						</div>
+						<span class="help-inline col-sm-1">㎡</span>
+						<label class="col-sm-2 control-label" style="margin-left:-133px">处理时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="chulitime" name="youwu.disposeTime"  class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" >
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							施工机械
+						</label>
+						<div class="col-sm-2">
+							<input type="text" name="youwu.shiGongJiXie"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							施工人员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" name="youwu.shiGongRenYuan" class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							现场专职安全员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" name="youwu.anQuanYuan" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							现场施工负责人
+						</label>
+						<div class="col-sm-2">
+							<input type="text"  name="youwu.fuZeRen" class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							质量评价
+						</label>
+						<div class="col-sm-2">
+							<select type="text"  name="youwu.pingJia"  class="form-control">
+								<option value="优">优</option>
+								<option value="良">良</option>
+								<option value="合格">合格</option>
+								<option value="差">差</option>
+							</select>
+						</div>
+						
+						<label class="col-sm-2 control-label" for="form-field-1" >
+							发现时间
+						</label>
+						<div class="col-sm-2" >
+							<input id="foundtime" type="text" name="youwu.foundTime"  class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" >
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<select type="text" id="sunHuaiCauseType" name="youwu.sunHuaiCauseType" class="form-control">
+								<option value="日常损坏">日常损坏</option>
+								<option value="事故损坏">事故损坏</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="youwu.remark" class="form-control" rows="4" cols="20"></textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+						        <div id="container">
+						            <!--头部，相册选择和格式选择-->
+						
+						            <div id="uploader">
+						                <div class="queueList">
+						                    <div id="dndArea" class="placeholder">
+						                        <div id="filePicker"></div>
+						                        <p>或将照片拖到这里，单次最多可选3张</p>
+						                    </div>
+						                </div>
+						                <div class="statusBar" style="display:none;">
+						                    <div class="progress">
+						                        <span class="text">0%</span>
+						                        <span class="percentage"></span>
+						                    </div><div class="info"></div>
+						                    <div class="btns">
+						                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+var result = common_ajax.ajaxFunc("/jf/manage/rwtask/choose", {"_query.wxmkId":"54c6234d19884f89ad37cc8bffd20d8e","_query.taskRelateState":0});
+$("#weixiurenwuDIV").html(result);
+
+//设置维修的类型(为弹出框插入行选择合适的表)
+var weixiu_type_table="DMS_WX_youWuDispose";
+
+
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + date.getHours() + seperator2 + date.getMinutes()
+            + seperator2 + date.getSeconds();
+    $("#chulitime").val(currentdate);
+    $("#createtime").val(currentdate);
+    
+}
+getNowFormatDate();
+
+	function chooseTask(){
+		//$("#tbodyDom").html("");
+		//var url="/jf/manage/rwtask/choose";
+		//popup.show(url,{"_query.wxmkId":"54c6234d19884f89ad37cc8bffd20d8e","_query.taskRelateState":0},1100,650,"选择任务");
+		//$("#dataTable").show();
+	}
+
+	function mySubmit(){
+		
+		
+		if($("[name='youwu.taskInfoRelate']").val() == ""){
+			layer.msg("维修任务编号不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.luXian']").val() == ""){
+			layer.msg("路线不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.wzType']").val() == ""){
+			layer.msg("位置不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.wzName']").val() == ""){
+			layer.msg("'方向/互通/收费站/服务区'不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.wzMiaoShu']").val() == ""){
+			layer.msg("'车道/匝道/广场'不能为空");
+			return;
+		}
+		
+		
+		var startzhk=$("[name='youwu.startZHK']").val();
+		if(startzhk==""){
+			layer.msg("开始桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhk)){
+				if(startzhk<=0){
+					layer.msg("开始桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var startzhm=$("[name='youwu.startZHM']").val();
+		if(startzhm==""){
+			layer.msg("开始桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhm)){
+				if(startzhm<=0){
+					layer.msg("开始桩号M不能小于等于零！");
+					return false;
+				}else if(startzhm>999){
+					layer.msg("开始桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var endzhk = $("[name='youwu.endZHK']").val();
+		if(endzhk==""){
+			layer.msg("结束桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhk)){
+				if(endzhk<=0){
+					layer.msg("结束桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var endzhm = $("[name='youwu.endZHM']").val();
+		if(endzhm==""){
+			layer.msg("结束桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhm)){
+				if(endzhm<=0){
+					layer.msg("结束桩号M不能小于等于零！");
+					return false;
+				}else if(endzhm>999){
+					layer.msg("结束桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+		
+		if($("[name='youwu.qiWen']").val() == ""){
+			layer.msg("气温不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.weatherState']").val() == ""){
+			layer.msg("天气状况不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.mianji']").val() == ""){
+			layer.msg("面积不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.disposeTime']").val() == ""){
+			layer.msg("处理时间不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.shiGongJiXie']").val() == ""){
+			layer.msg("施工机械不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.shiGongRenYuan']").val() == ""){
+			layer.msg("施工人员不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.anQuanYuan']").val() == ""){
+			layer.msg("现场专职安全员不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.fuZeRen']").val() == ""){
+			layer.msg("现场施工负责人不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.pingJia']").val() == ""){
+			layer.msg("质量评价不能为空");
+			return;
+		}
+		
+		if($("[name='youwu.createTime']").val() == ""){
+			layer.msg("创建时间不能为空");
+			return;
+		}
+		
+		
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！");
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/youwu");
+			}
+		}
+		
+	}
+	function ValidateFloat(e, pnumber){
+		if (!/^\d+[.]?\d*$/.test(pnumber)){
+			$(e).val(/^\d+[.]?\d*/.exec($(e).val()));
+		}
+		return false;
+	}
+
+</script>	

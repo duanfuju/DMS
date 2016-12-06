@@ -1,0 +1,302 @@
+<script>
+	function showImg(url){
+		layer.photos({
+		    photos: {
+	    	  "data": [   //相册包含的图片，数组格式
+	    	    {
+	    	      "src": cxt+url //原图地址
+	    	    }
+	    	  ]
+		    }
+		});
+	}
+	
+	
+	$(function(){
+		$("#pictureDiv").hide();
+		
+		//循环遍历图片
+		var imgs = '${yangHu.imgs!}';
+
+		if( imgs != ""){
+			var arr = imgs.split(',');
+			$.each(arr,function(i,n){
+				$("#pictureDiv").show();
+				$("#imgsDiv").append('<img style="width:200px;height:200px;" src="'+arr[i]+'"><br><br><br>')
+			})		
+		}
+	})
+	
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghu');">养护通用维修</a></li>
+			<li class="active">查看</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">查看养护通用维修</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+							
+						</tr>
+					</thead>
+					<tbody>
+						
+						<tr id="tbodyTr">
+								<td class="hidden-xs">${yangHu.taskNo!}</td>
+								<td class="hidden-xs">${yangHu.fuZeRen!}</td>
+								<td class="hidden-xs">${yangHu.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${yangHu.wzName!}</td>
+								<td class="hidden-xs">K${yangHu.xunChaStartZHK!}  +  ${yangHu.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${yangHu.xunChaEndZHK!}  +  ${yangHu.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${yangHu.binghaiOrQueXianType }  :  ${yangHu.yuGuGongChengLiang }    (${yangHu.yuGuGongChengLiangDw })</td>
+								
+							</tr>
+						
+					</tbody>
+				</table>
+				<form id="editForm" action="${cxt!}/jf/manage/yanghu/view" method="POST" role="form" class="form-horizontal">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="text" id="taskInfoRelate"   value="${yangHu.taskNo!}"
+								class="form-control focused" readonly="readonly"   maxlength="100">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.weiXiuTime" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="${yangHu.weixiutime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" readonly="readonly" >
+						</div>
+						<label class="col-sm-2 control-label">养护项目</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.yangHuProject" class="form-control" value="${yangHu.yanghuproject!}" readonly="readonly" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="luXian" name="yangHu.luXian" value="${yangHu.luXian!}" readonly="readonly" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzType" name="yangHu.wzType"  value="${yangHu.wzType!}" readonly="readonly" class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzName" name="yangHu.wzName"  value="${yangHu.wzName!}"  readonly="readonly" class="form-control">
+						</div>
+
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="yangHu.wzMiaoShu"  value="${yangHu.wzMiaoShu!}" readonly="readonly" class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yangHu.startZHK" class="form-control" value="${yangHu.startzhk!}" readonly="readonly">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yangHu.startZHM" class="form-control" value="${yangHu.startzhm!}" readonly="readonly">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yangHu.endZHK" class="form-control" value="${yangHu.endzhk!}" readonly="readonly">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="yangHu.endZHM" class="form-control" value="${yangHu.endzhm!}" readonly="readonly">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.weatherState" class="form-control" value="${yangHu.weatherstate!}" readonly="readonly" >
+						</div>
+						
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.qiWen" class="form-control" value="${yangHu.qiwen!}" readonly="readonly" >
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修人员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.weiXiuRenYuan" class="form-control" value="${yangHu.weixiurenyuan!}" readonly="readonly" >
+						</div>
+						
+						<label class="col-sm-2 control-label">现场专职安全员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.anQuanYuan" class="form-control" value="${yangHu.anquanyuan!}" readonly="readonly" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">现场施工负责人</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.fuZeRen" class="form-control" value="${yangHu.fuzeren!}" readonly="readonly" >
+						</div>
+						
+						<label class="col-sm-2 control-label">维修质量评价</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.pingJia" class="form-control" value="${yangHu.pingjia!}" readonly="readonly" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						
+						<label class="col-sm-2 control-label">施工机械</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="yangHu.shiGongJiXie" class="form-control" value="${yangHu.shigongjixie!}" readonly="readonly" >
+						</div>
+						<label class="col-sm-2 control-label">单位</label>
+						<div class="col-sm-2">
+							<input type="text" id="danWei" readonly name="yangHu.danWei" value="${yangHu.danWei!}" class="form-control" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						
+						<label class="col-sm-2 control-label">数量</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" readonly name="yangHu.num" value="${yangHu.num!}" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" class="form-control" >
+						</div>
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="lblx" readonly name="yangHu.diseaseType"  value="${yangHu.diseaseType!}" class="form-control" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="sunHuaiCauseType" name="yangHu.sunHuaiCauseType" class="form-control" value="${yangHu.sunHuaiCauseType}" disabled="disabled">
+								
+							</input>
+						</div>
+					</div>
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏现状描述及原因分析</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="yangHu.sunHuaiMiaoShu" class="form-control" readonly="readonly" rows="4" cols="20" >${yangHu.sunhuaimiaoshu!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<!-- <div class="form-group">
+						<input type="text"  id="yangHuRelateListSize" style="display:none" value="${listSize!}">
+						<input type="text"  id="delIds" name="delIds" style="display:none" value="">
+						<table
+							class="table table-striped table-bordered bootstrap-datatable " style="width:56.5%;margin-left:17.6%">
+							<thead>
+								<th width="15%">位置</th>
+								<th width="15%">单位</th>
+								<th width="15%">数量</th>
+								<th width="40%">处理内容</th>
+								
+							</thead>
+							
+							<tbody id="tbody-list">
+						<% for(yangHuRelate in list){ %>	
+						<tr id="clone-target">
+							
+							<td>
+								<input type="text"  name="yangHuRelateList[${yangHuRelateLP.index!}].weiZhi" class="form-control" value="${yangHuRelate.weizhi!}"disabled="true">
+								<input type="hidden" name="yangHuRelateList[${yangHuRelateLP.index!}].ids" value="${yangHuRelate.ids!}">
+							</td>
+							<td>
+								<input type="text"  name="yangHuRelateList[${yangHuRelateLP.index!}].danWei" class="form-control" value="${yangHuRelate.danwei!}"disabled="true">
+								
+							<td>
+								<input type="text" name="yangHuRelateList[${yangHuRelateLP.index!}].num" class="form-control" value="${yangHuRelate.num!}"disabled="true">
+								
+							</td>
+							<td>
+								<input type="text"  name="yangHuRelateList[${yangHuRelateLP.index!}].yangHuContent" class="form-control" value="${yangHuRelate.yangHuContent!}"disabled="true">
+								
+							</td>
+							
+						</tr>
+						<% } %>
+					</tbody>
+					
+						</table>
+						<span class="help-inline col-sm-2"> </span>
+					</div> -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="yangHu.remark" class="form-control" rows="4" cols="20" readonly="readonly" >${remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group" id="pictureDiv">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-3" id="imgsDiv">
+							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

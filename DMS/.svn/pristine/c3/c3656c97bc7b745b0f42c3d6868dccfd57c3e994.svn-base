@@ -1,0 +1,204 @@
+<script type="text/javascript">
+var start;
+var end;
+function mySelect(){
+	//设置查询条件
+	var condition_1=$("#state_select").val();
+	$("#state_hidden").attr("value",condition_1);
+	start = $("#xunChaStartTime").val();
+	 end = $("#xunChaEndTime").val();
+	common_ajax.ajaxFormMainPanel("splitPage");
+
+	selectDate();
+}
+function selectDate(){
+	$("#xunChaStartTime").val(start);
+	$("#xunChaEndTime").val(end);
+}
+function resetDate(){
+	$("#xunChaStartTime").attr("value","");
+	$("#xunChaEndTime").attr("value","");
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/index/content');">${i18nMap["admin.common.mainPage"]}</a></li>
+			<li class="active">巡查信息</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt!}/jf/manage/xunChaInfo" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">查询</span></h4>
+					
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							巡查时间
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaStartTime" name="_query.sdate" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+						<label class="col-sm-1 control-label" style="text-align: left;width: 1%" for="form-field-1">
+							~
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaEndTime" name="_query.edate"  value='${escapeXml(paramMap["_query.edate"])}'   class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" >
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-5 col-sm-offset-5">
+						<button type="button" class="btn btn-primary" onclick='mySelect()'>查询</button>
+						<input type="reset" class="btn" onclick='resetDate()'></button>
+					</div>
+			  	</div><br/>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">巡查信息列表</span>
+					</h4>
+					
+				</div>
+				<%
+					var view = authUrl("/jf/manage/xunChaInfo/view");
+					var edit = authUrl("/jf/manage/xunChaInfo/edit");
+					var delete = authUrl("/jf/manage/xunChaInfo/delete");
+				%>
+				<div class="panel-body">
+					
+					<div class="row">
+						<div class="col-md-12 space20">
+							<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/xunChaInfo/add',undefined,undefined,'back');">
+								添加 <i class="fa fa-plus"></i>
+							</button>
+							
+						</div>
+					</div>
+				
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<td class="hidden-xs" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wxmkName');selectDate()">
+									病害信息	${orderBy("wxmkName")}
+								</td>
+								<td class="hidden-xs" style="cursor:pointer">
+									位置
+								</td>
+								<td class="hidden-xs" style="cursor:pointer">
+									桩号(范围1 ~ 范围2)
+								</td>
+								<td class="hidden-xs" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'xunChaTime');selectDate()">
+									巡查日期	${orderBy("xunChaTime")}
+								</td>
+								<td class="hidden-xs" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'xiuBuBiaoZhi');selectDate()">
+									修补损坏标识	${orderBy("xiuBuBiaoZhi")}
+								</td>
+								<td class="hidden-xs" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'binghaiOrQueXianType');selectDate()">
+									病害或缺陷类型	${orderBy("binghaiOrQueXianType")}
+								</td>
+								<td class="hidden-xs" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'binghaiOrQueXianMiaoShu');selectDate()">
+									病害或缺陷描述	${orderBy("binghaiOrQueXianMiaoShu")}
+								</td>
+								<td class="hidden-xs" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'level');selectDate()">
+									严重程度	${orderBy("level")}
+								</td>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(xunChaInfo in splitPage.list){ %>
+								<tr id="trDom${xunChaInfo.ids}">
+									<td class="hidden-xs">${xunChaInfo.wxmkName} ${xunChaInfo.yuGuGongChengLiang} ${xunChaInfo.yuGuGongChengLiangDw} </td>
+									<td class="hidden-xs">${xunChaInfo.wzName} / ${xunChaInfo.wzMiaoShu} </td>
+									
+									<td class="hidden-xs">K${xunChaInfo.xunChaStartZHK}+${xunChaInfo.xunChaStartZHM}
+									<% if((xunChaInfo.xunChaEndZHK != null && xunChaInfo.xunChaEndZHK != "") && (xunChaInfo.xunChaEndZHM == null && xunChaInfo.xunChaEndZHM == "")){%>
+										~K${xunChaInfo.xunChaEndZHK}+${xunChaInfo.xunChaEndZHM}
+									<%}%>
+									</td>
+									<td class="hidden-xs">${xunChaInfo.xunChaTime ,dateFormat="yyyy-MM-dd"}</td>
+									<td class="hidden-xs">${xunChaInfo.xiuBuBiaoZhi }</td>
+									<td class="hidden-xs">${xunChaInfo.binghaiOrQueXianType }</td>
+									<td class="hidden-xs">${xunChaInfo.binghaiOrQueXianMiaoShu }</td>
+									<td class="hidden-xs">${xunChaInfo.level }</td>
+									
+									
+									<td class="hidden-xs">
+											<button type="button" title='查看' class="btn btn-dark-yellow add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/xunChaInfo/view',{ids:'${xunChaInfo.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');">
+												 <i class="fa fa-eye"></i>
+											</button>
+											
+										<%if(xunChaInfo.state==0){%>
+											<button type="button" title='修改' class="btn btn-green edit-row" 
+											onclick="common_ajax.ajaxMainPanel('/jf/manage/xunChaInfo/edit',{ids:'${xunChaInfo.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');"> 
+												 <i class="fa fa-edit"></i>
+											</button>
+											<!-- <button type="button" title='删除' class="btn btn-red delete-row" data-bb="deleteOne" data-url="/jf/manage/xunChaInfo/delete/${xunChaInfo.ids!}"> 
+												 <i class="fa fa-trash-o"></i>
+											</button> -->
+											
+											<button type="button" title='删除' class="btn btn-red delete-row" onClick="xunChaInfodelete('${xunChaInfo.ids}');selectDate()" > 
+											<i class="fa fa-trash-o"></i>
+											<%}%>
+										</button>
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+	function xunChaInfodelete(ids){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var resultData=common_ajax.ajaxFunc("/jf/manage/xunChaInfo/delete",{"ids":ids},"JSON");
+			if(resultData==""){
+				layer.msg("请求失败！");
+			}else{
+				layer.msg(resultData.result_desc);
+				if(resultData.result){
+					$("#trDom"+ids).fadeOut('fast',function(){
+						$("#trDom"+ids).remove()();
+					});
+				}
+				
+			}
+		});
+	}
+</script>
+

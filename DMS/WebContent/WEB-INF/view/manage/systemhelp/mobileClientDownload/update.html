@@ -1,0 +1,144 @@
+<div class="row" style="font-size: 13px;margin-bottom:-20px;">
+	<div class="col-md-12" style="">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+
+<div class="panel-body">
+			<form id="editForm" action="${cxt!}/jf/manage/systemhelp/mobileClientDownload/update"
+				method="POST" role="form" class="form-horizontal"  enctype="multipart/form-data">
+
+				<div class="form-group" style="display:none;">
+						<input id="ids" type="hidden" name="downloadApp.ids" value="${downloadApp.ids!} ">
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>名称</label>
+					<div class="col-sm-6" >
+						<input id="appName"  type="text" name="downloadApp.appName" value="${downloadApp.appName!}"
+							class="form-control" maxlength="20" vMin="1" vType="length"
+							onblur="platform_verify.onblurVali(this);"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 长度不能超过20
+					</span>
+				</div>
+				
+				<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							<span class="symbol required"></span>手机客户端apk
+						</label>
+						<div class="col-sm-6">
+							<div data-provides="fileupload" class="fileupload fileupload-new">
+								<span class="btn btn-file btn-light-grey"><i class="fa fa-folder-open-o"></i> <span class="fileupload-new">选择文件</span><span class="fileupload-exists">重新选择</span>
+									<input type="file" id="file" name="file"></input>
+								</span>
+								<span class="fileupload-preview"> </span>
+								<a data-dismiss="fileupload" class="close fileupload-exists float-none" href="#">
+									&times; 
+								</a>
+							</div>
+						</div>
+						<span class="help-inline col-sm-4"> <i
+							class="fa fa-info-circle"></i> .apk文件
+						</span>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>版本</label>
+					<div class="col-sm-6">
+						<input id="versions"  type="text" name="downloadApp.versions" value="${downloadApp.versions! == 0?'':downloadApp.versions!}"
+							class="form-control" maxlength="xxx" vMin="xxx" vType="length"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 数字
+					</span>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>修改内容</label>
+					<div class="col-sm-6">
+						<input id="updateContent" type="text" name="downloadApp.updateContent" value="${downloadApp.updateContent!}"
+							class="form-control" maxlength="100" vMin="0" vType="length"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 长度不能超过500
+					</span>
+				</div>
+				
+										
+				<div class="col-sm-5 col-sm-offset-5">
+						<button type="button" class="btn btn-red" onclick="formSubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+						</button>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	$(function(){
+	});
+	
+	function myValidate()
+	{
+		var numberReg = new RegExp("^[0-9]*\.[0-9]*$");
+		var moneyReg = new RegExp("^[0-9]+\.?[0-9]*$");
+		var zsORxs = new RegExp("^[1-9]+([.]{1}[0-9]+){0,1}$");
+		var yearReg = /^[1-2]\d{3}$/;
+		//表单验证
+		var name = $("#appName").val();
+		var versions = $("#versions").val();
+		var updateContent = $("#updateContent").val();
+		if(name=="")
+		{
+			alert("项目名称不能为空");
+			return false;
+		}
+		var file = $("#file").val();
+		if(file==""){
+			alert("请选择要上传的文件");
+			return false;
+		}
+		
+		if(file.indexOf(".apk") == -1){
+			alert("上传文件格式不正确");
+			return false;
+		}
+		
+		if(versions != "")
+		{
+			if(!zsORxs.test(versions))
+			{
+				alert("输入的版本格式不正确");
+				return false;
+			}
+		}
+		if(updateContent == "")
+		{
+			alert("修改内容不能为空");
+			return false;
+		}
+		return true;
+	}
+	
+	function formSubmit()
+	{
+		if(!myValidate())
+		{
+			return;
+		}
+		var resultData = common_ajax.ajaxForm("editForm","JSON");
+		layer.closeAll();
+		if(resultData.isSuccess == false){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg("修改成功！")
+			init();
+		}
+	}
+
+</script>

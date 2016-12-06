@@ -1,0 +1,588 @@
+<style>
+<!--
+#fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+-->
+</style>
+<script src="${cxt!}/jsFile/webuploader/js/upload.js"></script>
+
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/youwu');">油污处理</a></li>
+			<li class="active">修改</li>
+		</ol>
+	</div>
+</div>
+	<img src="" id='fix' alt="图片损坏,点击返回" style="display: none;">	
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">修改油污处理</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">
+			
+			<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="5%" >
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+							
+						</tr>
+					</thead>
+					<tbody>
+						
+							<tr id="trDom${youwuTask.taskInfoRelate!}">
+								<td class="hidden-xs">
+									<i class="fa fa-arrow-circle-down td_i" id="${youwuTask.taskInfoRelate!}"></i>
+								</td>
+								<td class="hidden-xs">${youwuTask.taskNo!}</td>
+								<td class="hidden-xs">${youwuTask.fuZeRen!}</td>
+								<td class="hidden-xs">${youwuTask.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${youwuTask.wzName!}</td>
+								<td class="hidden-xs">K${youwuTask.xunChaStartZHK!}  +  ${youwuTask.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${youwuTask.xunChaEndZHK!}  +  ${youwuTask.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${youwuTask.binghaiOrQueXianType }  :  ${youwuTask.yuGuGongChengLiang }    (${youwuTask.yuGuGongChengLiangDw })</td>
+							</tr>
+							
+							
+						
+					</tbody>
+				</table>
+				
+				<form id="editForm" action="${cxt!}/jf/manage/youwu/update" method="POST" role="form" class="form-horizontal">
+					<input type="hidden" name="youwu.ids" value="${youwu.ids!}" />	
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="hidden" id="taskInfoRelateId"  name="youwu.taskInfoRelate"  />
+							<input type="text" id="taskInfoRelate"   
+								class="form-control focused" readonly="readonly" value="${youwuTask.taskNo!}"  maxlength="100">
+						</div>
+					</div>	
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.luXian" value="${youwu.luXian}" readonly="readonly" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.wzType"  value="${youwu.wzType}" readonly="readonly" class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.wzName" value="${youwu.wzName}" readonly="readonly" class="form-control">
+						</div>
+
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="youwu.wzMiaoShu" value="${youwu.wzMiaoShu}"  class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="lblx" name="youwu.luBingType" class="form-control" value="${youwu.luBingType}">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="youwu.startZHK"  value="${youwu.startZHK!}" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="youwu.startZHM"  value="${youwu.startZHM!}" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="youwu.endZHK"  value="${youwu.endZHK!}" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="youwu.endZHM"  value="${youwu.endZHM!}" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<select type="text" id="tianqi" name="youwu.weatherState"   class="form-control">
+								<option value="晴">晴</option>
+										<option value="阴">阴</option>
+										<option value="多云">多云</option>
+										<option value="小雨">小雨</option>
+										<option value="中雨">中雨</option>
+										<option value="大雨">大雨</option>
+										<option value="雷阵雨">雷阵雨</option>
+										<option value="小雪">小雪</option>
+										<option value="中雪">中雪</option>
+										<option value="大雪">大雪</option>
+										<option value="冰冻">冰冻</option>
+										<option value="下雪/积雪">下雪/积雪</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.qiWen" value="${youwu.qiWen}"   class="form-control" onkeyup="return ValidateFloat($(this),value)" >
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">面积</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.mianji"  value="${youwu.mianji!}" class="form-control" onkeyup="return ValidateFloat($(this),value)" >
+						</div>
+						<span class="help-inline col-sm-1">㎡</span>
+						<label class="col-sm-2 control-label" style="margin-left:-133px">处理时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.disposeTime" value="${youwu.disposeTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}"  class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							施工机械
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.shiGongJiXie"  value="${youwu.shiGongJiXie}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							施工人员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.shiGongRenYuan" value="${youwu.shiGongRenYuan}"  class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							现场专职安全员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.anQuanYuan"  value="${youwu.anQuanYuan}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							现场施工负责人
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.fuZeRen" value="${youwu.fuZeRen}"  class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							质量评价
+						</label>
+						<div class="col-sm-2">
+							<select type="text" id="pingjia" name="youwu.pingJia"   class="form-control">
+								<option value="优">优</option>
+								<option value="良">良</option>
+								<option value="合格">合格</option>
+								<option value="差">差</option>
+							</select>
+						</div>
+						
+						<label class="col-sm-2 control-label" for="form-field-1" >
+							发现时间
+						</label>
+						<div class="col-sm-2" >
+							<input id="foundtime" type="text" name="youwu.foundTime"  value="${youwu.foundTime,dateFormat="yyyy-MM-dd HH:mm:ss"}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" >
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<select type="text" id="sunHuaiCauseType" name="youwu.sunHuaiCauseType" class="form-control">
+								<option value="日常损坏">日常损坏</option>
+								<option value="事故损坏">事故损坏</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea id="remark" name="youwu.remark"  class="form-control" rows="4" cols="20">${remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-3" id="imgsDiv">
+						</div>	
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+						        <div id="container">
+<!-- 			            		头部，相册选择和格式选择 -->
+						
+						            <div id="uploader">
+						                <div class="queueList">
+						                    <div id="dndArea" class="placeholder">
+						                        <div id="filePicker"></div>
+						                        <p>或将照片拖到这里，单次最多可选3张</p>
+						                    </div>
+						                </div>
+						                <div class="statusBar" style="display:none;">
+						                    <div class="progress">
+						                        <span class="text">0%</span>
+						                        <span class="percentage"></span>
+						                    </div><div class="info"></div>
+						                    <div class="btns">
+						                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-3">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+//设置维修的类型(为弹出框插入行选择合适的表)
+var weixiu_type_table="DMS_WX_youWuDispose";
+$('.td_i').on('click', function () {
+	var expandId=$(this).attr("id");
+	var tr=$("#trDom"+expandId);
+	if($(this).hasClass("fa-arrow-circle-down")){
+		$(this).removeClass("fa-arrow-circle-down");
+		$(this).addClass("fa-arrow-circle-up");
+		
+		if(!tr.next().hasClass('pad')){
+			  $.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/rwtask/getWeiXiuJiLuByTaskId',
+			    cache:false,  
+			    data:{table:weixiu_type_table,tirIds:expandId},
+			    dataType:'json',  
+			    success:function(entity){
+			    	if(!entity.flag){
+			    		layer.msg("维修记录不存在或被删除");
+			    		return;
+			    	}
+			       html=' <table style="width:100%;border:1px">';
+			       var _tr="";
+			       $.each(entity.result,function(i,data){
+			    	  _tr+=' <tr>'+
+			    		   		'<td rowspan=3>'+(i+1)+'</td>'+
+					            ' <td style="text-align:right">桩号范围  ：  </td>'+
+					            ' <td> K'+data.startZHK+' + ' +data.startZHM+'  ~  K  '+ data. endZHK+' + ' +data.endZHM+'</td>'+
+					            ' <td style="text-align:right">位置  ：  </td>'+
+					            ' <td> '+data. luXian +'/'+data.wzType +'/'+ data. wzName +'/'+ data. wzMiaoShu+'</td>'+
+					            ' <td style="text-align:right">天气  ：  </td>'+
+					            ' <td>'+data.weatherState+'</td>'+
+					            ' <td style="text-align:right">气温  ：  </td>'+
+					            ' <td>'+data.qiWen+'℃</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">施工机械  ：  </td>'+
+					            ' <td>'+ data.shiGongJiXie+'</td>'+
+					            ' <td style="text-align:right">维修人员  ：  </td>'+
+					            ' <td>'+  data.weiXiuRenYuan+'</td>'+
+					            ' <td style="text-align:right">现场专职安全员  ：  </td>'+
+					            ' <td>'+ data.anQuanYuan+'</td>'+
+					            ' <td style="text-align:right">现场施工负责人  ：  </td>'+
+					            ' <td>'+ data.fuZeRen+'</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">质量评价  ：  </td>'+
+					            ' <td> '+ data.pingJia+'</td>'+
+					            ' <td style="text-align:right">图片  ：  </td><td><a href="javascript:void(0)" style="text-align:left" onclick="showImg(\''+data.imgs+'\')">附件</a></td>'+
+					        ' </tr>';
+		        	});
+			       
+			       html	+= _tr+' </table>';
+			       tr.after("<tr class='pad'><td colspan='10'>"+html+"</td></tr>");
+			    }
+			});  
+		}else{
+			tr.next().show();
+		}
+	}else{
+		$(this).addClass("fa-arrow-circle-down");
+		$(this).removeClass("fa-arrow-circle-up");
+		if(tr.next().hasClass("pad")){
+			tr.next().hide();
+		}
+	}
+});
+
+$("#fix").click(function(){
+	$("#fix").hide();
+});
+function showImg(path){
+	$("#fix").attr("src",path);
+	$("#fix").show();
+}
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	$(function(){
+		$("#tianqi").val("${youwu.weatherState}");
+		$("#pingjia").val("${youwu.pingJia}");
+		$("#sunHuaiCauseType").val("${youwu.sunHuaiCauseType}");
+	})
+	
+	function mySubmit(){
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/youwu",{"pageNumber":2});
+			}
+		}
+		
+	}
+	
+	
+	
+	function deleteElement(id){
+		
+		$("#"+id).remove();
+	}
+	
+	
+	//删除从数据库中循环的图片
+	function del(i){
+		
+	}
+	
+	
+	$(function(){
+		
+		//循环遍历图片
+		var imgs = '${youwu.imgs!}';
+		
+		if(imgs == '' || imgs == null) return;
+		var arr = imgs.split(',');
+		$.each(arr,function(i,n){
+			var imgobj = $('<img style="width:200px;height:200px;" src="'+arr[i]+'"><br>'
+					+'<div id="delbtn'+i+'"><button type="button" style="margin-left:60px;margin-top:10px;" class="fa fa-trash-o btn btn-red delete-row delimg-btn">删除</button></div><br>'
+					+'<input type="hidden" value="' + arr[i] + '" name="youwuImgs"/>');
+			$("#imgsDiv").append(imgobj);
+			imgobj.find('.delimg-btn').on('click', function () {
+				layer.confirm('确定删除此条数据？', {
+					  btn: ['确定','取消'] ,//按钮
+					  scrollbar:false
+				}, function(){
+					imgobj.remove();
+					layer.closeAll();
+				});
+			});
+		})	
+		
+	 	
+		/* //循环遍历图片
+		var imgs = '${youwu.imgs!}';
+		
+		
+		var arr = imgs.split(',');
+		$.each(arr,function(i,n){
+// 			$("#imgsDiv").append('<img style="width:200px;height:200px;float:left;" src="${cxt!}'+arr[i]+'"><br>'+'<div id="delbtn'+i+'"><button type="button" onclick="del('+i+');" style="margin-left:40px;margin-top:10px;" class="fa fa-trash-o">删除</button></div>');
+			$("#imgsDiv").append('<img style="width:200px;height:200px;float:left;" src="'+arr[i]+'"><br>'+'<div id="delbtn'+i+'"><button type="button" onclick="delImg(this);" style="margin-left:40px;margin-top:10px;" class="fa fa-trash-o">删除</button></div>');
+		})	
+		
+		
+		var uploader = WebUploader.create({
+
+		    // 选完文件后，是否自动上传。
+		    auto: true,
+
+		    // swf文件路径
+		    swf: cxt + '/jsFile/ueditor/third-party/webuploader/Uploader.swf',
+
+		    // 文件接收服务端。
+		    server: cxt+ '/jf/manage/youwu/saveImgToJson',
+
+		    // 选择文件的按钮。可选。
+		    // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+		    pick: '#filePicker',
+
+		    fileVal:"uploadImg",
+		    
+		    //设置上传数量
+		    //fileNumLimit: 3,
+		    
+		    // 只允许选择图片文件。
+		    accept: {
+		        title: 'Images',
+		        extensions: 'gif,jpg,jpeg,bmp,png',
+		        mimeTypes: 'image/*'
+		    }
+		});
+		
+		uploader.on( 'fileQueued', function( file ) {
+			console.log(file);
+			var elemId = "'"+file.id+"'";
+		    var $li = $(
+		            '<div id="' + file.id + '" class="" style="width:250px;">' +
+		                '<img>' +
+		                '<div class="info">' +'</div>' +
+		            '</div><br>'
+		            ),
+		        $img = $li.find('img');
+
+
+		    // $list为容器jQuery实例
+		    $("#fileList").append( $li );
+		    
+		    
+
+		    // 创建缩略图
+		    // 如果为非图片文件，可以不用调用此方法。
+		    // thumbnailWidth x thumbnailHeight 为 100 x 100
+		    uploader.makeThumb( file, function( error, src ) {
+		        if ( error ) {
+		            $img.replaceWith('<span>不能预览</span>');
+		            return;
+		        }
+
+		        $img.attr( 'src', src );
+		        
+		        $img.css({
+		        	width: '150px',
+		        	height: '150px'
+		        })
+		        
+		    }, uploader.thumbnailWidth, uploader.thumbnailHeight );
+		}); 
+		
+		uploader.on('uploadAccept', function(file,data) {
+			//拼接隐藏域
+// 			$("#pictureArea").append('<input type="hidden" id="delete'+file.id+'" name="youwuImgs" class="form-control" value="/files/upload/'+data.fileName+'"/>');
+			$("#pictureArea").append('<input type="hidden" id="delete'+file.id+'" name="youwuImgs" class="form-control" value="/'+data.url+'"/>');
+		});
+		
+		
+// 		showImgNum=$("#imgsDiv").find("img").size();
+// 		if(showImgNum==3){
+// 			$("#filePicker2").hide();
+// 		}
+
+		*/
+		
+	})//$(function) end 
+	
+// 	var delImgStrs="";
+// 	var showImgNum;
+// 	function delImg(obj){
+// 		if(!confirm("确认删除这张图片？")){
+// 			return;
+// 		}
+// 		showImgNum--;
+// 		delImgStrs+=$(obj).parent().find("img").attr("myImg")+",";
+// 		$(obj).parent().remove();
+// 		if(showImgNum<3){
+// 			$("#filePicker2").show();
+// 		}
+// 	}
+	function ValidateFloat(e, pnumber){
+		if (!/^\d+[.]?\d*$/.test(pnumber)){
+			$(e).val(/^\d+[.]?\d*/.exec($(e).val()));
+		}
+		return false;
+	}
+</script>	

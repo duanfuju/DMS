@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.xunchatou">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_XZ_XC_xunChaTou order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_XZ_XC_xunChaTou) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_XZ_XC_xunChaTou where ids not in ( select top {1, number, #.#} ids from DMS_XZ_XC_xunChaTou )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_XZ_XC_xunChaTou ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				xct.*,
+				dpf.name xcfx1,
+                dpf1.name xcfx2
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_XC_xunChaTou xct
+			LEFT JOIN
+				DMS_PZ_fangXiang dpf
+		    ON
+                dpf.ids = xct.xunChaFangXiang1
+            LEFT JOIN
+				DMS_PZ_fangXiang dpf1
+		    ON
+                dpf1.ids = xct.xunChaFangXiang2
+			where 1=1 
+			
+			<% if(!isEmpty(weatherState)){ %>
+					and xct.weatherState like #'%$weatherState$%'#
+			<% } %>
+			
+			<% if(!isEmpty(xunChaType)){ %>
+					and xct.xunChaType like #'%$xunChaType$%'#
+			<% } %>
+			
+			<% if(!(isEmpty(sdate))){ 
+			%>
+					and xct.xunChaStartTime  between #'$sdate$'# 
+					<% if(!(isEmpty(edate))){ 
+					%>
+						and #'$edate$'#
+					<% } %>
+					<% if((isEmpty(edate))){ 
+					%>
+						and getdate()
+					<% } %>
+			<% } %>		
+			<% if(1==2){ %>
+				<% if(!isEmpty(createUserId)&&createUserId!="03a44ba0aa4e4905bea726d4da976ba5"){ %>
+						and xct.createUserId like #'%$createUserId$%'#
+				<% } %>
+			<% } %>
+			
+			
+			<% if(!isEmpty(sql)){ %>
+					${sql}
+			<% } %>
+    	]]>
+	</sql>
+	<sql id="searchbinhaiinfo">
+		<![CDATA[ 
+			SELECT
+				xi.xunChaTime,xi.xiuBuBiaoZhi,xi.binghaiOrQueXianType,xi.binghaiOrQueXianMiaoShu,xi.level,xi.state,z.name wxmkName,xi.ids,
+				xi.xunChaStartZHK,xi.xunChaStartZHM,xi.xunChaEndZHK,xi.xunChaEndZHM,xi.luXian,xi.wzType,xi.wzName,xi.wzMiaoShu,
+				xi.yuGuGongChengLiang,xi.yuGuGongChengLiangDw,xi.wxmkId,dbo.ConcatBuJian(xi.ids,',') as FZHLBHIF
+			FROM
+				DMS_XC_xunChaTou xct
+			LEFT JOIN DMS_XC_xunChaInfo xi ON xi.xunChaTouId=xct.ids
+			LEFT JOIN DMS_RW_task_info_relate tir ON tir.xunChaInfoId=xi.ids
+			LEFT JOIN DMS_RW_task t ON t.ids = tir.taskId
+			LEFT JOIN DMS_PZ_chooseInfo z ON z.ids = xi.wxmkId
+			WHERE
+				xct.ids=?
+    	]]>
+	</sql>
+	
+	<sql id="serachxunchainfo">
+		<![CDATA[ 
+			SELECT
+				xi.xunChaStartZHK,xi.xunChaStartZHM,xi.wzType,xi.xiuBuBiaoZhi,xi.binghaiOrQueXianType,level,xi.yuGuGongChengLiang
+			FROM
+				DMS_XC_xunChaTou xct
+			LEFT JOIN
+				DMS_XC_xunChaInfo xi ON xi.xunChaTouId=xct.ids
+			WHERE
+				xct.ids=?
+    	]]>
+	</sql>
+	<sql id="serachfangxiang1">
+		<![CDATA[ 
+			SELECT
+				fx.name
+			FROM
+				DMS_XC_xunChaTou xct
+			LEFT JOIN
+				DMS_PZ_fangXiang fx ON fx.ids=xct.xunChaFangXiang1
+			WHERE
+				xct.xunChaFangXiang1=? AND xct.ids=?
+    	]]>
+	</sql>
+	<sql id="serachfangxiang2">
+		<![CDATA[ 
+			SELECT
+				fx.name
+			FROM
+				DMS_XC_xunChaTou xct
+			LEFT JOIN
+				DMS_PZ_fangXiang fx ON fx.ids=xct.xunChaFangXiang2
+			WHERE
+				xct.xunChaFangXiang2=? AND xct.ids=?
+    	]]>
+	</sql>
+</sql-statement>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.company">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_luXian order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_luXian) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_luXian where ids not in ( select top {1, number, #.#} ids from DMS_PZ_luXian )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_luXian ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				*
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_PZ_company  company
+			where 1=1  and state = 1
+			<% if(!isEmpty(name)){ %>
+					and company.name like #'%$name$%'#
+			<% } %>	
+			<% if(!isEmpty(name)){ %>
+					and company.addr like #'%addr%'#
+			<% } %>	
+			<% if(!isEmpty(name)){ %>
+					and company.userName like #'%userName%'#
+			<% } %>	
+    	]]>
+	</sql>
+	
+<!-- 动态SQL处理 -->
+	<sql id="findList">
+		<![CDATA[ 
+        	select * FROM DMS_PZ_company where 1=1  and state = 1
+    	]]>
+	</sql>
+	
+	
+</sql-statement>

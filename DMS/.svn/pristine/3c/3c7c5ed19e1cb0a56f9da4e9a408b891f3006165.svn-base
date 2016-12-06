@@ -1,0 +1,235 @@
+package com.junl.dms.mvc.monthplan;
+
+
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.junl.dms.mvc.dayplan.DayPlan;
+import com.junl.dms.mvc.dayplan.DayPlanService;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/monthplan")
+public class MonthPlanController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(MonthPlanController.class);
+	
+	
+	/**
+	 * 首页
+	 */
+	public void index() {
+		paging(ConstantInit.db_dataSource_main, splitPage, MonthPlan.sqlId_splitPageSelect, MonthPlan.sqlId_splitPageFrom);
+		render("/manage/monthplan/list.html");
+	}
+	
+	
+	
+	/**
+	 * 向新增界面跳转
+	 */
+	public void add() {
+		List<DayPlan> list= DayPlanService.service.findByDate();
+		setAttr("dayList", list);
+		boolean flag=false;
+		if (list.size()>0) {
+			flag=true;
+		}
+		setAttr("flag", flag);
+		Date date=new Date();
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM");
+		setAttr("plandate", sdf.format(date));
+		render("/manage/monthplan/add.html");
+	}
+	
+	/**
+	 * /jf/manage/monthplan/select
+	 */
+	public void select(){
+		String plandate=getPara("plandate");
+		List<DayPlan> list= DayPlanService.service.findByDate1(plandate);
+		setAttr("dayList", list);
+		boolean flag=false;
+		if (list.size()>0) {
+			flag=true;
+		}
+		setAttr("plandate", plandate);
+		setAttr("flag", flag);
+		render("/manage/monthplan/add.html");
+	}
+	
+	/**
+	 * 	/jf/manage/monthplan/findDayPlanByMonthIds
+	 */
+	public void findDayPlanByMonthIds(){
+		JSONObject jsonObject = new JSONObject();
+		try{
+			String monthIds=getPara("monthIds");
+			List<Map<String, Object>> result = MonthPlanService.service.findDayPlanByMonthIds(monthIds);	
+			boolean flag=false;
+			if (result.size()>0) {
+				flag=true;
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("flag", flag);
+		}catch(Exception e){
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("flag", false);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	public void save(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String[] days=getParas("checkIds");
+			String planMonth=getPara("planMonth");
+			planMonth+="-01 00:00:00";
+			MonthPlan monthPlan = getModel(MonthPlan.class);
+			monthPlan.set("planMonth", planMonth);
+			boolean result = MonthPlanService.service.save(monthPlan,days);
+			String result_desc="新增失败！";
+			if(result){
+				result_desc="新增成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	public void delete(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String ids = getPara("ids");
+			boolean result = MonthPlanService.service.delete(ids);
+			String result_desc="删除失败！";
+			if(result){
+				result_desc="删除成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	public void edit(){
+		String ids = getPara("ids");
+		Integer pageNumber = getParaToInt("pageNumber");
+		MonthPlan monthPlan = MonthPlanService.service.findById(ids);
+		List<DayPlan> dayList=DayPlanService.service.findByMonthIds(ids);
+		setAttr("monthPlan", monthPlan);
+		setAttr("dayList", dayList);
+		setAttr("pageNumber", pageNumber);
+		render("/manage/monthplan/update.html");
+	}
+	
+	
+	/**
+	 * 删除日计划和月计划的关联		/jf/manage/monthplan/deleteMonthAndDayRelate
+	 */
+	public void deleteMonthAndDayRelate(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String planMonthIds = getPara("planMonthIds");
+			String dayIds = getPara("dayIds");
+			boolean result = MonthPlanService.service.deleteMonthAndDayRelate(planMonthIds,dayIds);
+			String result_desc="删除失败！";
+			if(result){
+				result_desc="删除成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void view(){
+		String ids = getPara("ids");
+		Integer pageNumber = getParaToInt("pageNumber");
+		MonthPlan monthPlan = MonthPlanService.service.findById(ids);
+		List<DayPlan> dayList=DayPlanService.service.findByMonthIds(ids);
+		setAttr("monthPlan", monthPlan);
+		setAttr("dayList", dayList);
+		setAttr("pageNumber", pageNumber);
+		render("/manage/monthplan/view.html");
+	}
+	
+	
+	public void update(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String checkIds_h=getPara("checkIds_h");
+			String[] days=checkIds_h.split(",");
+			String planMonth=getPara("planMonth");
+			planMonth+="-01 00:00:00";
+			MonthPlan monthPlan = getModel(MonthPlan.class);
+			monthPlan.set("planMonth", planMonth);
+			boolean result = MonthPlanService.service.update(monthPlan,days);
+			String result_desc="修改失败！";
+			if(result){
+				result_desc="修改成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	
+
+}
+
+

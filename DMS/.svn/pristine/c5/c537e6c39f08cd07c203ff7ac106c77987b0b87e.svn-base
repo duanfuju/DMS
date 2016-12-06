@@ -1,0 +1,242 @@
+<script type="text/javascript">
+function bathePlanShowMp(){
+	var plandate=$("#planMonth").val();
+	common_ajax.ajaxDiv("divModel","/jf/manage/monthplan/select",{'plandate':plandate});
+}
+</script>
+
+<div id="divModel" style="font-size: 13px">
+	<div class="row">
+		<div class="col-md-12">
+			<ol class="breadcrumb">
+				<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+				<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/monthplan');">日计划</a></li>
+				<li class="active">新增</li>
+			</ol>
+		</div>
+	</div>
+	<form id="editForm" action="${cxt!}/jf/manage/monthplan/save" method="POST" role="form" class="form-horizontal">
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">月计划表单</span></h4>
+				</div>
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							计划日期
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="planMonth" name="planMonth"  readonly  value="${plandate!}" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM',onpicked:function() {javascript:bathePlanShowMp();}})"class="form-control" >
+							<input type="hidden" id="planMonth_h" name="monthPlan.planMonth" value="${monthPlan.planMonth!}" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+						<!-- <div class="col-sm-2">
+							<span class="help-inline col-sm-2"> 
+									<a href="#"  class="btn btn-blue" onclick="showEditChildrenMenu()" >点击关联日计划</a>
+							</span>
+						</div> -->
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div class="row" style="font-size: 13px;" id="dataRow" >
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body">		
+						
+						<table class="table table-bordered table-hover" id="dataTable">
+							<thead>
+								<tr>
+									<th class="hidden-xs" width="5%" >
+										<input type="checkbox" name="checkAll" id="checkAll" class="flat-grey selectall" 
+											onchange="checkedAll('dataTable', this.checked);"> 
+									</th>
+									<th class="hidden-xs" width="10%">
+										日期 	
+			      					</th>
+									<th class="hidden-xs" width="20%" >
+										路线 	
+			      					</th>
+			      					<th class="hidden-xs" width="20%">
+										桩号范围 	
+			      					</th>
+			      					<th class="hidden-xs" width="10%" >
+										负责人	
+			      					</th>
+			      					<th class="hidden-xs" width="10%">
+										机械设备
+			      					</th>
+			      					<!-- <th class="hidden-xs" width="10%" >
+										操作	
+			      					</th> -->
+								</tr>
+							</thead>
+							<tbody id="tbodyDom">
+								<% for(dayplan in dayList){ %>
+									<tr id="trDom${dayplan.ids}">
+										<td class="hidden-xs">
+											<input id="${dayplan.ids!}" type="checkbox" name="checkIds" 
+												value="${dayplan.ids!}" onclick="getCheckboxs()" class="flat-grey foocheck">
+										</td>
+										<td class="hidden-xs">${dayplan.planTime!,dateFormat="yyyy-MM-dd"}</td>
+										<td class="hidden-xs">${dayplan.luXian!}/${dayplan.wzType!}/${dayplan.wzName!}/${dayplan.wzMiaoShu!}</td>
+										<td class="hidden-xs">K${dayplan.startZHK!}  +  ${dayplan.startZHM!}  ~  K${dayplan.endZHK!} +${dayplan.endZHM!}</td>
+										<td class="hidden-xs">${dayplan.fuZePeople!}</td>
+										<td class="hidden-xs">${dayplan.jiXieSheBei!}</td>
+									</tr>
+								<% } %>
+							</tbody>
+						</table>	
+						
+						<div class="form-group">
+<!-- 							<div class="col-sm-2 col-sm-offset-3"> -->
+							<div class="col-sm-5 col-sm-offset-5">
+								<button type="button" class="btn btn-red" onclick="mySubmit()">
+									提交<i class="fa fa-arrow-circle-right"></i>
+								</button>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="hidden" id="notInIds" class="form-control">
+	<input type="hidden" id="notInIds_h" class="form-control">
+	</form>
+</div>
+<script type="text/javascript">
+function getCheckboxs(){   
+	var vals = $("input[name=checkIds]:checked").map(function() { 
+        return this.value; 
+    }).get().join();
+	window.getDayPlanIds=vals;
+	calcCheckedCount();
+}
+//计算选中维修数和所占百分比	
+function calcCheckedCount(){
+	var total=$("input[name='checkIds']").length;
+	var num=$("input[name='checkIds']:checked").length;
+	if(total==num){
+		$("#checkAll").prop("checked", true);
+	}else{
+		$("#checkAll").prop("checked", false);
+	}
+}	
+//全选和反选
+function checkedAll(id, checked){
+	$("#" + id + " input[name='checkIds']").each(function(){
+		$(this).prop("checked", checked);
+    });
+	getCheckboxs();
+}
+function delMode(id){
+	layer.confirm('确定删除此条数据？', {
+		  btn: ['确定','取消'] ,//按钮
+		  scrollbar:false
+	}, function(){
+		$("#trDom"+id).remove();
+		layer.closeAll();
+		resetHidden();
+	})
+}
+function resetHidden(){
+	var notInIds="";
+	$(".eachTd").each(function(i,n){
+		notInIds+=$(this).attr("p")+"\',\'";
+	});
+
+	notInIds=notInIds.substring(0,notInIds.length-3);
+	$("#notInIds").val(notInIds);
+}
+//显示子级菜单编辑弹出层
+	function showEditChildrenMenu(){	
+		var notInIds=$("#notInIds").val();
+		var planMonth=$("#planMonth").val();
+		var url="/jf/manage/dayplan/select";
+		var width=1100;
+		var height=650;
+		var title="选择日计划";
+		$.ajax({
+		type : "post",
+		url : encodeURI(encodeURI(cxt + url)),
+		data : {"_query.planMonth":planMonth,"_query.notInIds":notInIds},
+		dataType : "HTML",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		async: false,
+		cache: false,
+		success:function(response){
+			result = response;
+			layer.open({
+			  type: 1, //page层
+			  area: [width+'px', height+'px'],
+			  title: title,
+			  shade: 0.6, //遮罩透明度
+			  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+			  shift: 0, //0-6的动画形式，-1不开启
+			  content: result,
+			  btn:['确定'],
+			  btn1:function(){
+				  var dayPlanIds=window.getDayPlanIds.split(",");
+				  for(var i=0;i<dayPlanIds.length;i++){
+					  var dayPlanId=dayPlanIds[i];
+					  var trObj=$("#trDom"+dayPlanId);
+					  trObj.find("td:eq(0)").css("display","none");
+					  trObj.append("<td class='eachTd' p='"+dayPlanIds+"'><button type='button' title='删除' class='btn btn-red delete-row' onClick='delMode(\""+dayPlanIds+"\")' > <i class='fa fa-trash-o'></i></button></td>");
+					  $("#tbodyDom").append(trObj);
+				  }
+				  $("#dataRow").show();
+				  layer.closeAll();
+				  resetHidden();
+			  }
+			});
+		}
+	});
+	}
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+    
+    $("#planMonth_h").val(currentdate);
+   // $("#planMonth").val( date.getFullYear() + seperator1 + month);
+}
+getNowFormatDate();
+	
+
+	function mySubmit(){
+		var num=$("input[name='checkIds']:checked").length;
+		if(num==0){
+			layer.msg("请勾选任务");
+			return;
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/monthplan");
+			}
+		}
+		
+	}
+</script>	

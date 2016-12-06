@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.rwtask">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_luXian order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_luXian) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_luXian where ids not in ( select top {1, number, #.#} ids from DMS_PZ_luXian )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_luXian ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				t.ids tids,
+				t.taskNo taskNo,
+				t.createUserId createUserId,
+				t.createTime tcreateTime,
+				t.yuJiTaskEndTime yuJiTaskEndTime,
+				t.remark tremark,
+				t.taskState taskState,
+				t.fuZeRen fuZeRen,
+				t.paiDanDate paiDanDate,
+				x.ids xids,
+				x.xunChaStartZHK xunChaStartZHK,
+				x.xunChaStartZHM xunChaStartZHM,
+				x.xunChaEndZHK xunChaEndZHK,
+				x.xunChaEndZHM xunChaEndZHM,
+				x.xiuBuBiaoZhi xiuBuBiaoZhi,
+				x.wxmkId wxmkId,
+				x.binghaiOrQueXianType binghaiOrQueXianType,
+				x.binghaiOrQueXianMiaoShu binghaiOrQueXianMiaoShu,
+				x.level level,
+				x.yuGuGongChengLiang yuGuGongChengLiang,
+				x.yuGuGongChengLiangDw yuGuGongChengLiangDw,
+				x.xunChaTime xunChaTime,
+				x.remark xremark,
+				x.imgs imgs,
+				x.xunChaUserId xunChaUserId,
+				x.xunChaTouId xunChaTouId,
+				x.luXian luXian,
+				x.wzType wzType,
+				x.wzName wzName,
+				x.wzMiaoShu wzMiaoShu,
+				x.createTime xcreateTime,
+				x.state state,
+				tir.ids tirIds,
+				tir.taskWeiXiuNum taskWeiXiuNum,
+				tir.state tirState,
+				tir.overTime overTime,
+				ci.name wxmkName,
+				t.byu as byu,
+				t.DiseaseNumber DiseaseNumber
+				
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+				from DMS_RW_task_info_relate tir
+					left join DMS_XC_xunChaInfo x on x.ids=tir.xunChaInfoId
+					left join DMS_RW_task t  on t.ids=tir.taskId
+					LEFT JOIN DMS_PZ_chooseInfo ci on ci.ids=x.wxmkId
+				
+			where 1=1
+			
+			<% if(!(isEmpty(sdate))){ 
+			%>
+					and t.paiDanDate  between #'$sdate$'# 
+					<% if(!(isEmpty(edate))){ 
+				    %>
+						and #'$edate$'#
+			    	<% } %>
+			  		<% if((isEmpty(edate))){ 
+					%>
+						and getdate()
+					<% } %>
+			<% } %>
+						
+			<% if(!isEmpty(fuZeRen)){ %>
+					and t.fuZeRen like #'%$fuZeRen$%'#
+			<% } %>
+			<% if(!isEmpty(wxmkId)){ %>
+					and x.wxmkId = '${wxmkId}'
+			<% } %>
+			<% if(!isEmpty(taskRelateState)){ %>
+					and tir.state = ${taskRelateState}
+			<% } %>
+			
+			
+			
+			
+			<% if(!(isEmpty(oversdate))){ 
+			%> 
+					and tir.overTime  between #'$oversdate$'# 
+					<% if(!(isEmpty(overedate))){ 
+				    %>
+						and #'$overedate$'#
+			    	<% } %>
+			  		<% if((isEmpty(overedate))){ 
+					%>
+						and getdate()
+					<% } %>
+			<% } %>
+		
+    	]]>
+	</sql>
+	
+	<!-- 动态SQL处理 -->
+	<sql id="findByTaskId">
+		<![CDATA[ 
+			SELECT
+				info.*, ci.name wxmkName
+			FROM
+				DMS_RW_task_info_relate tir
+			LEFT JOIN DMS_RW_task t ON t.ids = tir.taskId
+			LEFT JOIN DMS_XC_xunChaInfo info ON tir.xunChaInfoId = info.ids
+			LEFT JOIN DMS_PZ_chooseInfo ci ON ci.ids = info.wxmkId
+			WHERE
+				t.ids = ?	
+    	]]>
+	</sql>
+	<!-- 获取任务单编号 -->
+	<sql id="getTaskNo">
+		<![CDATA[ 
+			select * from DMS_RW_task r where datediff(month,r.createTime,getdate())=0 ORDER BY taskNum DESC
+    	]]>
+	</sql>
+	
+	<sql id="getTaskNossss">
+		<![CDATA[ 
+			select * from DMS_DMS_XC_xunChaInfo r where byIds = ?
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect_d">
+		<![CDATA[ 
+			SELECT
+				t.ids tids,
+				t.taskNo taskNo,
+				t.createUserId createUserId,
+				t.createTime tcreateTime,
+				t.yuJiTaskEndTime yuJiTaskEndTime,
+				t.remark tremark,
+				t.taskState taskState,
+				t.fuZeRen fuZeRen,
+				t.paiDanDate paiDanDate,
+				t.byu as byu,
+				t.DiseaseNumber DiseaseNumber,
+				t.singleMan singleMan
+				
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom_d">
+		<![CDATA[ 
+			from  DMS_RW_task t 
+				
+				
+			where 1=1
+			
+			<% if(!(isEmpty(sdate))){ 
+			%>
+					and t.paiDanDate  between #'$sdate$'# 
+					<% if(!(isEmpty(edate))){ 
+				    %>
+						and #'$edate$'#
+			    	<% } %>
+			  		<% if((isEmpty(edate))){ 
+					%>
+						and getdate()
+					<% } %>
+			<% } %>
+						
+			<% if(!isEmpty(fuZeRen)){ %>
+					and t.fuZeRen like #'%$fuZeRen$%'#
+			<% } %>
+    	]]>
+	</sql>
+	
+	<!-- 获取任务单编号 -->
+	<sql id="getTaskInfoById">
+		<![CDATA[ 
+			SELECT
+				tir.ids tirIds,
+				tir.taskWeiXiuNum taskWeiXiuNum,
+				tir.state tirState,
+				tir.overTime overTime,
+				x.ids xids,
+				x.xunChaStartZHK xunChaStartZHK,
+				x.xunChaStartZHM xunChaStartZHM,
+				x.xunChaEndZHK xunChaEndZHK,
+				x.xunChaEndZHM xunChaEndZHM,
+				x.xiuBuBiaoZhi xiuBuBiaoZhi,
+				x.wxmkId wxmkId,
+				x.binghaiOrQueXianType binghaiOrQueXianType,
+				x.binghaiOrQueXianMiaoShu binghaiOrQueXianMiaoShu,
+				x.yuGuGongChengLiang yuGuGongChengLiang,
+				x.yuGuGongChengLiangDw yuGuGongChengLiangDw,
+				x.xunChaTime xunChaTime,
+				x.remark xremark,
+				x.imgs imgs,
+				x.xunChaUserId xunChaUserId,
+				x.xunChaTouId xunChaTouId,
+				x.luXian luXian,
+				x.wzType wzType,
+				x.wzName wzName,
+				x.wzMiaoShu wzMiaoShu,
+				x.createTime xcreateTime,
+				x.state state
+			FROM
+				DMS_RW_task_info_relate tir
+			LEFT JOIN DMS_XC_xunChaInfo x ON x.ids = tir.xunChaInfoId
+			WHERE
+				1 = 1
+			AND tir.ids = ?
+    	]]>
+	</sql>
+	
+
+	
+</sql-statement>

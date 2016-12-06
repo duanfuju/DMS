@@ -1,0 +1,34 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">版权申明</li>
+		</ol>
+	</div>
+</div>
+
+<div>
+	<div class="sidemain-body">
+	     <div class="sidemain-mhead" align="center">
+	         <h2>版权申明</h2>
+	     </div>
+	     <div class="sidedetail">
+		     <p style="text-align:justify;"><span style="font-size:16px;">
+		         	<span style="font-size:16px;font-family:'times new roman';"> &nbsp; </span>
+		         	<span style="font-size:16px;color:#000000;font-family:'times new roman';">
+			         	本系统由南京道润交通科技有限公司（Nanjing RoadKeeper Technology Co,.Ltd）、东南大学交通学院研制开发，并享有相关权利。
+		         		任何对本系统的破解、仿制和抄袭，将在法律许可的范围内受到最大可能的起诉。
+		        		 本计算机程序受著作权法和国际公约的保护,未经授权擅自复制或传播本程序的部分或全部,可能受到严厉的民事及刑事制裁,并将在法律许可的范围内受到最大可能的起诉。
+	        	 	</span>
+		         	 </span>
+		         	 <span id="_baidu_bookmark_start_14" style="display:none;line-height:0px;font-size:16px;color:#000000;font-family:'times new roman';">&#65279;</span>
+		         	 <span id="_baidu_bookmark_start_16" style="display:none;line-height:0px;font-size:16px;color:#000000;font-family:'times new roman';">&#65279;</span>
+	          </p>
+	         	
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	
+</script>

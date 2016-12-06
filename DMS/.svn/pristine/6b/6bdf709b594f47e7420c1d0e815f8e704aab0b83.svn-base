@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.fangxiang">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_fangXiang order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_fangXiang) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_fangXiang where ids not in ( select top {1, number, #.#} ids from DMS_PZ_fangXiang )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_fangXiang ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				fx.*, lx.luXianName
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+			FROM
+				DMS_PZ_fangXiang fx
+			LEFT JOIN DMS_PZ_luXian lx ON lx.ids = fx.luXianId
+			where 1=1
+			<% if(!isEmpty(luXianName)){ %>
+					and lx.luXianName like #'%$luXianName$%'#
+			<% } %>
+			<% if(!isEmpty(name)){ %>
+					and fx.name like #'%$name$%'#
+			<% } %>	
+			<% if(!isEmpty(pinYinSx)){ %>
+					and fx.pinYinSx like #'%$pinYinSx$%'#
+			<% } %>				
+    	]]>
+	</sql>
+	<!-- 根据路线id查询方向-->
+	<sql id="findByLuXianId">
+		<![CDATA[		
+			SELECT * FROM DMS_PZ_fangXiang f WHERE  f.luXianId= ?
+    	]]>
+	</sql>
+	
+	
+</sql-statement>

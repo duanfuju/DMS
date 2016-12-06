@@ -1,0 +1,93 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">公路技术状况明细导入</li>
+		</ol>
+	</div>
+</div>
+						
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+						<div class="col-sm-2">
+							<h4 class="panel-title"><span class="text-bold">公路技术状况明细查询</span></h4>
+						</div>
+						<div class="col-sm-2" style="margin-left: -10px;">
+								<button type="button" class="btn btn-red" onclick="downLoadTemp()">
+									下载导入模板<i class="fa fa-arrow-circle-down"> </i>
+								</button>
+						</div>
+					
+				</div>
+				<div class="panel-body">			
+					<form id="editForm" action="${cxt!}/jf/manage/basemethod/importInfo" method="POST" enctype="multipart/form-data" role="form" class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label" for="form-field-1">
+								文件
+							</label>
+							<div class="col-sm-4">
+								<div data-provides="fileupload" class="fileupload fileupload-new">
+									<span class="btn btn-file btn-light-grey"><i class="fa fa-folder-open-o"></i> <span class="fileupload-new">选择文件</span><span class="fileupload-exists">重新选择</span>
+										<input type="file" id="file" name="file"></input>
+									</span>
+									<span class="fileupload-preview"> </span>
+									<a data-dismiss="fileupload" class="close fileupload-exists float-none" href="#">
+										&times; 
+									</a>
+								</div>
+							</div>
+							<div class="col-sm-2">
+									<button type="button" class="btn btn-primary" onclick='uploadFile()'>上传</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="tableList">
+		
+	</div>
+
+<script type="text/javascript">
+	
+	$(function(){
+		
+		var html = common_ajax.ajaxFunc("/jf/manage/roadassessment/roadTechnicStateDetail/getList",{"tmp":false},"html");
+		$("#tableList").html(html);
+		
+	});
+	
+	//公路技术状况评定导入模板.xls  ==import_gonglujishuzhuangkuang
+	function downLoadTemp()
+	{
+		var fileName = "import_gonglujishuzhuangkuang.xlsx";
+		var url ="/jf/manage/basemethod/downExcelTemp";
+		var resultData=common_ajax.ajaxFunc(url,{"tempName":fileName},"JSON");
+		if(resultData==""){
+			layer.msg("请求失败！");
+		}else{
+			window.location.href=resultData.resultUrl;
+		}
+	}
+	function uploadFile()
+	{
+		var file = $("#file").val();
+		if(file==""){
+			layer.msg("请选择要上传的文件");
+			return;
+		}
+		var fileName = "IMPORT_GONGLUJISHUZHUANGKUANG";
+		var data ={"file":file,"fileName":fileName,"taskInfoRelateId":""};
+		var resultData=common_ajax.ajaxFileForm("editForm","JSON",data);
+		var html = common_ajax.ajaxFunc("/jf/manage/roadassessment/roadTechnicStateDetail/getList",{"tmp":false},"html");
+		$("#tableList").html(html);
+		layer.msg("上传成功");
+	}
+</script>

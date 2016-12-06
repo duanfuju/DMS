@@ -1,0 +1,35 @@
+package com.junl.dms.mvc.mappoint;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+/** 
+ * @author  hank E-mail: hankun@junl.cn 
+ * @date 创建时间：2016年8月30日 下午4:55:37 
+ * @version 1.0 
+ * @parameter  
+ * @since  
+ * @return  
+ */
+@Controller(controllerKey = "/jf/manage/mapPoint")
+public class MapPointController extends BaseController {
+	
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(MapPointController.class);
+	
+	/**
+	 * 首页
+	 */
+	public void index() {
+		List<MapPoint> mappoint = new ArrayList<MapPoint>();
+		String sql = "select * from DMS_APP_PointInfo";
+		mappoint = MapPoint.dao.find(sql);
+		setAttr("mappoint", mappoint);
+		render("/manage/mappoint/index.html");
+	}
+}

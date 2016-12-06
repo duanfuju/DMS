@@ -1,0 +1,97 @@
+						
+<form id="splitPage" action="" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">沥青路面状况列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<div class="row">
+						<div class="col-md-12 space20">
+							<button type="button" class="btn btn-success add-row" onclick="">
+								导出 <i class="fa fa-hospital-o"> </i>
+							</button>
+			
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th align="center" colspan="25" width="100%">高速公路沥青路面状况表</th>
+							</tr>
+							<tr>
+								<th style="text-align: left;" colspan="8" width="33%">路线名称：</th>
+								<th style="text-align: left;" colspan="9" width="34%">方向：</th>
+								<th style="text-align: left;" colspan="8" width="34%">年月：</th>
+							</tr>
+							<tr>
+								<th rowspan="2">桩号</th>
+								<th rowspan="2">长度</th>
+								<th colspan="3">龟裂</th>
+								<th colspan="2">块状 裂缝</th>
+								<th colspan="2">纵向 裂缝</th>
+								<th colspan="2">横向 裂缝</th>
+								<th colspan="2">坑槽</th>
+								<th colspan="2">松散</th>
+								<th colspan="2">沉陷</th>
+								<th colspan="2">车辙</th>
+								<th colspan="2">波浪拥包</th>
+								<th rowspan="2">泛油</th>
+								<th rowspan="2">修补不良</th>
+								<th rowspan="2">DR</th>
+								<th rowspan="2">PCI</th>
+							</tr>
+							<tr>
+								<th>轻</th>
+								<th>中</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+								<th>轻</th>
+								<th>重</th>
+							</tr>		
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	
+</form>			
+
+ <style>
+   .table th, .table td { 
+		text-align: center; 
+		height:38px;
+		}
+ </style>
+<script type="text/javascript">
+	
+</script>

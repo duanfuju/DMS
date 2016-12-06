@@ -1,0 +1,455 @@
+<div class="form-group">
+	<label class="col-sm-2 control-label" id="lbl1">
+		锡张
+	</label>
+	<label class="col-sm-1 control-label">
+		开始桩号K
+	</label>
+	<input type="hidden" name="xunChaTou.xunChaFangXiang1" id="xunChaFangXiang1" value="xz"/>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaStartZHK1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHK1" value="${xunChaTou.xunChaStartZHK1!}"   class="form-control">
+	</div>
+	<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaStartZHM1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHM1" value="${xunChaTou.xunChaStartZHM1!}"   class="form-control">
+	</div>
+	<label class="col-sm-1 control-label">
+		结束桩号K
+	</label>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaEndZHK1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHK1" value="${xunChaTou.xunChaEndZHK1!}"    class="form-control">
+	</div>
+	<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaEndZHM1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHM1" value="${xunChaTou.xunChaEndZHM1!}"   class="form-control">
+	</div>
+</div>
+
+
+<div class="form-group">
+	
+	<label class="col-sm-2 control-label"  id="lbl2">
+		张锡
+	</label>
+	<label class="col-sm-1 control-label">
+		开始桩号K
+	</label>
+	<input type="hidden" name="xunChaTou.xunChaFangXiang2" id="xunChaFangXiang2" value="zx"/>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaStartZHK2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHK2" value="${xunChaTou.xunChaStartZHK2!}"     class="form-control">
+	</div>
+	<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaStartZHM2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHM2" value="${xunChaTou.xunChaStartZHM2!}"   class="form-control">
+	</div>
+	<label class="col-sm-1 control-label">
+		结束桩号K
+	</label>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaEndZHK2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHK2" value="${xunChaTou.xunChaEndZHK2!}"   class="form-control">
+	</div>
+	<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+	<div class="col-sm-1">
+		<input type="text" id="xunChaEndZHM2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHM2" value="${xunChaTou.xunChaEndZHM2!}"   class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查里程
+	</label>
+	<div class="col-sm-5">
+		<input type="text" id="xunChaLiCheng" style="ime-mode:disabled" onkeyup="return ValidateFloat($(this),value)" name="xunChaTou.xunChaLiCheng" value="${xunChaTou.xunChaLiCheng!}"  class="form-control">
+	</div>
+	<div class="col-sm-1">
+		<h5>Km</h5>
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查开始时间
+	</label>
+	<div class="col-sm-2">
+		<input type="text" id="xunChaStartTime" name="xunChaTou.xunChaStartTime" value="${xunChaTou.xunChaStartTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}"  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"class="form-control" >
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查结束时间
+	</label>
+	<div class="col-sm-2">
+		<input type="text" id="xunChaEndTime" name="xunChaTou.xunChaEndTime"  value="${xunChaTou.xunChaEndTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" >
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		天气状况
+	</label>
+	
+	<div class="col-sm-2">
+		<select name="xunChaTou.weatherState" id="weatherState" style="width: 100%" class="form-control">
+			<option value="晴">晴</option>
+			<option value="阴">阴</option>
+			<option value="多云">多云</option>
+			<option value="小雨">小雨</option>
+			<option value="中雨">中雨</option>
+			<option value="大雨">大雨</option>
+			<option value="雷阵雨">雷阵雨</option>
+			<option value="小雪">小雪</option>
+			<option value="中雪">中雪</option>
+			<option value="大雪">大雪</option>
+			<option value="冰冻">冰冻</option>
+			<option value="下雪/积雪">下雪/积雪</option>
+		</select>
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查类型
+	</label>
+	<div class="col-sm-2"> 	 
+		<select name="xunChaTou.xunChaType" id="xunChaType" style="width: 100%"  class="form-control">
+			<option value="日常巡查" >日常巡查</option>
+			<option value="特殊巡查" >特殊巡查</option>
+		</select>
+	</div>
+</div>
+
+
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">备注</label>
+	<div class="col-sm-6">
+		<textarea rows="4" cols="20" id="remark" name="xunChaTou.remark"  value="" class="form-control">${xunChaTou.remark!}</textarea>
+	</div>
+	<span class="help-inline col-sm-2"> </span>
+</div>
+
+
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		common_form.init();
+	});
+	//路线选择后回填
+	$("#luXian").change(function(){
+		var dataObj = $(this).find("option:selected");
+		$("#xunChaStartZHK1").attr("value",dataObj.attr("startZHK"));
+		$("#xunChaStartZHM1").attr("value",dataObj.attr("startZHM"));
+		$("#xunChaEndZHK1").attr("value",dataObj.attr("endZHK"));
+		$("#xunChaEndZHM1").attr("value",dataObj.attr("endZHM"));
+		var _luXianId=dataObj.attr("value");
+		//根据主线获取方向
+    	$.ajax({
+    		url:cxt+"/jf/manage/fangxiang/findByLuXianId",
+    		type:"post",
+    		dateType:"JSON",
+    		data:{"luXianId":_luXianId},  
+    		async: false,
+    		success:function(data){
+    	    	$.each(data.result,function(i,dataObj){
+    	    		if(i==0){
+    	    			$("#xunChaFangXiang1").val(dataObj.value);
+    	    			$("#lbl1").text(dataObj.name);
+    	    		}else{
+    	    			$("#xunChaFangXiang2").val(dataObj.value);
+    	    			$("#lbl2").text(dataObj.name);
+    	    		}
+    	    	});
+    		}
+    	});
+		
+		
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+		
+		/* $("#xunChaStartZHK2").val('');
+		$("#xunChaStartZHM2").val('');
+		$("#xunChaEndZHK2").val('');
+		$("#xunChaEndZHM2").val(''); */
+	});
+	
+	//方向一
+	$("#xunChaStartZHK1").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	$("#xunChaStartZHM1").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	$("#xunChaEndZHK1").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	$("#xunChaEndZHM1").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	//方向二
+	$("#xunChaStartZHK2").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	$("#xunChaStartZHM2").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	$("#xunChaEndZHK2").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+	$("#xunChaEndZHM2").change(function(){
+		if(validateZx()){
+			calcXunChaLiCheng_zx();
+		}else{
+			calcXunChaLiCheng_xz();
+		}
+	});
+
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//锡张(在初始登陆的时候或回填的时候执行)
+	function calcXunChaLiCheng_xz(){
+		//计算里程		
+		//xunChaStartZHK1	xunChaStartZHM1
+		//xunChaEndZHK1	xunChaEndZHM1
+		var xunChaStartZHK1=parseInt($("#xunChaStartZHK1").attr("value"),10);
+		var xunChaStartZHM1=parseInt($("#xunChaStartZHM1").attr("value"),10);
+		var xunChaEndZHK1=parseInt($("#xunChaEndZHK1").attr("value"),10);
+		var xunChaEndZHM1=parseInt($("#xunChaEndZHM1").attr("value"),10);
+		var start=xunChaStartZHK1+(xunChaStartZHM1/1000);
+		var end=xunChaEndZHK1+(xunChaEndZHM1/1000);
+		var num=(end-start).toFixed(3);
+		$("#xunChaLiCheng").val(num);
+	}
+	//张锡	和 	锡张（在所有空填上的时候计算）
+	function calcXunChaLiCheng_zx(){
+		//计算里程		
+		//xunChaStartZHK2	xunChaStartZHM2
+		//xunChaEndZHK2	xunChaEndZHM2
+		var xunChaStartZHK1=parseInt($("#xunChaStartZHK1").attr("value"),10);
+		var xunChaStartZHM1=parseInt($("#xunChaStartZHM1").attr("value"),10);
+		var xunChaEndZHK1=parseInt($("#xunChaEndZHK1").attr("value"),10);
+		var xunChaEndZHM1=parseInt($("#xunChaEndZHM1").attr("value"),10);
+		var num_xz=(xunChaEndZHK1+(xunChaEndZHM1/1000))-(xunChaStartZHK1+(xunChaStartZHM1/1000));
+		
+		
+		var xunChaStartZHK2=parseInt($("#xunChaStartZHK2").val(),10);
+		var xunChaStartZHM2=parseInt($("#xunChaStartZHM2").val(),10);
+		var xunChaEndZHK2=parseInt($("#xunChaEndZHK2").val(),10);
+		var xunChaEndZHM2=parseInt($("#xunChaEndZHM2").val(),10);
+		var start=xunChaStartZHK2+(xunChaStartZHM2/1000);
+		var end=xunChaEndZHK2+(xunChaEndZHM2/1000);
+		var num=(end-start+num_xz).toFixed(3);
+		$("#xunChaLiCheng").val(num);
+	}
+	function  validateZx(){
+		var submit=false;
+		//验证张锡
+		var xunChaFangXiang2=$.trim($("#xunChaFangXiang2").val());
+		var xunChaStartZHK2=$.trim($("#xunChaStartZHK2").val());
+		var xunChaStartZHM2=$.trim($("#xunChaStartZHM2").val());
+		var xunChaEndZHK2=$.trim($("#xunChaEndZHK2").val());
+		var xunChaEndZHM2=$.trim($("#xunChaEndZHM2").val());
+		
+		//验证非空
+		if(xunChaStartZHK2.length!=0&&xunChaStartZHK2!=null){
+			submit=true;
+			submit=validateFangXiang2(xunChaStartZHK2,xunChaStartZHM2,xunChaEndZHK2,xunChaEndZHM2);
+		}
+		if(xunChaStartZHM2.length!=0&&xunChaStartZHM2!=null){
+			submit=true;
+			submit=validateFangXiang2(xunChaStartZHK2,xunChaStartZHM2,xunChaEndZHK2,xunChaEndZHM2);
+		}
+		if(xunChaEndZHK2.length!=0&&xunChaEndZHK2!=null){
+			submit=true;
+			submit=validateFangXiang2(xunChaStartZHK2,xunChaStartZHM2,xunChaEndZHK2,xunChaEndZHM2);
+		}
+		if(xunChaEndZHM2.length!=0&&xunChaEndZHM2!=null){
+			submit=true;
+			submit=validateFangXiang2(xunChaStartZHK2,xunChaStartZHM2,xunChaEndZHK2,xunChaEndZHM2);
+		}
+		return submit;
+	}
+	
+	function mysubmit(){
+		//是否符合提交条件
+		var submit=true;
+		
+		
+		//验证日期不为空
+		submit=validateTime();
+		//如果不符合提交条件就不再往下验证
+		if(!submit){
+			return;
+		}
+		
+		//验证锡张
+		submit=validateFangXiang1Num();
+		//如果不符合提交条件就不再往下验证
+		if(!submit){
+			return;
+		}
+		
+		//如果不符合提交条件就不再往下验证
+		if(!submit){
+			return;
+		}
+		
+		
+		//是否符合提交条件						
+		if(submit){
+			//提交
+			var formId=$("#editForm");
+			var fromAction=formId.attr("action");
+			 $(formId).ajaxSubmit({  
+	                type:"post",  //提交方式  
+	                dataType:"json", //数据类型  
+	                url:fromAction, //请求url  
+	                success:function(data){ //提交成功的回调函数  
+	                	layer.msg(data.result);
+	                    common_ajax.ajaxMainPanel("/jf/manage/xunChaTou",{"pageNumber":'${pageNumber!}'});
+	                }  
+	            });  
+		}
+	}
+	
+	
+	//验证巡查时间
+	//因为是日期控件，所以只需要判断非空就行
+	function validateTime(){
+		var xunChaStartTime=$.trim($("#xunChaStartTime").val());
+		var xunChaEndTime=$.trim($("#xunChaEndTime").val());
+		if(xunChaStartTime.length==0||xunChaStartTime==null){
+			layer.msg("巡查开始时间请填写完整！");
+			return false;
+		}
+		if(xunChaEndTime.length==0||xunChaEndTime==null){
+			layer.msg("巡查结束时间请填写完整！");
+			return false;
+		}
+		return true;
+	}
+	
+	//验证巡查米位(锡张)
+	//0-999米
+	function validateFangXiang1Num(){
+		var xunChaStartZHM1=$.trim($("#xunChaStartZHM1").val());
+		var xunChaEndZHM1=$.trim($("#xunChaEndZHM1").val());
+		var xunChaStartZHK1=$.trim($("#xunChaStartZHK1").val());
+		var xunChaEndZHK1=$.trim($("#xunChaEndZHK1").val());
+		if(xunChaStartZHK1.length==0||xunChaStartZHK1==null){
+			layer.msg("锡张  开始桩号K请填写完整！");
+			return false;
+		}
+		if(xunChaEndZHK1.length==0||xunChaEndZHK1==null){
+			layer.msg("锡张  结束桩号K请填写完整！");
+			return false;
+		}
+		//非空判断
+		if(xunChaStartZHM1.length==0||xunChaStartZHM1==null){
+			layer.msg("锡张  开始桩号M请填写完整！");
+			return false;
+		}
+		if(xunChaEndZHM1.length==0||xunChaEndZHM1==null){
+			layer.msg("锡张 结束桩号M请填写完整！");
+			return false;
+		}
+		//
+		if(!(xunChaStartZHM1>=0&&xunChaStartZHM1<=999)){
+			layer.msg("锡张  开始桩号M请填写错误,范围(0-999)！");
+			return false;
+		}
+		if(!(xunChaEndZHM1>=0&&xunChaEndZHM1<=999)){
+			layer.msg("锡张  结束桩号M请填写错误,范围(0-999)！");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	//验证巡查米位(张锡)
+	//0-999米
+	function validateFangXiang2Num(){
+		var xunChaStartZHM2=$.trim($("#xunChaStartZHM2").val());
+		var xunChaEndZHM2=$.trim($("#xunChaEndZHM2").val());
+		if(!(xunChaStartZHM2>=0&&xunChaStartZHM2<=999)){
+			layer.msg("张锡  开始桩号M请填写错误,范围(0-999)！");
+			return false;
+		}
+		if(!(xunChaEndZHM2>=0&&xunChaEndZHM2<=999)){
+			layer.msg("张锡  结束桩号M请填写错误,范围(0-999)！");
+			return false;
+		}
+		return true;
+	}
+	//验证巡查张锡
+	//如果张锡只要有一个空填写了，其余的都要填写
+	function validateFangXiang2(xunChaStartZHK2,xunChaStartZHM2,xunChaEndZHK2,xunChaEndZHM2){
+		if(xunChaStartZHK2.length!=0&&xunChaStartZHK2!=null){
+			if(xunChaStartZHM2.length!=0&&xunChaStartZHM2!=null){
+				if(xunChaEndZHK2.length!=0&&xunChaEndZHK2!=null){
+					if(xunChaEndZHM2.length!=0&&xunChaEndZHM2!=null){
+						//符合条件则允许提交
+						var isTrue=validateFangXiang2Num();
+						return isTrue;
+					}else{
+						layer.msg("张锡  结束桩号M请填写完整！");
+						return false;
+					}
+				}else{
+					layer.msg("张锡  结束桩号K请填写完整！");
+					return false;
+				}
+			}else{
+				layer.msg("张锡  开始桩号M请填写完整！");
+				return false;
+			}
+		}else{
+			layer.msg("张锡  开始桩号K请填写完整！");
+			return false;
+		}
+	}	
+		
+	function ValidateFloat(e, pnumber){
+		if (!/^\d+[.]?\d*$/.test(pnumber)){
+			$(e).val(/^\d+[.]?\d*/.exec($(e).val()));
+		}
+		return false;
+	}
+	
+</script>

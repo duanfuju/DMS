@@ -1,0 +1,177 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+	$("#state_select option:first").prop("selected", 'selected'); 
+}
+var _state;
+function mySelect(){
+	//设置查询条件
+	_state=$("#state_select").val();
+	$("#state_hidden").attr("value",_state);
+	common_ajax.ajaxFormMainPanel("splitPage");
+	setCondition();
+}
+function setCondition(){
+	$("#state_select").val(_state);
+}
+//导出word文档
+function exportword(ids,pageNumber){
+ 	var h = "${basePath}/uploadword/"+"jiliang-"+ids+".doc";
+	$.ajax({
+		url:cxt+'/jf/manage/jiliangword/daochuWord',
+		type: "post",
+		data: {"ids":ids, "pageNumber":pageNumber},
+		async: false,
+		success:function(data){
+			window.location.href=h;
+		}
+	}); 
+}
+
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">中间计量</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/jiliangword" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">中间计量查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label">报验单编号</label>
+						<div class="col-sm-2">
+					  		<input class="form-control focused" type="text" name="_query.byNo" value='${escapeXml(paramMap["_query.byNo"])}' maxlength="20" >
+						</div>
+						<label class="col-sm-2 control-label" >状态</label>
+						<div class="col-sm-2">
+					  		<input class="form-control" type="hidden" id="state_hidden" name="_query.state" value='${escapeXml(paramMap["_query.state"])}' maxlength="40" >
+					  		<select name="xunChaTou.xunChaType" id="state_select" style="width: 100%" class="form-control">
+					  			<option value="" selected>请选择</option>
+								<option value="0" >未计量</option>
+								<option value="1" >已计量</option>
+							</select>
+						</div>
+				  	</div>
+				  	
+				  
+				  	
+				  	<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='mySelect()' >查询</button>
+							<button type="reset" class="btn"  onclick='resetCondition()' >重置</button>
+						</div>
+				  	</div><br/>
+				  	
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">管理单位列表</span>
+					</h4>
+					
+				</div>
+				<div class="panel-body">
+					<!-- <div class="row">
+						<div class="col-md-12 space20">
+							<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/company/toUrl?toUrl=/manage/company/add.html');">
+								新增 <i class="fa fa-plus"></i>
+							</button>
+						</div>
+					</div> -->
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'byNo')">
+									报验单编号	${orderBy("byNo")}
+		      					</th>
+		      					<th class="hidden-xs" width="15%")">
+									维修个数（个）  	
+		      					</th>
+		      					<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'returnNum')">
+									维修退回数（个） 	${orderBy("returnNum")}
+		      					</th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'state')">
+									状态 	${orderBy("state")}
+		      					</th>
+		      					<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'confirmTime')">
+									确认时间 	${orderBy("confirmTime")}
+		      					</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(jiliang in splitPage.list){ %>
+								<tr id="trDom${jiliang.jlIds}">
+									<td class="hidden-xs" width="15%">${jiliang.byNo!}</td>
+									<td class="hidden-xs" width="15%" id="td${jiliang.jlIds}"></td>
+									<td class="hidden-xs" width="15%">${jiliang.returnNum!}</td>
+									<td class="hidden-xs" width="15%">
+										<%if(jiliang.state==0){%>
+											<span class="label label-danger">未计量</span>
+										<%}else if(jiliang.state==1){%>
+											<span class="label label-success">已计量</span>
+										<%}%>
+									</td>
+									<td class="hidden-xs" width="15%">${jiliang.confirmTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+									<td class="hidden-xs">
+
+										<button type="button" onclick="exportword('${jiliang.jlIds}','${splitPage.pageNumber}');" title='导出' style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+												<i class="fa fa-arrow-circle-o-down"></i>
+										</button>
+									</td>
+									<script type="text/javascript">
+											//通过ajax获取指定的维修数
+											$.ajax({
+												type:"post",
+												url:cxt+"/jf/manage/jiliang/getWeiXiuNum",
+												dataType:"json",
+												data : {"ids":"${jiliang.byanIds!}"},										
+												async: false,
+												success:function(data){
+													$("#td${jiliang.jlIds}").text(data.result);
+												}
+											});
+										</script>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			

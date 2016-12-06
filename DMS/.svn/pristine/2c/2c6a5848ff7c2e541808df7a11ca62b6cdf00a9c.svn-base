@@ -1,0 +1,67 @@
+package com.junl.dms.mvc.yanghuyhuizong;
+
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.junl.dms.mvc.yangHuLog.YangHuLog;
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/yanghuyhuizong")
+public class YangHuHuiZongController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(YangHuHuiZongController.class);
+	
+	
+	/**
+	 * 首页
+	 * @throws ParseException 
+	 */
+	public void index() throws ParseException {
+		String searchTime = getPara("searchtime");
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM");
+		if(searchTime != null){
+			Date date = sim.parse(searchTime);
+			cal.setTime(date);
+		}else{
+			Date dates =  cal.getTime();
+			searchTime = sim.format(dates);   
+		}
+		// 单价承包
+		List<Map<String,Object>> tabList = YangHuLogService.service.getTabInfo(String.valueOf(cal.get(Calendar.YEAR)),String.valueOf(cal.get(Calendar.MONTH)+1),searchTime);
+		setAttr("tabList",tabList);
+		setAttr("searchtime",searchTime);
+		render("/manage/yanghuhuizong/list.html");
+	}
+	
+	public void exportword() throws Exception{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String ids = getPara("ids");
+		YangHuLog yangHuLog = YangHuLog.dao.findById(ids);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(yangHuLog.getDate("yangHuTime"));
+		dataMap.put("year", cal.get(Calendar.YEAR));
+		dataMap.put("month", cal.get(Calendar.MONTH));
+		dataMap.put("day", cal.get(Calendar.DAY_OF_MONTH));
+		dataMap.put("yangHuLog", yangHuLog);
+		baseCreateWord(dataMap, "loglist.ftl", ids+".doc");
+	}
+	
+
+	
+
+}
+
+

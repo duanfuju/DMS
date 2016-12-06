@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.liefeng">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_WX_lieFengDispose order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_WX_lieFengDispose) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_WX_lieFengDispose where ids not in ( select top {1, number, #.#} ids from DMS_WX_lieFengDispose )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_WX_lieFengDispose ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				*
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+			FROM
+				DMS_WX_lieFengDispose liefeng
+			where 1=1
+			<% if(!isEmpty(wzName)){ %>
+					and liefeng.wzName like #'%$wzName$%'#
+			<% } %>
+			<% if(!isEmpty(state)){ %>
+					and liefeng.state = #'$state$'#
+			<% } %>	
+			<% if(!(isEmpty(sdate))){ 
+			%>
+					and liefeng.weiXiuTime  between #'$sdate$'# 
+					<% if(!(isEmpty(edate))){ 
+					%>
+						and #'$edate$'#
+					<% } %>
+					<% if((isEmpty(edate))){ 
+					%>
+						and getdate()
+					<% } %>
+			<% } %>		
+			<% if(1==2){ %>
+				<% if(!isEmpty(createUserId)&&createUserId!="03a44ba0aa4e4905bea726d4da976ba5"){ %>
+						and liefeng.createUserId like #'%$createUserId$%'#
+				<% } %>
+			<% } %>
+			
+			<% if(!isEmpty(sql)){ %>
+						${sql}
+				<% } %>
+    	]]>
+	</sql>
+	<!-- 根据id查询信息 -->
+	<sql id="findById">
+		<![CDATA[ 
+			SELECT
+				lf.*, t.taskNo,t.createTime,t.yuJiTaskEndTime,t.fuZeRen FZR,x.xunChaTime,x.xiuBuBiaoZhi,x.binghaiOrQueXianType,t.paiDanDate,z.name wxmkName
+			FROM
+				DMS_WX_lieFengDispose lf
+			LEFT JOIN DMS_RW_task_info_relate tir ON tir.ids = lf.taskInfoRelate
+			LEFT JOIN DMS_RW_task t ON tir.taskId = t.ids
+			LEFT JOIN DMS_XC_xunChaInfo x ON x.ids = tir.xunChaInfoId
+			LEFT JOIN DMS_PZ_chooseInfo z ON z.ids = x.wxmkId 
+			WHERE
+				lf.ids =?
+    	]]>
+	</sql>
+	
+	
+	
+	<sql id="findTaskForUpdate">
+		<![CDATA[ 
+				SELECT
+				lf.*, t.taskNo,t.createTime,t.yuJiTaskEndTime,t.fuZeRen FZR,x.xunChaTime,x.xiuBuBiaoZhi,x.binghaiOrQueXianType,t.paiDanDate,z.name wxmkName,
+				x.xunChaStartZHK,x.xunChaStartZHM,x.xunChaEndZHK,x.xunChaEndZHM,x.yuGuGongChengLiang,x.yuGuGongChengLiangDw
+			FROM
+				DMS_WX_lieFengDispose lf
+			LEFT JOIN DMS_RW_task_info_relate tir ON tir.ids = lf.taskInfoRelate
+			LEFT JOIN DMS_RW_task t ON tir.taskId = t.ids
+			LEFT JOIN DMS_XC_xunChaInfo x ON x.ids = tir.xunChaInfoId
+			LEFT JOIN DMS_PZ_chooseInfo z ON z.ids = x.wxmkId
+			WHERE
+				lf.ids =?
+    	]]>
+	</sql>
+</sql-statement>

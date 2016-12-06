@@ -1,0 +1,56 @@
+<div id="childrenPanel">
+<form id="childrenSplitPage" action="${cxt!}/jf/manage/weixiurecord/youwuxinfo" method="POST" role="form" class="form-horizontal">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body">
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<td class="hidden-xs" >
+									桩号
+								</td>
+								<td class="hidden-xs">
+									位置
+								</td>
+								
+								<td class="hidden-xs">
+									施工机械
+								</td>
+								<td class="hidden-xs">
+									维修人员
+								</td>
+								<td class="hidden-xs">
+									安全员
+								</td>
+								
+								<td class="hidden-xs">
+									负责人
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							
+							<% for(youwu in youwulist){ %>
+								<tr>
+								<td class="hidden-xs">K${youwu.startZHK}+${youwu.startZHM}~K${youwu.endZHK}+${youwu.endZHM}</td>
+								<td class="hidden-xs">${youwu.luXian}/${youwu.wzType}/${youwu.wzName}/${youwu.wzMiaoShu}</td>
+								<td class="hidden-xs">${youwu.shiGongJiXie}</td>
+								<td class="hidden-xs">${youwu.weiXiuRenYuan}</td>
+								<td class="hidden-xs">${youwu.anQuanYuan}</td>
+								<td class="hidden-xs">${youwu.fuZeRen}</td>
+								</tr>
+								
+								
+							<% } %>
+							
+						</tbody>
+					</table>
+					
+					
+						
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+</form>			
+</div>
+<

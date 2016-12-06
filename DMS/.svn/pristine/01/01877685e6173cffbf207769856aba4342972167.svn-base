@@ -1,0 +1,119 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input[type='text']").attr("value","");
+}
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+    
+    $("#planMonth").val( date.getFullYear() + seperator1 + month);
+}
+getNowFormatDate();
+</script>
+
+<div id="divModel" style="font-size: 13px">
+	<form id="splitPageModel" action="${cxt}/jf/manage/dayplan/select" method="POST" role="form" class="form-horizontal">
+		<div class="form-group" style="width: 80%">
+			<label class="col-sm-2 control-label" for="form-field-1">
+				选择日计划月份
+			</label>
+			<div class="col-sm-3">
+				<input type="text" name="_query.planMonth" id="planMonth"  value='${escapeXml(paramMap["_query.planMonth"])}' onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM'})"class="form-control" >
+			</div>
+		</div>
+	  	
+		<div class="form-group" style="width: 80%">
+			<div class="col-sm-4 col-sm-offset-5">
+				<button type="button" class="btn btn-primary" onclick='common_ajax.ajaxFormDiv("divModel","splitPageModel");'>查询</button>
+				<button type="reset" class="btn" onclick="resetCondition()">重置</button>
+			</div>
+	  	</div>
+		
+		<input  type="hidden" name="_query.taskRelateState" value='${escapeXml(paramMap["_query.taskRelateState"])}' >
+		<div class="panel panel-white">
+			<div class="panel-body">	
+				<table class="table table-bordered table-hover" id="dataTable" style="font-size: 13px" >
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="5%" >
+								<input type="checkbox" name="checkAll" id="checkAll" class="flat-grey selectall" 
+									onchange="checkedAll('dataTable', this.checked);"> 
+	      					</th>
+							<th class="hidden-xs" width="10%">
+								日期 	
+	      					</th>
+							<th class="hidden-xs" width="20%" >
+								路线 	
+	      					</th>
+	      					<th class="hidden-xs" width="20%">
+								桩号范围 	
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人	
+	      					</th>
+	      					<th class="hidden-xs" width="10%">
+								机械设备
+	      					</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(dayplan in splitPage.list){ %>
+							<tr id="trDom${dayplan.ids}">
+								<td class="hidden-xs">
+									<input id="${dayplan.ids!}" type="checkbox" name="checkIds" 
+										value="${dayplan.ids!}" onclick="getCheckboxs()" class="flat-grey foocheck">
+								</td>
+								<td class="hidden-xs">${dayplan.planTime!,dateFormat="yyyy-MM-dd"}</td>
+								<td class="hidden-xs">${dayplan.luXian!}/${dayplan.wzType!}/${dayplan.wzName!}/${dayplan.wzMiaoShu!}</td>
+								<td class="hidden-xs">K${dayplan.startZHK!}  +  ${dayplan.startZHM!}  ~  K${dayplan.endZHK!} +${dayplan.endZHM!}</td>
+								<td class="hidden-xs">${dayplan.fuZePeople!}</td>
+								<td class="hidden-xs">${dayplan.jiXieSheBei!}</td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+				
+				<div class="row" id="splitPageDivModel" >
+					<% include("/common/splitPage.html", {"divId" : "divModel", "formId" : "splitPageModel", "splitPageDiv" : "splitPageDivModel"}){} %>
+				</div>
+			</div>
+		</div>	
+	</form>
+</div>			
+
+<script type="text/javascript">
+function getCheckboxs(){   
+	var vals = $("input[name=checkIds]:checked").map(function() { 
+        return this.value; 
+    }).get().join();
+	window.getDayPlanIds=vals;
+	calcCheckedCount();
+}
+//计算选中维修数和所占百分比	
+function calcCheckedCount(){
+	var total=$("input[name='checkIds']").length;
+	var num=$("input[name='checkIds']:checked").length;
+	if(total==num){
+		$("#checkAll").prop("checked", true);
+	}else{
+		$("#checkAll").prop("checked", false);
+	}
+}	
+//全选和反选
+function checkedAll(id, checked){
+	$("#" + id + " input[name='checkIds']").each(function(){
+		$(this).prop("checked", checked);
+    });
+	getCheckboxs();
+}
+</script>

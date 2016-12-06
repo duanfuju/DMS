@@ -1,0 +1,47 @@
+package com.junl.dms.mvc.yanghuyhuizong;
+
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.platform.mvc.base.BaseService;
+
+public class YangHuLogService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(YangHuLogService.class);
+
+	public static final YangHuLogService service = new YangHuLogService();
+
+	public boolean save(YangHuHuiZong yangHuLog) {
+		return yangHuLog.save();
+	}
+
+	public boolean delete(String ids) {
+		return YangHuHuiZong.dao.deleteById(ids);
+	}
+
+	public YangHuHuiZong findById(String ids) {
+		YangHuHuiZong yangHuLog = YangHuHuiZong.dao.findById(ids);
+		return yangHuLog;
+	}
+	
+	public boolean update(YangHuHuiZong yangHuLog){
+		return yangHuLog.update();
+	}
+	
+	
+	public List<Record> getTabName(){
+		String sql = "SELECT firstLevelNumberDetail FROM DMS_PZ_yanShouXinXi GROUP BY firstLevelNumberDetail";
+		List<Record> tabList = Db.find(sql);
+		for (int i = 0; i < tabList.size(); i++) {
+			Record record = tabList.get(i);
+			record.set("index", i+1);
+		}
+		return tabList;
+	}
+	
+}

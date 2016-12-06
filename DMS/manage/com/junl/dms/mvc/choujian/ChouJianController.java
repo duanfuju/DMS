@@ -1,0 +1,355 @@
+package com.junl.dms.mvc.choujian;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.PropKit;
+import com.junl.dms.mvc.jiling.JiLiang;
+import com.junl.dms.mvc.jiling.JiLiangService;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/choujian")
+public class ChouJianController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(ChouJianController.class);
+	
+	/**
+	 * 首页		抽检
+	 */
+	public void index() {
+		if((splitPage.getOrderColunm() == null || ("").equals(splitPage.getOrderColunm()))
+				&& (splitPage.getOrderMode() == null || ("").equals(splitPage.getOrderMode()))) {
+			splitPage.setOrderColunm("byan.createTime");
+			splitPage.setOrderMode("desc");
+		}
+		paging(ConstantInit.db_dataSource_main, splitPage, ChouJian.sqlId_splitPageSelect, ChouJian.sqlId_splitPageFrom);
+		render("/manage/choujian/list.html");
+	}
+	
+	
+	
+	
+	/**
+	 * 首页			/jf/manage/choujian/index1	验收	
+	 */
+	public void index1() {
+		if(!splitPage.getQueryParam().containsKey("state")) {
+			splitPage.getQueryParam().put("_state", "0");
+		}
+		if((splitPage.getOrderColunm() == null || ("").equals(splitPage.getOrderColunm()))
+				&& (splitPage.getOrderMode() == null || ("").equals(splitPage.getOrderMode()))) {
+			splitPage.setOrderColunm("byan.createTime");
+			splitPage.setOrderMode("desc");
+		}
+		paging(ConstantInit.db_dataSource_main, splitPage, ChouJian.sqlId_splitPageSelect, ChouJian.sqlId_splitPageFrom);
+		render("/manage/choujian/list1.html");
+	}
+	/**
+	 * 	/jf/manage/choujian/showWeiXiu
+	 */
+	public void showWeiXiu(){
+		String  byanIds = getPara("ids");
+		boolean isAccept=getParaToBoolean("type");
+		List<Map<String, Object>> list=new ArrayList<Map<String, Object>>();
+		if (isAccept) {
+			list= JiLiangService.service.getWeiXiuRecord(byanIds);
+		}else{//退回的维修数据
+			list= JiLiangService.service.getWeiXiuRecord_return(byanIds);
+		}
+		setAttr("list",list);
+		render("/manage/choujian/showWeiXiu.html");
+	}
+	
+	
+	/**
+	 * 获取通过的次数
+	 */
+	public void getAcceptNum(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String  ids = getPara("ids");
+			//根据ids获取当前的计量数据
+			JiLiang jiliang=JiLiangService.service.findByIds(ids);
+			//根据任务编号获取所有的维修记录数
+			List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+			int num=0;
+			for (int i = 0; i < list.size(); i++) {
+				Map<String, Object> map=list.get(i);
+				String state=map.get("wxState").toString();
+				if (state.equals("3")) {
+					num++;
+				}
+			}
+			jsonObject.put("result", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", 0);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	/**
+	 * 获取通过的数据
+	 */
+	public void showAccept(){
+		String  ids = getPara("ids");
+		List<Map<String, Object>> _list=new ArrayList<Map<String, Object>>();
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map=list.get(i);
+			String state=map.get("wxState").toString();
+			if (state.equals("3")) {
+				_list.add(map);
+			}
+		}
+		setAttr("list",_list);
+		render("/manage/choujian/showAccept.html");
+	}
+	
+	
+	/**
+	 * 获取未通过的次数
+	 */
+	public void getNoAcceptNum(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String  ids = getPara("ids");
+			//根据ids获取当前的计量数据
+			JiLiang jiliang=JiLiangService.service.findByIds(ids);
+			//根据任务编号获取所有的维修记录数
+			List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+			int num=0;
+			for (int i = 0; i < list.size(); i++) {
+				Map<String, Object> map=list.get(i);
+				String state=map.get("wxState").toString();
+				if (state.equals("4")) {
+					num++;
+				}
+			}
+			jsonObject.put("result", num);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", 0);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	/**
+	 * 获取未通过的数据
+	 */
+	public void showNoAccept(){
+		String  ids = getPara("ids");
+		List<Map<String, Object>> _list=new ArrayList<Map<String, Object>>();
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+		for (int i = 0; i < list.size(); i++) {
+			Map<String, Object> map=list.get(i);
+			String state=map.get("wxState").toString();
+			if (state.equals("4")) {
+				_list.add(map);
+			}
+		}
+		setAttr("list",_list);
+		render("/manage/choujian/showNoAccept.html");
+	}
+	
+	/**
+	 * 跳转到验收的页面		/jf/manage/choujian/checkAndAccept	验收	
+	 */
+	public void checkAndAccept() {
+		String ids = getPara("ids");
+		String cjIds = getPara("cjIds");
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据计量数据所关联的报验编号查询维修数量
+		int weiXiuNum=JiLiangService.service.getWeiXiuNum(jiliang.getStr("byanIds"));
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+		String hegelv = PropKit.get("hegelv");
+		setAttr("hegelv",hegelv);
+		setAttr("list",list);
+		setAttr("jiliang",jiliang);
+		setAttr("weiXiuNum",weiXiuNum);
+		setAttr("cjIds",cjIds);
+		setAttr("ids",ids);
+		render("/manage/choujian/checkAndAccept.html");
+	}
+	/**
+	 * 跳转到验收的查看页面	/jf/manage/choujian/view1	验收	
+	 */
+	public void view1() {
+		String ids = getPara("ids");
+		String cjIds = getPara("cjIds");
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据计量数据所关联的报验编号查询维修数量
+		int weiXiuNum=JiLiangService.service.getWeiXiuNum(jiliang.getStr("byanIds"));
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+		String hegelv = PropKit.get("hegelv");
+		setAttr("hegelv",hegelv);
+		setAttr("list",list);
+		setAttr("jiliang",jiliang);
+		setAttr("weiXiuNum",weiXiuNum);
+		setAttr("cjIds",cjIds);
+		setAttr("ids",ids);
+		render("/manage/choujian/view1.html");
+	}
+	/**
+	 * 是否通过		/jf/manage/choujian/isAccept 		验收
+	 */
+	public void isAccept(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String isAppcept = getPara("isAppcept");
+			String weiXiuIds = getPara("weiXiuIds");
+			boolean result = ChouJianService.service.isAccept(weiXiuIds,isAppcept);
+			String result_desc="操作失败！";
+			if(result){
+				result_desc="操作成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	/**
+	 * 修改计量的状态		验收
+	 */
+	public void save1(){
+		
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String cjIds = getPara("cjIds");
+			boolean result = ChouJianService.service.save1(cjIds);
+			String result_desc="验收失败！";
+			if(result){
+				result_desc="验收成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 跳转抽检页面		/jf/manage/choujian/sampling	抽检
+	 */
+	public void sampling(){
+		String ids = getPara("ids");
+		String cjIds = getPara("cjIds");
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据计量数据所关联的报验编号查询维修数量
+		int weiXiuNum=JiLiangService.service.getWeiXiuNum(jiliang.getStr("byanIds"));
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord(jiliang.getStr("byanIds"));
+		String hegelv = PropKit.get("hegelv");
+		setAttr("hegelv",hegelv);
+		setAttr("list",list);
+		setAttr("jiliang",jiliang);
+		setAttr("weiXiuNum",weiXiuNum);
+		setAttr("cjIds",cjIds);
+		render("/manage/choujian/sampling.html");
+	}
+	
+	/**
+	 * 修改抽检的状态		/jf/manage/choujian/save	抽检
+	 */
+	public void save(){
+		
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String weiXiu_array =  getPara("weiXiu_array");
+			String task_array = getPara("task_array");
+			String cjIds = getPara("cjIds");
+			boolean result = ChouJianService.service.save(cjIds,weiXiu_array,task_array);
+			String result_desc="抽检失败！";
+			if(result){
+				result_desc="抽检成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	/**
+	 * 跳转查看页面		/jf/manage/choujian/view
+	 */
+	public void view(){
+		String ids = getPara("ids");
+		String cjIds = getPara("cjIds");
+		//根据ids获取当前的计量数据
+		JiLiang jiliang=JiLiangService.service.findByIds(ids);
+		//根据计量数据所关联的报验编号查询维修数量
+		int weiXiuNum=JiLiangService.service.getWeiXiuNum(jiliang.getStr("byanIds"));
+		//根据任务编号获取所有的维修记录数
+		List<Map<String, Object>> list= JiLiangService.service.getWeiXiuRecord_accept(jiliang.getStr("byanIds"));
+		String hegelv = PropKit.get("hegelv");
+		setAttr("hegelv",hegelv);
+		setAttr("list",list);
+		setAttr("jiliang",jiliang);
+		setAttr("weiXiuNum",weiXiuNum);
+		setAttr("cjIds",cjIds);
+		render("/manage/choujian/view.html");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

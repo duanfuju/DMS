@@ -1,0 +1,65 @@
+package com.junl.dms.mvc.checkinfo;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.mappoint.MapPointController;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/checkInfo")
+public class CheckInfoController extends BaseController {
+	
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(MapPointController.class);
+	
+	/**
+	 * 跳转验收信息配置首页
+	 */ 
+	public void index() {
+		render("/manage/checkinfo/index.html");
+	}
+	
+	/**
+	 * 获取父级菜单
+	 */
+	public void getParentMenu()
+	{
+		JSONObject json = new JSONObject();
+		List<Map> menuMapList = CheckInfoServiceImpl.getIntance().getParentMenuMap();
+		json.put("menu", menuMapList);
+		renderJson(json.toJSONString());
+	}
+	/**
+	 * /jf/manage/checkInfo/menuList
+	 */
+	public void menuList(){
+		paging(ConstantInit.db_dataSource_main, splitPage, CheckInfo.sqlId_splitPageSelect, CheckInfo.sqlId_splitPageFrom);
+		render("/manage/checkinfo/list.html");
+	}
+	
+	public void showAdd()
+	{
+		render("/manage/checkinfo/add.html");
+	}
+	
+	public void showUpdate()
+	{
+		render("/manage/checkinfo/update.html");
+	}
+	
+	public void delete()
+	{
+		
+	}
+	
+	
+
+}

@@ -1,0 +1,275 @@
+<script type="text/javascript">
+var start;
+var end;
+function mySelect(){
+	 start = $("#xunChaStartTime").val();
+	end = $("#xunChaEndTime").val();
+	common_ajax.ajaxFormMainPanel("splitPage");
+	selectDate();
+}
+function selectDate(){
+	$("#xunChaStartTime").val(start);
+	$("#xunChaEndTime").val(end);
+}
+function resetDate(){
+	$("#xunChaStartTime").attr("value","");
+	$("#xunChaEndTime").attr("value","");
+	$("input[name='_query.fuZeRen']").attr("value","");
+}
+// 导出word文档
+function exportword(ids,pageNumber){
+ 	var h = cxt+"/uploadword/"+"renwudan-"+ids+".doc";
+	$.ajax({	
+		url:cxt+'/jf/manage/renwudanList/chakan',
+		type: "post",
+		data: {"ids":ids, "pageNumber":pageNumber},
+		async: false,
+		success:function(data){
+			if(data.isSuccess)
+			{
+				window.location.href=h;	
+			}
+			else
+			{
+				layer.msg("请求失败！");
+			}
+		}
+	}); 
+
+
+}
+
+
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">任务单</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/renwudanList" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">路线查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label">负责人</label>
+						<div class="col-sm-4">
+					  		<input class="form-control focused" type="text" name="_query.fuZeRen" value='${escapeXml(paramMap["_query.fuZeRen"])}' maxlength="20" >
+						</div>
+				  	</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							派单时间
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaStartTime" name="_query.sdate" value='${escapeXml(paramMap["_query.sdate"])}'   onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+						<label class="col-sm-1 control-label" style="text-align: left;width: 1%" for="form-field-1">
+							~
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaEndTime" name="_query.edate"  value='${escapeXml(paramMap["_query.edate"])}'  class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" >
+						</div>
+					</div>
+				  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='mySelect()'>查询</button>
+							<button type="reset" class="btn" onclick="resetDate()">重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">任务列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<table class="table table-bordered table-hover" id="dataTable" >
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'taskNo');selectDate()">
+									任务单编号  	${orderBy("taskNo")}
+		      					</th>
+		      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'fuZeRen');selectDate()">
+									负责人  	${orderBy("fuZeRen")}
+		      					</th>
+								<!-- <th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'tcreateTime');selectDate()">
+									任务创建时间  	${orderBy("tcreateTime")}
+		      					</th> -->
+		      					<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'yuJiTaskEndTime');selectDate()">
+									预计任务结束时间  	${orderBy("yuJiTaskEndTime")}
+		      					</th>
+		      					
+								<!-- <th class="hidden-xs" width="5%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'taskState');selectDate()">
+									任务状态  	${orderBy("taskState")}
+		      					</th> -->
+		      					
+		      					<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'paiDanDate');selectDate()">
+									派单日期  	${orderBy("paiDanDate")}
+		      					</th>
+							
+								<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'DiseaseNumber');selectDate()">
+										任务数量${orderBy("DiseaseNumber")}
+								</td>
+								
+								<!-- <td class="hidden-xs" >
+									致	
+								</td> -->
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(rwtask in splitPage.list){ %>
+								<tr id="trDom${rwtask.tids}" >
+									
+									<td class="hidden-xs">${rwtask.taskNo!}</td>
+									<td class="hidden-xs">${rwtask.fuZeRen!}</td>
+									<!-- <td class="hidden-xs">${rwtask.tcreateTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td> -->
+									<td class="hidden-xs">${rwtask.yuJiTaskEndTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+									<!-- <td class="hidden-xs">
+										<%
+											if(rwtask.taskState==0){
+										%>
+											未处理
+										<%
+											}else if(rwtask.taskState==1){
+										%>
+											处理中
+										<%
+											}else if(rwtask.taskState==2){
+										%>
+											已完结
+										<%
+											}
+										%>
+									
+									</td> -->
+									
+									<td class="hidden-xs">${rwtask.paiDanDate!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								
+									<td class="hidden-xs" >
+									
+									
+									
+									
+									<%if(rwtask.DiseaseNumber=='0'){%>
+										<span class="label label-danger" onclick="javascript:layer.msg('没有关联信息');">${rwtask.DiseaseNumber!}</span>
+									<%}else{%>
+										<span onclick="showXunChaInfo('${rwtask.tids}')" class="label label-success">${rwtask.DiseaseNumber!}</span>
+									<%}%>
+									
+									</td>
+								
+									<!-- <td class="hidden-xs">${rwtask.byu!}</td> -->
+									
+								
+									<td class="hidden-xs">
+										<button type="button" onclick="exportword('${rwtask.tids}','${splitPage.pageNumber}');" title='导出' style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+												<i class="fa fa-arrow-circle-o-down"></i>
+										</button>
+											
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+	function rwtaskDelete(ids){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var resultData=common_ajax.ajaxFunc("/jf/manage/rwtask/delete",{"ids":ids},"JSON");
+			if(resultData==""){
+				layer.msg("请求失败！")
+			}else{
+				layer.msg(resultData.result_desc);
+				if(resultData.result){
+					$("#trDom"+ids).fadeOut('fast',function(){
+						$("#trDom"+ids).remove()();
+					});
+				}
+				
+			}
+		});
+	}
+	function showXunChaInfo(ids){
+		var url="/jf/manage/rwtask/getXunChaInfoByIds";
+   		var width=850;
+   		var height=500;
+   		var title="关联巡查信息";
+   		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + url)),
+			data : {"ids":ids},
+			dataType : "HTML",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			async: false,
+			cache: false,
+			success:function(response){
+				result = response;
+				layer.open({
+				  type: 1, //page层
+				  area: [width+'px', height+'px'],
+				  title: title,
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  content: result,
+				  btn:['确定'],
+				  btn1:function(){
+					  layer.closeAll();
+				  }
+				});
+			}
+		});
+	}
+	
+	
+		
+   		
+</script>

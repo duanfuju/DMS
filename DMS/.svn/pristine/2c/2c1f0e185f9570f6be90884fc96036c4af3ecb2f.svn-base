@@ -1,0 +1,330 @@
+package com.junl.dms.mvc.rwtask;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.baoyan.BaoYanService;
+import com.junl.dms.mvc.bycenter.ByCenterService;
+import com.junl.dms.mvc.chooseinfo.ChooseInfo;
+import com.junl.dms.mvc.chooseinfo.ChooseInfoService;
+import com.junl.dms.mvc.taskinforelate.TaskInfoRelate;
+import com.junl.dms.mvc.xunchainfo.XunChaInfo;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.constant.ConstantWebContext;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/rwtask")
+public class RwTaskController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(RwTaskController.class);
+
+	/**
+	 * 根据弹出框传过来的table名称（维修记录的类型）和子任务的编号查询，此任务中的维修记录
+	 * /jf/manage/rwtask/getWeiXiuJiLuByTaskId
+	 */
+	public void getWeiXiuJiLuByTaskId() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String table = getPara("table");
+			String tirIds = getPara("tirIds");
+			List<Map<String, Object>> result = RwTaskService.service
+					.getWeiXiuJiLuByTaskId(table, tirIds);
+			boolean flag = false;
+			if (result.size() > 0) {
+				flag = true;
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("flag", flag);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("flag", false);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	/**
+	 * 根据弹出框传过来的子任务的编号查询，此任务中的维修记录
+	 * /jf/manage/rwtask/getWeiXiuJiLuByTaskIdFromTables
+	 */
+	public void getWeiXiuJiLuByTaskIdFromTables() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String tirIds = getPara("ids");
+			List<Map<String, Object>> result = BaoYanService.service
+					.getWeiXiuJiLuByIdFromTables(tirIds);
+			boolean flag = false;
+			if (result.size() > 0) {
+				flag = true;
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("flag", flag);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("flag", false);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	/**
+	 * 根据维修ID获取维修信息
+	 * hank
+	 */
+	public void getWeiXiuJiLuByIdFromTables() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String tirIds = getPara("ids");
+			List<Map<String, Object>> result = RwTaskService.service.getWeiXiuJiLuByTaskIdFromTables(tirIds);
+			boolean flag = false;
+			if (result.size() > 0) {
+				flag = true;
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("flag", flag);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("flag", false);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+
+	/**
+	 * 首页
+	 */
+	public void index() {
+		if ((splitPage.getOrderColunm() == null || ("").equals(splitPage
+				.getOrderColunm()))
+				&& (splitPage.getOrderMode() == null || ("").equals(splitPage
+						.getOrderMode()))) {
+			splitPage.setOrderColunm("tcreateTime");
+			splitPage.setOrderMode("desc");
+		}
+
+		paging(ConstantInit.db_dataSource_main, splitPage,
+				RwTask.sqlId_splitPageSelect_d, RwTask.sqlId_splitPageFrom_d);
+		render("/manage/rwtask/list.html");
+	}
+
+	/**
+	 * 向新增界面跳转
+	 */
+	public void add() {
+		List<ChooseInfo> chooseInfo = ChooseInfoService.service
+				.findListByType(2);
+		setAttr("chooseInfo", chooseInfo);
+		Date currentTime = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+		// 生成任务单号
+		int taskNum = RwTaskService.service.getTaskNo();
+		String taskNum_str = RwTaskService.service.intToStrong(taskNum);
+		setAttr("taskPre", "XZYH");
+		setAttr("taskNum", taskNum);
+		setAttr("taskNo", "XZYH" + formatter.format(currentTime) + "-"
+				+ taskNum_str);
+
+		render("/manage/rwtask/add.html");
+	}
+
+	/**
+	 * 查询巡查信息（state！=1）没有关联任务的记录
+	 */
+	public void bindingXunChaInfo() {
+		String xunChaInofType = getPara("xunChaInofType");
+		splitPage.getQueryParam().put("state", "0");
+		splitPage.getQueryParam().put("xunChaInofType", xunChaInofType);
+		// splitPage.setOrderColunm("createTime");
+		// splitPage.setOrderMode("desc");
+
+		if ((splitPage.getOrderColunm() == null || ("").equals(splitPage
+				.getOrderColunm()))
+				&& (splitPage.getOrderMode() == null || ("").equals(splitPage
+						.getOrderMode()))) {
+			splitPage.setOrderColunm("createTime");
+			splitPage.setOrderMode("desc");
+		}
+
+		paging(ConstantInit.db_dataSource_main, splitPage,
+				XunChaInfo.sqlId_splitPageSelect,
+				XunChaInfo.sqlId_splitPageFrom);
+		render("/manage/rwtask/select.html");
+	}
+
+	public void getXunChaInfoByIds() {
+		String ids = getPara("ids");
+		List<Record> list = RwTaskService.service.getXunChaInfoByIds(ids);
+		setAttr("list", list);
+		render("/manage/rwtask/show.html");
+	}
+
+	public void save() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String userIds = getAttr(ConstantWebContext.request_cUserIds);
+
+			// 获取巡查信息的id集合
+			String xunChaInfoIds = getPara("xunChaInfoIds_h");
+
+			RwTask rwtask = getModel(RwTask.class);
+			boolean result = RwTaskService.service.save(rwtask, userIds,
+					xunChaInfoIds);
+			String result_desc = "新增失败！";
+			if (result) {
+				result_desc = "新增成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	public void delete() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String ids = getPara("ids");
+			boolean result = RwTaskService.service.delete(ids);
+			String result_desc = "删除失败！";
+			if (result) {
+				result_desc = "删除成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	public void showUpdate() {
+		String ids = getPara("ids");
+		Integer pageNumber = getParaToInt("pageNumber");
+		RwTask rwtask = RwTaskService.service.findById(ids);
+		List<ChooseInfo> chooseInfo = ChooseInfoService.service
+				.findListByType(2);
+		List<RwTask> xcInfoList = RwTaskService.service.findByTaskId(ids);
+		List<Map<String, String>> bcList = ByCenterService.service.findList();
+		setAttr("chooseInfo", chooseInfo);
+		setAttr("rwTask", rwtask);
+		setAttr("taskNo", rwtask.getStr("taskNo"));
+		setAttr("pageNumber", pageNumber);
+		setAttr("xcInfoList", xcInfoList);
+		setAttr("bcList", bcList);
+		render("/manage/rwtask/update.html");
+	}
+
+	public void update() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			RwTask rwtask = getModel(RwTask.class);
+			String xunChaInfoIds = getPara("xunChaInfoIds_h");
+			boolean result = RwTaskService.service
+					.update(rwtask, xunChaInfoIds);
+			String result_desc = "修改失败！";
+			if (result) {
+				result_desc = "修改成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	/**
+	 * 选择任务
+	 */
+	public void choose() {
+		paging(ConstantInit.db_dataSource_main, splitPage,
+				RwTask.sqlId_splitPageSelect, RwTask.sqlId_splitPageFrom);
+		render("/manage/rwtask/choose.html");
+	}
+
+	// 选择已完成的子任务
+	public void choose_checkBox() {
+		paging(ConstantInit.db_dataSource_main, splitPage,
+				RwTask.sqlId_splitPageSelect, RwTask.sqlId_splitPageFrom);
+		render("/manage/rwtask/chooseCheckBox.html");
+	}
+
+	public void overSmallTask() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+
+			String ids = getPara("ids");
+			TaskInfoRelate taskInfoRelate = TaskInfoRelate.dao.findById(ids);
+			taskInfoRelate.set("overTime",
+					new Timestamp(System.currentTimeMillis()));
+			taskInfoRelate.set("state", 1);
+			boolean result = taskInfoRelate.update();
+			String result_desc = "完结任务失败！";
+			if (result) {
+				result_desc = "完结任务成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	public void deleteTaskRelateInUpdate() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String taskRelateIds = getPara("taskRelateIds");
+			String rwTaskIds = getPara("rwTaskIds");
+			boolean result = RwTaskService.service.deleteTaskRelateInUpdate(
+					taskRelateIds, rwTaskIds);
+			String result_desc = "删除失败！";
+			if (result) {
+				result_desc = "删除成功！";
+			}
+			jsonObject.put("result", result);
+			jsonObject.put("result_desc", result_desc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result", false);
+			jsonObject.put("result_desc", "操作失败！");
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+	public void searchlist() {
+
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String ids = getPara("ids");
+			String wxmkid = getPara("wxmkid");
+			String sql = getSql("manage.fangzhl.aaa");
+			List<Record> list = Db.find(sql, wxmkid, ids);
+			jsonObject.put("list", list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+
+}

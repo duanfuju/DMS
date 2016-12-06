@@ -1,0 +1,170 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/fangzhl');">防撞护栏部件配置</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增防撞护栏部件</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" action="${cxt!}/jf/manage/fangzhl/add" method="POST" role="form" class="form-horizontal">	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">部件名称</label>
+						<div class="col-sm-7">
+							<input type="text" id="idcardId" name="fangZHL.name" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+					<label class="col-sm-2 control-label"></label>
+						<div class="col-sm-7">
+						<table
+							class="table table-striped table-bordered bootstrap-datatable " >
+							<thead>
+								<th width="300px">部件型号</th>
+								<th width="300px">部件单位</th>
+								<th width="150px"><a href="#" onclick="addlist();">添加</a></th>
+							</thead>
+							<tbody id="tbody-list" >
+								<tr id="clone-target" >
+							<td >
+								<input type="text" id="idcardId" name="type2" class="form-control">
+								
+							</td>
+							<td >
+								<input type="text" id="idcardId" name="danWei2" class="form-control">
+							</td>
+							<td ><a href="#"  >删除</a></td>
+						</tr>
+							</tbody>
+						
+						</table>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<input type="hidden" id="idcardId" name="fangZHL.type" class="form-control">
+					<!-- <div class="form-group">
+						
+						<table
+							class="table table-striped table-bordered bootstrap-datatable " style="width:40%;margin-left:20%">
+							<thead>
+								<th width="80%">部件单位</th>
+								
+								<th width="20%"><a href="#" onclick="addlist2();">添加</a></th>
+							</thead>
+							<tbody id="tbody-list2">
+						<tr id="clone-target2">
+							<td>
+								<input type="text" id="idcardId" name="danWei" class="form-control">
+							</td>
+							
+							<td ><a href="#" >删除</a></td>
+						</tr>
+					</tbody>
+						</table>
+						<span class="help-inline col-sm-2"> </span>
+					</div> -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">排序</label>
+						<div class="col-sm-3">
+							<input type="text" id="idcardId" name="fangZHL.sort"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" class="form-control">
+						</div>
+						
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<input type="hidden" id="idcardId" name="fangZHL.danWei" class="form-control">
+					
+					
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-3">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$("#clone-target").hide();
+	addlist();
+	function mySubmit(){
+		var arrays = new Array();
+		var type =$("[name='type']") 
+		for (var i = 0, j = type.length; i < j; i++){
+			arrays[i]= type[i].value;
+		}
+		
+		$("[name='fangZHL.type']").attr("value",arrays.join("|"));
+		var arr = new Array();
+		var danWei =document.getElementsByName("danWei"); 
+		for (var i = 0, j = danWei.length; i < j; i++){
+			arr[i]= danWei[i].value;
+		}
+		$("[name='fangZHL.danWei']").attr("value",arr.join("|"));
+		var fzname=$("[name='fangZHL.name']").val();
+		if(fzname==""){
+			layer.msg("部件名称不能为空");
+			return;
+		}
+		for (var i = 0, j = type.length; i < j; i++){
+			if(type[i].value==""){
+				layer.msg("部件型号不能为空");
+				return;
+			}
+		} 
+		 for (var i = 0, j = danWei.length; i < j; i++){
+			if(danWei[i].value==""){
+				layer.msg("部件单位不能为空");
+				return;
+			}
+		}
+		var paixun = $("[name='fangZHL.sort']").val();
+		if(paixun==""){
+			layer.msg("排序信息不能为空");
+			return;
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/fangzhl");
+			}
+		}
+		
+	}
+	
+	
+	function addlist(){
+		var temp = $('#clone-target').clone();
+		
+		temp.show();
+		temp.find("[name='type2']").attr("name","type");
+		temp.find("[name='danWei2']").attr("name","danWei")
+		temp.find('input').val('');
+		temp.find('a').attr("onclick","del(this)");
+		$('#tbody-list').append(temp);
+	}
+	
+	function del(me){
+		$(me).parent().parent().remove();
+	}
+	
+	
+</script>	

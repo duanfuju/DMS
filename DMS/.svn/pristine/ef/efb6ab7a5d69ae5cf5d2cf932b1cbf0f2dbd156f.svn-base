@@ -1,0 +1,472 @@
+package com.junl.dms.mvc.weixiurecord;
+
+
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONObject;
+
+import com.alibaba.fastjson.JSONArray;
+import com.jfinal.kit.PropKit;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.roadassessment.roadtechnicstate.RoadTechnicStatePro;
+import com.junl.dms.tools.ExcelTools;
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+@Controller(controllerKey = "/jf/manage/weixiurecord")
+public class WeiXiuRecordController extends BaseController{
+	/**
+	 * 
+	 * @author wlw
+	 * @date 2016年8月11日 上午11:52:42
+	 * @description 默认列表
+	 *		TODO
+	 *
+	 */
+	public void index(){
+		String searchtime = getPara("searchtime");
+		if(searchtime == null){
+			Date date = new Date();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			searchtime = dateFormat.format(date);
+		}
+		JSONArray jsonArr = WeiXiuRecordService.service.searchWeiXiuSize(searchtime);
+		
+		setAttr("weixiuList", jsonArr);
+		setAttr("searchtime", searchtime);
+		
+		render("/manage/weixiurecord/list.html");
+	}
+	
+	
+	/**
+	 * 
+	 * @author wlw  edit by hank
+	 * @date 2016年8月11日 上午11:57:17
+	 * @description 导出路面病害word 多张表 压缩成包下载
+	 *		TODO
+	 * @throws Exception
+	 *
+	 */
+	public void exportword() throws Exception {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String path = getWordPath();
+			String searchtime = getPara("searchtime");
+			Date date = new Date();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-ddHHmmss");
+			String foldName = dateFormat.format(date);
+			String type = getPara("type");
+			
+			String downloadPath = PropKit.get("tomcat.WordPath")+"/"+foldName; // 下载路径
+			
+			if (type.equals("lmbh")) { // 路面病害
+				foldName = foldName + "lmbh";
+				WeiXiuRecordService.service.lumianWord(path + foldName + File.separator,searchtime);
+				CompressedFileUtil csf = new CompressedFileUtil();
+				csf.compressedFile(path + foldName, path);
+				downloadPath +="lmbh.zip";
+			} else if (type.equals("jtaqss")) {//交通安全设施
+				WeiXiuRecordService.service.jiaotongWord(path, foldName,searchtime);
+				downloadPath +="jtaqss.doc";
+			} else if (type.equals("tywx")) {//通用维修
+				WeiXiuRecordService.service.generalWord(path, foldName,searchtime);
+				downloadPath +="tywx.doc";
+			} else if (type.equals("ywcl")) {//油污处理
+				WeiXiuRecordService.service.youwuWord(path, foldName,searchtime);
+				downloadPath +="ywcl.doc";
+			} else if (type.equals("fzhl")) {//防撞护栏
+				foldName = foldName + "fzhl";
+				WeiXiuRecordService.service.fangzhuangWord(path + foldName + File.separator, searchtime);
+				CompressedFileUtil csf = new CompressedFileUtil();
+				csf.compressedFile(path + foldName, path);
+//				ToolDirFile.delete(new File("downloadPath"));
+				downloadPath +="fzhl.zip";
+			} else if (type.equals("lfcl")) {//裂缝处理
+				WeiXiuRecordService.service.liefengWord(path, foldName,searchtime);
+				downloadPath +="lfcl.doc";
+			}
+			jsonObject.put("downloadPath", downloadPath);
+			jsonObject.put("isSuccess", true);
+		} catch (Exception e) {
+			jsonObject.put("isSuccess", false);
+		}
+		renderJson(jsonObject.toString());
+	}
+	
+	public void exportExecl(){
+		JSONObject jsonObject = new JSONObject();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		String excelName = "Excel";
+		List<Map<String,Object>> resultData = new ArrayList<Map<String,Object>>();
+		//维修的类型（在页面中设置）
+		String type = getPara("type");
+		String downloadPath = PropKit.get("tomcat.ExcelPath")+ File.separator;
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		List<Record> List=null;
+		if (type.equals("youwulist")) {//油污处理
+			 List=Db.find("select * from DMS_WX_youWuDispose order by disposeTime");
+		}else if(type.equals("lumianlist")){// 路面病害
+			List=Db.find("select * from DMS_WX_luMianBingHaiWeiXiu order by weiXiuEndTime");
+		}else if(type.equals("yanghulist")){// 通用维修
+			List=Db.find("select * from DMS_WX_yangHuTongYongWeiXiu order by weiXiuTime");
+		}else if(type.equals("liefenglist")){// 裂缝处理
+			List=Db.find("select * from DMS_WX_lieFengDispose order by weiXiuTime");
+		}else if(type.equals("jiaotonglist")){// 交通安全设施
+			List=Db.find("select * from DMS_WX_jtaqssWeiXiu order by weiXiuTime");
+		}else if(type.equals("fzhllist")){// 防撞护栏
+			List=Db.find("select * from DMS_WX_fzhlWeiXiu order by weiXiuEndTime");
+		}else if(type.equals("raodState"))
+		{
+			String startTime = getPara("startTime");
+			String endTime = getPara("endTime");
+			endTime += " 23:59:59";
+			String luXian = getPara("luXian");
+			String fangxiang = getPara("fangXiang");
+			String sql = "SELECT * FROM  [dbo].[F_LKPG_PCI]('"+startTime+"','"+endTime+"','"+luXian+"','"+fangxiang+"')";
+			List=Db.find(sql);
+			if(List == null || List.size() == 0)
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			resultData = WeiXiuRecordService.service.getRoadState(List);
+			try {
+				endTime = sdf1.format(sdf.parse(endTime));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dataMap.put("roadName", luXian);
+			dataMap.put("direction", fangxiang);
+			dataMap.put("date", endTime);
+		}else if(type.equals("roadbedstate"))
+		{
+			String startTime = getPara("startTime");
+			String endTime = getPara("endTime");
+			endTime += " 23:59:59";
+			String luXian = getPara("luXian");
+			String fangxiang = getPara("fangXiang");
+			String sql = "SELECT * FROM  [dbo].[F_LKPG_SCI]('"+startTime+"','"+endTime+"','"+luXian+"','"+fangxiang+"')";
+			List=Db.find(sql);
+			if(List == null || List.size() == 0)
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			resultData = WeiXiuRecordService.service.getRoadBedState(List);
+			try {
+				endTime = sdf1.format(sdf.parse(endTime));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dataMap.put("roadName", luXian);
+			dataMap.put("direction", fangxiang);
+			dataMap.put("date", endTime);
+		}
+		else if(type.equals("linestate"))
+		{
+			String startTime = getPara("startTime");
+			String endTime = getPara("endTime");
+			endTime += " 23:59:59";
+			String luXian = getPara("luXian");
+			String fangxiang = getPara("fangXiang");
+			String sql = "SELECT * FROM  [dbo].[F_LKPG_TCI]('"+startTime+"','"+endTime+"','"+luXian+"','"+fangxiang+"')";
+			List=Db.find(sql);
+			if(List == null || List.size() == 0)
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			resultData = WeiXiuRecordService.service.getlineState(List);
+			try {
+				endTime = sdf1.format(sdf.parse(endTime));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dataMap.put("roadName", luXian);
+			dataMap.put("direction", fangxiang);
+			dataMap.put("date", endTime);
+		}
+		else if(type.equals("roadtechnicstateMX"))
+		{
+			String startTime = getPara("startTime");
+			if(startTime == null || startTime == "")
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			String endTime = getPara("endTime");
+			endTime += " 23:59:59";
+			String luXian = getPara("luXian");
+			String fangxiang = getPara("fangXiang");
+			String jishudengji = getPara("jishudengji");
+			String roadType = getPara("roadType");
+			String sql = "SELECT * FROM  [dbo].[F_LKPG_BreakDown]('"+startTime+"','"+endTime+"','"+luXian+"','"+fangxiang+"') ";
+			List=Db.find(sql);
+			if(List == null || List.size() == 0)
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			resultData = WeiXiuRecordService.service.getRoadTechnicStateMX(List);
+			try {
+				endTime = sdf1.format(sdf.parse(endTime));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dataMap.put("roadName", luXian);
+			dataMap.put("direction", fangxiang);
+			dataMap.put("date", endTime);
+			dataMap.put("jishudengji", jishudengji);
+			dataMap.put("roadType", roadType);
+		}
+		else if(type.equals("roadtechnicstateHZ"))
+		{
+			String startTime = getPara("startTime");
+			if(startTime == null || startTime == "")
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			String endTime = getPara("endTime");
+			endTime += " 23:59:59";
+			String luXian = getPara("luXian");
+			String fangxiang = getPara("fangXiang");
+			String jishudengji = getPara("jishudengji");
+			String roadType = getPara("roadType");
+			String belongCity = getPara("jishudengji");
+			String dAllAvgLength = getPara("dAllAvgLength");
+			String feedUnit = getPara("feedUnit");
+			String competentUnit = getPara("competentUnit");
+			String technicLevel = getPara("technicLevel");
+			String dAllAvgMQI = getPara("dAllAvgMQI");
+			String dAllLevel = getPara("dAllLevel");
+			String direction1 = getPara("direction1");
+			String d1AvgMQI = getPara("d1AvgMQI");
+			String d1level = getPara("d1level");
+			String direction2 = getPara("direction2");
+			String d2AvgMQI = getPara("d2AvgMQI");
+			String d2level = getPara("d2level");
+			String d1Length = getPara("d1Length");
+			String d2Length = getPara("d2Length");
+			
+			RoadTechnicStatePro roadTechnicState = new RoadTechnicStatePro(startTime, endTime, luXian,direction1, direction2, "P_LKPG_Summary");
+			Db.execute(roadTechnicState);
+			resultData = roadTechnicState.getResult();
+			if(resultData == null || resultData.size() == 0)
+			{
+				jsonObject.put("isData", false);
+				renderJson(jsonObject.toString());
+			}
+			try {
+				endTime = sdf1.format(sdf.parse(endTime));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dataMap.put("date", endTime);
+			dataMap.put("belongCity", belongCity);
+			dataMap.put("roadName", luXian);
+			dataMap.put("technicLevel", technicLevel);
+			dataMap.put("roadType", roadType);
+			dataMap.put("dAllAvgLength", dAllAvgLength);
+			dataMap.put("feedUnit", feedUnit);
+			dataMap.put("competentUnit", competentUnit);
+			dataMap.put("dAllAvgMQI", dAllAvgMQI);
+			dataMap.put("dAllLevel", dAllLevel);
+			dataMap.put("direction1", direction1);
+			dataMap.put("d1AvgMQI", d1AvgMQI);
+			dataMap.put("d1level", d1level);
+			dataMap.put("d2level", d2level);
+			dataMap.put("direction2", direction2);
+			dataMap.put("d2AvgMQI", d2AvgMQI);
+			dataMap.put("d1Length", d1Length);
+			dataMap.put("d2Length", d2Length);
+		}
+		dataMap.put("List", List);
+		if(type.equals("raodState") || type.equals("roadbedstate")||type.equals("linestate")||type.equals("roadtechnicstateMX")||type.equals("roadtechnicstateHZ"))
+		{
+			dataMap.put("List", resultData);
+		}
+		if(type.equals("roadtechnicstateHZ"))
+		{
+			dataMap.put("ExcelRowSize", resultData.size()+2);
+		}
+		else
+		{
+			dataMap.put("ExcelRowSize", List.size()+2);
+		}
+		
+		try {
+			if(type.equals("raodState") || type.equals("roadbedstate")||type.equals("linestate")||type.equals("roadtechnicstateMX")||type.equals("roadtechnicstateHZ"))
+			{
+				excelName = WeiXiuRecordService.service.getExcelName(type);
+				//生成excel
+				ExcelTools.createExcel(dataMap, type+".ftl", getExcelPathAndCreate(), excelName+".xls");
+				//返回下载地址
+				jsonObject.put("downloadPath", downloadPath+excelName+".xls");
+			}
+			else
+			{
+				//生成excel
+				ExcelTools.createExcel(dataMap, type+".ftl", getExcelPathAndCreate(), type+".xls");
+				//返回下载地址
+				jsonObject.put("downloadPath", downloadPath+type+".xls");
+			}
+			jsonObject.put("isSuccess", true);
+		} catch (Exception e) {
+			jsonObject.put("isSuccess", false);
+		}
+		
+		renderJson(jsonObject.toString());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void youwuxinfo(){
+		String nameaa = getPara("name");
+		String time = getPara("time");
+		String name = "油污处理";
+		String name2 = "通用维修";
+		String name3 = "交通安全设施";
+		String name4 = "路面病害";
+		String name5 = "防撞护栏";
+		String name6 = "裂缝处理";
+		if(name.equals(nameaa)&&time.equals("")){
+			
+			String sql = getSql("manage.weixiurecord.seachlist");
+			List<Record>youwulist=Db.find(sql,name);
+			setAttr("youwulist",youwulist);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+			
+		}
+		if(name.equals(nameaa)&&!time.equals("")){
+			String sql = getSql("manage.weixiurecord.seachlistaa");
+			List<Record>youwulist2=Db.find(sql,name,time);
+			setAttr("youwulist",youwulist2);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+		}
+		if(name2.equals(nameaa)&&time.equals("")){
+			
+			String sql = getSql("manage.weixiurecord.seachlist2");
+			List<Record>youwulist=Db.find(sql,name2);
+			setAttr("youwulist",youwulist);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+			
+		}
+		if(name2.equals(nameaa)&&!time.equals("")){
+			String sql = getSql("manage.weixiurecord.seachlist2aa");
+			List<Record>youwulist2=Db.find(sql,name2,time);
+			setAttr("youwulist",youwulist2);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+		}
+		if(name3.equals(nameaa)&&time.equals("")){
+			
+			String sql = getSql("manage.weixiurecord.seachlist3");
+			List<Record>youwulist=Db.find(sql,name3);
+			setAttr("youwulist",youwulist);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+			
+		}
+		if(name3.equals(nameaa)&&!time.equals("")){
+			String sql = getSql("manage.weixiurecord.seachlist3aa");
+			List<Record>youwulist2=Db.find(sql,name3,time);
+			setAttr("youwulist",youwulist2);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+		}
+		if(name4.equals(nameaa)&&time.equals("")){
+			
+			String sql = getSql("manage.weixiurecord.lumianbinghai");
+			List<Record>youwulist=Db.find(sql,name4);
+			setAttr("youwulist",youwulist);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+			
+		}
+		if(name4.equals(nameaa)&&!time.equals("")){
+			String sql = getSql("manage.weixiurecord.searchlumianbinghai");
+			List<Record>youwulist2=Db.find(sql,name4,time);
+			setAttr("youwulist",youwulist2);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+		}
+		if(name5.equals(nameaa)&&time.equals("")){
+			
+			String sql = getSql("manage.weixiurecord.fhzlsize");
+			List<Record>youwulist=Db.find(sql,name5);
+			setAttr("youwulist",youwulist);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+			
+		}	
+		if(name5.equals(nameaa)&&!time.equals("")){
+			String sql = getSql("manage.weixiurecord.searchfhzlsize");
+			List<Record>youwulist2=Db.find(sql,name5,time);
+			setAttr("youwulist",youwulist2);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+		}
+		if(name6.equals(nameaa)&&time.equals("")){
+			
+			String sql = getSql("manage.weixiurecord.liefengsize");
+			List<Record>youwulist=Db.find(sql,name6);
+			setAttr("youwulist",youwulist);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+			
+		}
+		if(name6.equals(nameaa)&&!time.equals("")){
+			String sql = getSql("manage.weixiurecord.seachlist2bb");
+			List<Record>youwulist2=Db.find(sql,name6,time);
+			setAttr("youwulist",youwulist2);
+			setAttr("youwu",name);
+			render("/manage/weixiurecord/show.html");
+		}
+	}
+	
+}

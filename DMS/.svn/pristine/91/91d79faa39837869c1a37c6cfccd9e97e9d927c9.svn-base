@@ -1,0 +1,169 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">公路技术状况</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/liefeng" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">公路技术状况查询</span></h4>
+				</div>
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始时间</label>
+						<div class="col-sm-2">
+					  		<input type="text" id="startTime" name="" value=""
+							 onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >			  		
+						</div>					
+						<label class="col-sm-2 control-label">结束时间</label>
+						<div class="col-sm-2">
+					  		<input type="text" id="endTime" name="" value=""
+							 onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >			  		
+						</div>									
+				  	</div>
+				  	<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<select onchange="getFangxiangByLuxianId(this.value)" id="luxian" name="" class="form-control">
+										<option value="0">请选择</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">方向</label>
+						<div class="col-sm-2">
+							<select id="fangxiang" name="" class="form-control">
+										<option value="0">请选择</option>
+										<option value="0" selected="selected">请选择1</option>
+							</select>
+						</div>										
+				  	</div>
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" style="margin-left: -60px;" class="btn btn-primary" onclick='search()'>查询</button>
+						</div>
+				  	</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="tableList">
+		
+	</div>
+</form>			
+
+<script type="text/javascript">
+	
+	$(function(){
+		init();
+	});
+	//查询
+	function search()
+	{
+		var startTime = $("#startTime").val();
+		var endTime = $("#endTime").val();
+		var luXian = $("#luxian").find("option:selected").text();
+		var luXianId = $("#luxian").val();
+		var fangXiang = $("#fangxiang").find("option:selected").text();
+		if(startTime == null || startTime == "")
+		{
+			layer.msg("请选择开始时间");
+			return;
+		}
+		if(endTime == null || endTime == "")
+		{
+			layer.msg("请选择结束时间");
+			return;
+		}
+		if(luXian == null || luXian == "")
+		{
+			layer.msg("请选择路线");
+			return;
+		}
+		if(fangXiang == null || fangXiang == "")
+		{
+			layer.msg("请选择方向");
+			return;
+		}
+		luXian += "主线"
+		var data = {"startTime":startTime,"endTime":endTime,"luXian":luXian,"luXianId":luXianId,"fangXiang":fangXiang};
+		var html = common_ajax.ajaxFunc("/jf/manage/roadassessment/roadTechnicState/getList",data,"html");
+		$("#tableList").html(html);
+	}
+	function init()
+	{
+		//获取路线
+		getLuxian();
+		
+		//获取当前时间  年月
+		var nowDate = new Date();
+		var year = nowDate.getFullYear();
+		var month = nowDate.getMonth();
+		var m = (month+1);
+		var strDate = nowDate.getDate();
+		if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+		if(m < 10)
+		{
+			m = "0"+m;
+		}
+		var date = year+"-"+m+"-"+strDate;
+		$("#startTime").val(date);
+		$("#endTime").val(date);
+		
+		var html = common_ajax.ajaxFunc("/jf/manage/roadassessment/roadTechnicState/getList",undefined,"html");
+		$("#tableList").html(html);
+	}
+	
+	//获取路线
+	function getLuxian()
+	{
+		$("#luxian").html("");
+		var resultData = common_ajax.ajaxFunc("/jf/manage/roadassessment/roadstate/getLuxian",undefined,"JSON");
+		var html = "";
+		var luxianList = resultData.luxian;
+		if(luxianList.length > 0)
+		{
+			$.each(luxianList,function(i,item){
+				if(i == 0)
+				{
+					html += '<option selected="selected" value="'+item.ids+'">'+item.luXianName+'</option>';
+					return true;
+				}
+				html += '<option value="'+item.ids+'">'+item.luXianName+'</option>';
+			});
+		}
+		$("#luxian").html(html);
+		getFangxiangByLuxianId(luxianList[0].ids);
+	}
+	
+	function getFangxiangByLuxianId(luxianId)
+	{
+		$("#fangxiang").html("");
+		var resultData = common_ajax.ajaxFunc("/jf/manage/roadassessment/roadstate/getFangxiangByLuxianId",{"luxianId":luxianId},"JSON");
+		var fangxiangList = resultData.fangxiang;
+		var html = "";
+		if(fangxiangList.length > 0)
+		{
+			$.each(fangxiangList,function(i,item){
+				if(i == 0)
+				{
+					html += '<option selected="selected" value="'+item.ids+'">'+item.name+'</option>';
+					return true;
+				}
+				html += '<option value="'+item.ids+'">'+item.name+'</option>';
+			});
+		}
+		$("#fangxiang").html(html);
+	}
+	
+</script>

@@ -1,0 +1,135 @@
+package com.junl.dms.mvc.yanghuyhuizong;
+
+
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import com.jfinal.kit.PropKit;
+import com.junl.dms.mvc.weixiurecord.CompressedFileUtil;
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/yanghuyhuizong")
+public class YangHuHuiZongController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(YangHuHuiZongController.class);
+	
+	
+	/**
+	 * 首页
+	 * @throws ParseException 
+	 */
+	public void index() throws ParseException {
+		String searchTime = getPara("searchtime");
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM");
+		if(searchTime != null){
+			Date date = sim.parse(searchTime);
+			cal.setTime(date);
+		}else{
+			Date dates =  cal.getTime();
+			searchTime = sim.format(dates);   
+		}
+		// 计量汇总  950fc083899d4c6cbdc7ad8f554930cf
+		List<Map<String,Object>> jlhuiz = YangHuLogService.service.getHuiZong("950fc083899d4c6cbdc7ad8f554930cf",String.valueOf(cal.get(Calendar.YEAR)),searchTime,true);
+		Map<String,Object> huizMap = new HashMap<String, Object>();
+		huizMap.put("jlhuiz", jlhuiz);
+		huizMap.put("titleName", String.valueOf(cal.get(Calendar.YEAR))+"年"+PropKit.get("PROJECT.NAME")+"日常养护"+String.valueOf(cal.get(Calendar.MONTH)+1)+"月计量汇总表");
+		setAttr("huizMap",huizMap);
+		//清单明细  d0db9c14e5a343859e0f9b216096bf15
+		List<Map<String,Object>> detaillist = YangHuLogService.service.getHuiZong("d0db9c14e5a343859e0f9b216096bf15",String.valueOf(cal.get(Calendar.YEAR)),searchTime,false);
+		Map<String,Object> detailMap = new HashMap<String, Object>();
+		detailMap.put("detaillist", detaillist);
+		detailMap.put("mxTitle", String.valueOf(cal.get(Calendar.YEAR))+"年"+"日常养护"+String.valueOf(cal.get(Calendar.MONTH)+1)+"月清单明细表");
+		setAttr("detailMap",detailMap);
+		
+		// 单价承包
+		List<Map<String,Object>> tabList = YangHuLogService.service.getTabInfo("5c254454ef804c9b9328dc8d148681ac",String.valueOf(cal.get(Calendar.YEAR)),String.valueOf(cal.get(Calendar.MONTH)+1),searchTime);
+		setAttr("tabList",tabList);
+		
+		setAttr("searchtime",searchTime);
+		render("/manage/yanghuhuizong/list.html");
+	}
+	
+
+	public void exportword(){
+		JSONObject jsonObject = new JSONObject();
+		try {
+			String searchTime = getPara("searchtime");
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM");
+			if(searchTime != null){
+				Date date = sim.parse(searchTime);
+				cal.setTime(date);
+			}else{
+				Date dates =  cal.getTime();
+				searchTime = sim.format(dates);   
+			}
+			
+			String foldName = searchTime+File.separator;
+			// 计量汇总  950fc083899d4c6cbdc7ad8f554930cf
+			List<Map<String,Object>> jlhuiz = YangHuLogService.service.getHuiZong("950fc083899d4c6cbdc7ad8f554930cf",String.valueOf(cal.get(Calendar.YEAR)),searchTime,true);
+			Map<String,Object> huizMap = new HashMap<String, Object>();
+			huizMap.put("jlhuiz", jlhuiz);
+			huizMap.put("titleName", String.valueOf(cal.get(Calendar.YEAR))+"年"+PropKit.get("PROJECT.NAME")+"日常养护"+String.valueOf(cal.get(Calendar.MONTH)+1)+"月计量汇总表");
+			baseCreateWord(huizMap, "huizong.ftl", searchTime+"计量汇总.doc",foldName);
+			
+		//清单明细  d0db9c14e5a343859e0f9b216096bf15
+//		List<Map<String,Object>> detaillist = YangHuLogService.service.getHuiZong("d0db9c14e5a343859e0f9b216096bf15",String.valueOf(cal.get(Calendar.YEAR)),searchTime,false);
+//		Map<String,Object> detailMap = new HashMap<String, Object>();
+//		detailMap.put("detaillist", detaillist);
+//		detailMap.put("mxTitle", String.valueOf(cal.get(Calendar.YEAR))+"年"+"日常养护"+String.valueOf(cal.get(Calendar.MONTH)+1)+"月清单明细表");
+//		setAttr("detailMap",detailMap);
+		
+			// 单价承包
+			List<Map<String,Object>> tabList = YangHuLogService.service.getTabInfo("5c254454ef804c9b9328dc8d148681ac",String.valueOf(cal.get(Calendar.YEAR)),String.valueOf(cal.get(Calendar.MONTH)+1),searchTime);
+			for (int i = 0; i < tabList.size(); i++) {
+				Map<String,Object> map = tabList.get(i);
+				if (map.get("isparent").equals("false")) {
+					baseCreateWord(map, "mingxi.ftl", searchTime+"_"+map.get("levelNum")+map.get("firstLevelNumberDetail")+".doc",foldName);
+				}else{
+					List<Map<String,Object>> anqTabList = (List<Map<String,Object>>)map.get("anqTabList");
+					for (int j = 0; j < anqTabList.size(); j++) {
+						Map<String,Object> anqMap = anqTabList.get(j);
+						String levelNum = anqMap.get("levelNum").toString();
+						String firstLevelNumberDetail = anqMap.get("firstLevelNumberDetail").toString();
+						anqMap.put("titleName", map.get("titleName"));
+						anqMap.put("isparent", map.get("isparent"));
+						anqMap.put("levelNum", map.get("levelNum"));
+						anqMap.put("firstLevelNumberDetail", map.get("firstLevelNumberDetail"));
+						anqMap.put("threeName", levelNum+firstLevelNumberDetail);
+						baseCreateWord(anqMap, "mingxi.ftl", searchTime+"_"+anqMap.get("threeName")+".doc",foldName);
+					}
+					
+				}
+			}
+			String path = getWordPath();
+			CompressedFileUtil csf = new CompressedFileUtil();
+			csf.compressedFile(path + foldName, path);
+			String downloadPath = PropKit.get("tomcat.WordPath")+"/"+searchTime+".zip"; // 下载路径
+			jsonObject.put("downloadPath", downloadPath);
+			jsonObject.put("isSuccess", true);
+		} catch (Exception e) {
+			jsonObject.put("isSuccess", false);
+		}
+		renderJson(jsonObject.toString());
+	}
+	
+
+	
+
+}
+
+

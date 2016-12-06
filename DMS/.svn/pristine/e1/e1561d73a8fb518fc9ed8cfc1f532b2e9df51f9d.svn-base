@@ -1,0 +1,66 @@
+package com.junl.dms.mvc.roadassessment.roadtechnicstatedetail;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.upload.UploadFile;
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/roadassessment/roadTechnicStateDetail")
+public class RoadTechnicStateDetailController extends BaseController {
+	
+	public static final String EXCEL03_EXTENSION = ".xls"; //excel2003扩展名
+	public static final String EXCEL07_EXTENSION = ".xlsx";//excel2007扩展名
+	public void index()
+	{
+		render("/manage/roadassessment/roadtechnicstatedetail/list.html");
+	}
+
+	/**
+	 * 获取数据列表
+	 */
+	public void getList()
+	{
+			List<Map<String,Object>> resultData = new ArrayList<Map<String,Object>>();
+			String luxian = "";
+			String fangxiang = "";
+			String date = "";
+			
+			setAttr("luxian", luxian);
+			setAttr("fangxiang", fangxiang);
+			setAttr("date", date);
+			setAttr("resultData", resultData);
+		render("/manage/roadassessment/roadtechnicstatedetail/table.html");
+	}
+	
+	public void uploadFile()
+	{
+		JSONObject json = new JSONObject();
+		boolean isExcel = false;
+		UploadFile upFile = getFile("file");
+		File file = null;
+		String suffix = "";
+		if(upFile != null)
+		{
+			file = upFile.getFile();
+			if(file != null)
+			{
+				String name = file.getName();
+				suffix = name.substring(name.lastIndexOf('.'));
+				if(suffix.equals(EXCEL03_EXTENSION) || suffix.equals(EXCEL07_EXTENSION))
+				{
+					//解析Excel
+					isExcel = true;
+					
+				}
+			}
+		}
+		json.put("isExcel", isExcel);
+		renderJson(json.toJSONString());
+	}
+	
+}

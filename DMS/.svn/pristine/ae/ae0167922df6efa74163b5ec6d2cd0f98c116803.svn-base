@@ -1,0 +1,502 @@
+<script>
+
+function show(name){
+	var time = $("[name='searchtime']").val();
+	
+	var url = "/jf/manage/weixiurecord/youwuxinfo";
+	var width=850;
+		var height=500;
+		var title="维修信息";
+	$.ajax({
+		url:encodeURI(encodeURI(cxt + url)),
+		type:'post',
+		data:{'name':name,"time":time},
+		dataType : "HTML",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		async: false,
+		cache: false,
+		success:function(response){
+			result = response;
+			
+			layer.open({
+				type: 1, //page层
+				  area: [width+'px', height+'px'],
+				  title: title,
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  content: result,
+				  btn:['确定'],
+				  btn1:function(){
+					  layer.closeAll();
+				  }
+			});
+		}
+	})
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">维修记录表</li>
+		</ol>
+	</div>
+</div>
+<form id="splitPage" action="${cxt}/jf/manage/weixiurecord" method="POST" role="form" class="form-horizontal">
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">维修记录查询</span></h4>
+					
+				</div>
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-1 control-label">时间</label>
+						<div class="col-sm-2">
+					  		<input class="form-control focused" type="text" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="searchtime"  maxlength="20" >			  		
+						</div>												
+				  	</div>													  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick="search();">查询</button>
+							<button type="reset" class="btn"  onclick="resetDate()">重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">维修记录列表</span>
+					</h4>
+					
+				</div>
+				<div class="panel-body">
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="30%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzName')">
+									维修类型
+		      					</th>
+								<th class="hidden-xs" width="50%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuRenYuan')">
+									维修数量
+		      					</th>
+		      					
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+							<tr>
+								<td>
+									油污处理
+								</td>
+								<td ><span id="youwusize"  class="label label-success" onclick="show('油污处理');" style="cursor: pointer;">${youwusize}</span></td>
+								<td>
+									<button type="button" id="aa"   title='导出' onclick="exportword();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+									<button type="button" id="bb"   title='导出' onclick="searchexportword();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;display:none" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>通用维修</td>
+								<td ><span id="tongyongsize" class="label label-success" onclick="show('通用维修');"style="cursor: pointer;">${tongyongsize}</span></td>
+								<td>
+									<button type="button"  id="cc"  title='导出' onclick="exportword2();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+									<button type="button" id="dd"   title='导出' onclick="searchexportword2();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;display:none" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>交通安全设施</td>
+								<td ><span id="jiaotongsize" class="label label-success" onclick="show('交通安全设施');"style="cursor: pointer;">${jiaotongsize}</span></td>
+								<td>
+									<button type="button"  id="ee"  title='导出' onclick="exportword3();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+									<button type="button"  id="ff"  title='导出' onclick="searchexportword3();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;display:none" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>路面病害</td>
+								<td><span id="lumiansize" class="label label-success" onclick="show('路面病害');"style="cursor: pointer;">${lumiansize}</span></td>
+								<td>
+									<button type="button"  id="gg"  title='导出' onclick="exportword4();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+									<button type="button"  id="hh"  title='导出' onclick="searchexportword4();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;display:none" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>防撞护栏</td>
+								<td><span id="fzhlsize" class="label label-success" onclick="show('防撞护栏');"style="cursor: pointer;">${fzhlsize}</span></td>
+								<td>
+									<button type="button"  id="ii"  title='导出' onclick="exportwordfzhl();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+									<button type="button"  id="jj"  title='导出' onclick="searchexportwordfzhl();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;display:none" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+								</td>
+							</tr>
+							<tr>
+								<td>裂缝处理</td>
+								<td><span id="liefengsize" class="label label-success" onclick="show('裂缝处理');"style="cursor: pointer;">${liefengsize}</span></td>
+								<td>
+									<button type="button"  id="kk"  title='导出' onclick="exportwordliefeng();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+									<button type="button"  id="ll"  title='导出' onclick="searchexportwordliefeng();" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px;display:none" >
+										<i class="fa fa-arrow-circle-o-down"></i>
+									</button>
+								</td>
+							</tr>
+						</thead>
+						
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+<script>
+
+function search(){
+	 var searchtime = $("[name='searchtime']").val();
+	 $.ajax({
+			url:cxt+'/jf/manage/weixiurecord/searchtime',
+			type:'post',
+			data:{"searchtime":searchtime},
+			dataType:'JSON',
+			async: false,
+			success:function(data){
+			if(searchtime==""){
+					
+			}else{
+				$("#aa").hide();
+				$("#bb").show();
+				$("#cc").hide();
+				$("#dd").show();
+				$("#ee").hide();
+				$("#ff").show();
+				$("#gg").hide();
+				$("#hh").show();
+				$("#ii").hide();
+				$("#jj").show();
+				$("#kk").hide();
+				$("#ll").show();
+				$("#youwusize").text(data.youwusize)
+				if(data.youwusize==0){
+					$("#youwusize").removeClass().addClass("label label-danger");
+				}else{
+					$("#youwusize").removeClass().addClass("label label-success");
+				}
+				$("#tongyongsize").text(data.tongyongsize)
+				if(data.tongyongsize==0){
+					$("#tongyongsize").removeClass().addClass("label label-danger");
+				}else{
+					$("#tongyongsize").removeClass().addClass("label label-success");
+				}
+				$("#jiaotongsize").text(data.jiaotongsize)
+				if(data.jiaotongsize==0){
+					$("#jiaotongsize").removeClass().addClass("label label-danger");
+				}else{
+					$("#jiaotongsize").removeClass().addClass("label label-success");
+				}
+				$("#lumiansize").text(data.lumiansize)
+				if(data.lumiansize==0){
+					$("#lumiansize").removeClass().addClass("label label-danger");
+				}else{
+					$("#lumiansize").removeClass().addClass("label label-success");
+				}
+				$("#fzhlsize").text(data.fzhlsize)
+				if(data.fzhlsize==0){
+					$("#fzhlsize").removeClass().addClass("label label-danger");
+				}else{
+					$("#fzhlsize").removeClass().addClass("label label-success");
+				}
+				$("#liefengsize").text(data.liefengsize)
+				if(data.liefengsize==0){
+					$("#liefengsize").removeClass().addClass("label label-danger");
+				}else{
+					$("#liefengsize").removeClass().addClass("label label-success");
+				}
+			}
+				
+				
+			}
+		})
+}
+</script>
+<script>
+var ys = $("#youwusize").text();
+if(ys==0){
+	$("#youwusize").removeClass().addClass("label label-danger");
+}
+var ts = $("#tongyongsize").text();
+if(ts==0){
+	$("#tongyongsize").removeClass().addClass("label label-danger");
+}
+var jtaq = $("#jiaotongsize").text();
+if(jtaq==0){
+	$("#jiaotongsize").removeClass().addClass("label label-danger");
+}
+var lf = $("#liefengsize").text();
+if(lf==0){
+	$("#liefengsize").removeClass().addClass("label label-danger");
+}
+var fzhl = $("#fzhlsize").text();
+if(fzhl==0){
+	$("#fzhlsize").removeClass().addClass("label label-danger");
+}
+var lmbh = $("#lumiansize").text();
+if(lmbh==0){
+	$("#lumiansize").removeClass().addClass("label label-danger");
+}
+ function exportword(){
+	 if(ys==0){
+		 layer.msg("数量为0,不可导出");
+		 
+		 
+			return;	
+		}else{
+			$.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportword',
+				type:'post',
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'ywcl.doc';
+				}
+			})
+		}
+	 
+ }
+ function searchexportword(){
+	 var searchtime = $("[name='searchtime']").val();
+	 
+	 if($("#youwusize").text()==0){
+		 layer.msg("数量为0,不可导出");
+			return;	
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/searchexportword',
+				type:'post',
+				dataType:'JSON',
+				data:{"searchtime":searchtime},
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'ywcl.doc';
+				}
+			}) 
+	 }
+	 
+ }
+ function searchexportword2(){
+	 var searchtime = $("[name='searchtime']").val();
+	 if($("#tongyongsize").text()==0){
+		 layer.msg("数量为0,不可导出");
+			return;	
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/searchexportword2',
+				type:'post',
+				dataType:'JSON',
+				data:{"searchtime":searchtime},
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'tywx.doc';
+				}
+			}) 
+	 }
+	 
+ }
+ function searchexportword3(){
+	 
+	 var searchtime = $("[name='searchtime']").val();
+	 if($("#jiaotongsize").text()==0){
+		 layer.msg("数量为0,不可导出");
+			return;	
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/searchexportword3',
+				type:'post',
+				dataType:'JSON',
+				data:{"searchtime":searchtime},
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'jtaqss.doc';
+				}
+			})
+	 }
+	
+ }
+ function searchexportword4(){
+	 var searchtime = $("[name='searchtime']").val();
+	 if($("#lumiansize").text()==0){
+		 layer.msg("数量为0,不可导出");
+			return;	
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/searchexportwordlumian',
+				type:'post',
+				data:{"searchtime":searchtime},
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+data.sjnum+'lmbh.zip';
+				}
+			})
+	 }
+	 
+ }
+ function searchexportwordfzhl(){
+	 var searchtime = $("[name='searchtime']").val();
+	 if($("#fzhlsize").text()==0){
+		 layer.msg("数量为0,不可导出");
+			return;	
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/searchexportwordfzhl',
+				type:'post',
+				data:{"searchtime":searchtime},
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+data.sjnum+'fzhl.zip';
+				}
+			})
+	 }
+	 
+ }
+ function exportword2(){
+	 if(ts==0){
+			layer.msg("数量为0,不可导出");
+			return;
+		}else{
+			$.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportword2',
+				type:'post',
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'tywx.doc';
+				}
+			})
+		}
+	 
+ }
+ function exportword3(){
+	 if(jtaq==0){
+		 layer.msg("数量为0,不可导出");
+		 return
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportword3',
+				type:'post',
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'jtaqss.doc';
+				}
+			}) 
+	 }
+	 
+ }
+ 
+ 
+ function exportword4(){
+	 if(lmbh==0){
+		 layer.msg("数量为0,不可导出");
+		 return;
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportwordlumian',
+				type:'post',
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+data.sjnum+'lmbh.zip';
+				}
+			})
+	 }
+	 
+ }
+ function exportwordfzhl(){
+	 if(fzhl==0){
+		 layer.msg("数量为0,不可导出");
+		 return;
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportwordfzhl',
+				type:'post',
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+data.sjnum+'fzhl.zip';
+				}
+			})
+	 }
+	 
+ }
+ function exportwordliefeng(){
+	 if(lf==0){
+		 layer.msg("数量为0,不可导出");
+		 return;
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/exportwordliefeng',
+				type:'post',
+				dataType:'JSON',
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'lfcl.doc';
+				}
+			}) 
+	 }
+	 
+ }
+ function searchexportwordliefeng(){
+	 var searchtime = $("[name='searchtime']").val();
+	 if($("#liefengsize").text()==0){
+		 layer.msg("数量为0,不可导出");
+		 return;
+	 }else{
+		 $.ajax({
+				url:cxt+'/jf/manage/weixiurecord/searchexportwordliefeng',
+				type:'post',
+				dataType:'JSON',
+				data:{"searchtime":searchtime},
+				async: false,
+				success:function(data){
+					window.location.href='${basePath}/uploadword/'+data.year+data.month+data.day+'lfcl.doc';
+				}
+			})
+	 }
+	 
+ }
+</script>	
+</form>		

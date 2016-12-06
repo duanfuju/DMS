@@ -1,0 +1,37 @@
+package com.junl.dms.mvc.roadassessment.roadbedstate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/roadassessment/roadBedState")
+public class RoadBedStateController extends BaseController {
+	
+	public void index()
+	{
+		render("/manage/roadassessment/roadbedstate/list.html");
+	}
+
+	
+	/**
+	 * 获取数据列表
+	 */
+	public void getList()
+	{
+		List<Map<String,Object>> resultData = new ArrayList<Map<String,Object>>();
+		String luxian = "";
+		String fangxiang = "";
+		String date = "";
+		
+		
+		
+		setAttr("luxian", luxian);
+		setAttr("fangxiang", fangxiang);
+		setAttr("date", date);
+		setAttr("resultData", resultData);
+		render("/manage/roadassessment/roadbedstate/table.html");
+	}
+}

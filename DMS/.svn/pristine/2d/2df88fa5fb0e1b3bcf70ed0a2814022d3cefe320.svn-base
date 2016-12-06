@@ -1,0 +1,14 @@
+package com.junl.dms.mvc.roadassessment.linestate;
+
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/roadassessment/lineState")
+public class LineStateController extends BaseController {
+	
+	public void index()
+	{
+		render("/manage/roadassessment/linestate/list.html");
+	}
+
+}

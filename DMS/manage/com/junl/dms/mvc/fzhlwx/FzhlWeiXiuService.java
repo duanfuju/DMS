@@ -1,0 +1,124 @@
+package com.junl.dms.mvc.fzhlwx;
+
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.taskinforelate.TaskInfoRelate;
+import com.junl.dms.mvc.taskinforelate.TaskInfoRelateService;
+import com.platform.mvc.base.BaseService;
+
+
+public class FzhlWeiXiuService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(FzhlWeiXiuService.class);
+
+	public static final FzhlWeiXiuService service = new FzhlWeiXiuService();
+
+	public boolean save(FzhlWeiXiu fzhlWeiXiu, List<FzhlWeiXiuRelate> fzhlRelateList, String[] paras) {
+		fzhlWeiXiu.set("createTime", new Timestamp(System.currentTimeMillis()));
+		StringBuffer sb = new StringBuffer();		
+		if(paras != null) {
+			for(int i=0;i<paras.length;i++){
+				sb.append(paras[i]+",");
+				String newStr = sb.toString();
+				//去掉最后一个逗号
+				String newStr1 = newStr.substring(0, newStr.length()-1);
+				fzhlWeiXiu.set("imgs",newStr1);
+			}
+		}else{
+			fzhlWeiXiu.set("imgs","");
+		}
+		boolean result = fzhlWeiXiu.save();
+		//防撞护栏维修表保存成功
+		//再保存防撞护栏维修部件表
+		if (result) {
+			if (fzhlRelateList.size()>0) {
+				for (FzhlWeiXiuRelate fzhlRelate : fzhlRelateList) {
+					if(fzhlRelate.toJson().length()>2){
+						fzhlRelate.set("weiXiuId", fzhlWeiXiu.getStr("ids"));
+						fzhlRelate.save();
+					}
+				}
+			}
+		}
+		
+		String DMS_RW_task_info_relate_ids=fzhlWeiXiu.get("taskInfoRelate");
+		TaskInfoRelate taskInfoRelate=TaskInfoRelateService.service.findById(DMS_RW_task_info_relate_ids);
+		taskInfoRelate.set("taskWeiXiuNum", taskInfoRelate.getInt("taskWeiXiuNum")+1);
+		taskInfoRelate.update();
+		return result;
+	}
+	
+	public boolean update(FzhlWeiXiu fzhlWeiXiu, List<FzhlWeiXiuRelate> fzhlRelateList,String[] paras) {
+		StringBuffer sb = new StringBuffer();
+		if(paras != null) {
+			for(int i=0;i<paras.length;i++){
+				sb.append(paras[i]+",");
+				String newStr = sb.toString();
+				//去掉最后一个逗号
+				String newStr1 = newStr.substring(0, newStr.length()-1);
+				fzhlWeiXiu.set("imgs",newStr1);
+			}
+		}else{
+			fzhlWeiXiu.set("imgs","");
+		}
+		boolean result = fzhlWeiXiu.update();
+		//防撞护栏维修表保存成功
+		//再保存防撞护栏维修部件表
+		if (result) {
+			if (fzhlRelateList.size()>0) {
+				for (FzhlWeiXiuRelate fzhlRelate : fzhlRelateList) {
+					if(fzhlRelate.toJson().length()>2){
+						if(fzhlRelate.get("ids") == null){
+							fzhlRelate.set("weiXiuId", fzhlWeiXiu.getStr("ids"));
+							fzhlRelate.save();
+						}else{
+							fzhlRelate.update();
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+		
+	public FzhlWeiXiu findById(String ids) {
+		/*String sql = getSql("manage.fzhl.findById");*/
+		String sql = getSql("manage.fzhl.findTaskForUpdate");
+		FzhlWeiXiu fzhlWeiXiu = FzhlWeiXiu.dao.findFirst(sql,ids);
+		return fzhlWeiXiu;
+	}
+	public boolean delete_DMS_WX_fzhlWeiXiu(HttpServletRequest request,String ids) {
+		boolean rel = FzhlWeiXiu.dao.deleteById(ids);
+		if(rel){
+			FzhlWeiXiu fzhlWeiXiu = FzhlWeiXiu.dao.findById(ids);
+			String imgs = fzhlWeiXiu.getStr("imgs");
+			String DMS_RW_task_info_relate_ids=fzhlWeiXiu.get("taskInfoRelate");
+			TaskInfoRelate taskInfoRelate=TaskInfoRelateService.service.findById(DMS_RW_task_info_relate_ids);
+			taskInfoRelate.set("taskWeiXiuNum", taskInfoRelate.getInt("taskWeiXiuNum")+1);
+			taskInfoRelate.update();
+			deleteImages(request,imgs);//删除图片
+		}
+		return rel;
+	}
+	
+	
+	public List<Record> selectDMS_WX_fzhlWeiXiu_item_relateFindById(String weiXiuId){
+		List<Record> list = Db.find("SELECT * FROM DMS_WX_fzhlWeiXiu_item_relate where weiXiuId =  '"+weiXiuId+"'");
+		return list;
+	}
+	
+	public boolean delete_DMS_WX_fzhlWeiXiu_item_relate(String weiXiuId) {
+		int result =Db.update("DELETE FROM  DMS_WX_fzhlWeiXiu_item_relate where weiXiuId =  '"+weiXiuId+"'");
+		return result ==0?false:true;
+	}
+	
+}

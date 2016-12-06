@@ -1,0 +1,118 @@
+<script src="${cxt!}/jsFile/webuploader/js/upload_small.js"></script>
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+<script type="text/javascript">
+function mySubmit_r(){
+	var returnTime = $("#returnTime").val();
+	if(returnTime==""){
+		layer.msg("退回时间不能为空");
+		return;
+	}
+	var remark = $("#remark").val();
+	if(remark==""){
+		layer.msg("退回理由不能为空");
+		return;
+	}
+	
+	var resultData=common_ajax.ajaxForm("childrenSplitPage","JSON");
+	if(resultData==""){
+		layer.msg("请求失败！");
+	}else{
+		if(resultData.result){
+			layer.closeAll();
+			layer.msg(resultData.result_desc);
+			common_ajax.ajaxMainPanel('/jf/manage/jiliang/meterage',{ids:'${jlIds!}'},undefined,'back');
+		}else{
+			layer.msg(resultData.result_desc);
+			common_ajax.ajaxMainPanel('/jf/manage/jiliang/meterage',{ids:'${jlIds!}'},undefined,'back');
+		}
+	}
+}
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+   	var min=date.getMinutes();
+   	if(min>= 0 && min <= 9){
+   		min="0" + min;
+   	}
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + date.getHours() + seperator2 + min
+            + seperator2 + date.getSeconds();
+    
+    $("#returnTime").val(currentdate);
+}
+getNowFormatDate();
+$('#filePicker .webuploader-pick').on('click tap',function(){
+	$('#filePicker input').trigger('click');
+});
+</script>
+<div id="childrenPanel">
+<form style="font-size: 13px;"  id="childrenSplitPage" action="${cxt!}/jf/manage/jiliang/saveReturn" method="POST" role="form" class="form-horizontal">
+	<input type="hidden" name="jiLingTuiHui.weiXiuIds" value="${ids!}" />
+	<input type="hidden" name="jiLingTuiHui.jlIds" value="${jlIds!}" />
+	<!-- start: BORDERED TABLE PANEL -->
+	<div class="panel panel-white">
+		<div class="panel-body">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">退回时间</label>
+				<div class="col-sm-3">
+					<input type="text" id=returnTime name="jiLingTuiHui.returnTime" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"  class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">退回理由</label>
+				<div class="col-sm-8">
+					<textarea rows="4" cols="20" id="remark" name="jiLingTuiHui.remark" class="form-control"></textarea>
+				</div>
+				<span class="help-inline col-sm-2"> </span>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="form-field-1">
+					图片
+				</label>
+				<div class="col-sm-8" id="pictureArea">
+					<div id="wrapper">
+				        <div id="container">
+				            <!--头部，相册选择和格式选择-->
+				
+				            <div id="uploader">
+				                <div class="queueList">
+				                    <div id="dndArea" class="placeholder">
+				                        <div id="filePicker"></div>
+				                        <p>或将照片拖到这里，单次最多可选3张</p>
+				                    </div>
+				                </div>
+				                <div class="statusBar" style="display:none;">
+				                    <div class="progress">
+				                        <span class="text">0%</span>
+				                        <span class="percentage"></span>
+				                    </div><div class="info"></div>
+				                    <div class="btns">
+				                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				    </div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 col-sm-offset-3">
+					<button type="button" class="btn btn-red" onclick="mySubmit_r()">
+						提交<i class="fa fa-arrow-circle-right"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end: BORDERED TABLE PANEL -->
+</form>			
+</div>

@@ -1,0 +1,522 @@
+<style>
+	.losttable td {
+		padding: 8px 8px 8px 8px;
+	}
+	
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/pingfen');">质量评分</a></li>
+			<li class="active">修改</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">质量评分</span></h4>
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" action="${cxt!}/jf/manage/pingfen/update" method="POST" role="form" class="form-horizontal">
+				    <table border="0" class="form-group" style="width: 80%;">
+				    	<tr>
+				    		<td style="width: 40px;"></td>
+				    		<td style="width: 80px;">检查段落：K</td>
+				    		<td><input  class="form-control" value="${pingfen.startZHK}"   name="pingfen.startZHK"></td>
+				    		<td>&nbsp;+</td>
+				    		<td><input  class="form-control"  value="${pingfen.startZHM}"  name="pingfen.startZHM"></td>
+				    		<td style="width: 30px;">&nbsp;~ K</td>
+				    		<td><input  class="form-control"  value="${pingfen.endZHL}"  name="pingfen.endZHK"></td>
+				    		<td>&nbsp;+</td>				    		
+				    		<td><input  class="form-control"  value="${pingfen.endZHM}"  name="pingfen.endZHM"></td>
+				    		<td  style="width: 100px;"></td>
+				    		<td  style="width: 60px;">时间：</td>
+				    		<td><input style="width: 160px;"  id="sdate" value="${pingfen.tianXieTime,dateFormat='yyyy-MM-dd HH:mm:ss'}" name="pingfen.tianXieTime" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="form-control" >
+				    		</td>
+				    	</tr>
+				    </table>
+				    
+					<table class="table table-bordered losttable" border="1" style="width: 90%;">
+					    	<tr>
+					    		<td rowspan="21" style="width: 80px;">定期检查100分(占综合考评得分的80%)</td>
+					    		<td>项目</td>
+					    		<td>考核内容</td>
+					    		<td>扣分标准</td>
+					    		<td>扣分</td>
+					    		<td>得分</td>
+					    		<td rowspan="1" style="width: 60px;">综合评价得分</td>
+					    		<td>备注</td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="4" colspan="2">内业(10分)</td>
+					    		<td>1、有无作业周、月、年计划； 3分</td>
+					    		<td><input   class="form-control" value="${pingfen.inLosePoint1 }" name="pingfen.inLosePoint1"></td>
+					    		<td rowspan="4"><input   class="form-control" value="${pingfen.inGetPoint }" name="pingfen.inGetPoint"></td>
+					    		<td rowspan="20"><input style="width: 80px;"  class="form-control" type="text" value="${pingfen.zongHeScore }" name="pingfen.zongHeScore"></td>
+					    		<td rowspan="4"><input   class="form-control" value="${pingfen.inRemark }" name="pingfen.inRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>2、有无作业记录； 3分</td>
+					    		<td><input   class="form-control" value="${pingfen.inLosePoint2 }" name="pingfen.inLosePoint2"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>3、有无技术操作规程； 2分</td>
+					    		<td><input   class="form-control" value="${pingfen.inLosePoint3 }" name="pingfen.inLosePoint3"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>4、是否建立技术档案； 2分</td>
+					    		<td><input   class="form-control" value="${pingfen.inLosePoint4 }" name="pingfen.inLosePoint4"></td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="16">外业(90分)</td>
+					    		<td rowspan="3">成活保存率(10分)</td>
+					    		<td>1、乔木、花灌木因养护不善而死亡，每株扣1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outLiveLosePoint1 }" name="pingfen.outLiveLosePoint1"></td>
+					    		<td rowspan="3"><input   class="form-control" value="${pingfen.outLiveGetPoint }" name="pingfen.outLiveGetPoint"></td>
+					    		<td rowspan="3"><input   class="form-control" value="${pingfen.outLiveRemark }" name="pingfen.outLiveRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>2、绿篱、地被、草坪等因养护不善而死亡，每株扣1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outLiveLosePoint2 }" name="pingfen.outLiveLosePoint2"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>3、死亡苗木未及时伐除，每株扣0.2分</td>
+					    		<td><input   class="form-control" value="${pingfen.outLiveLosePoint3 }" name="pingfen.outLiveLosePoint3"></td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="2">生长势(10分)</td>
+					    		<td>乔木、花灌木长势不旺盛，每株扣0.1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outGrowLosePoint1 }" name="pingfen.outGrowLosePoint1"></td>
+					    		<td rowspan="2"><input   class="form-control" value="${pingfen.outGrowGetPoint }" name="pingfen.outGrowGetPoint"></td>
+					    		<td rowspan="2"><input   class="form-control" value="${pingfen.outGrowPointRemark }" name="pingfen.outGrowPointRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>2、绿篱、地被长势不旺盛，草坪在生长季出现枯黄，每1㎡扣1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outGrowLosePoint2 }" name="pingfen.outGrowLosePoint2"></td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="2">修剪(10分)</td>
+					    		<td>1、乔木、花灌木未按要求修剪，每株扣0.1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outTrimLosePoint1 }" name="pingfen.outTrimLosePoint1"></td>
+					    		<td rowspan="2"><input   class="form-control" value="${pingfen.outTrimGetPoint }" name="pingfen.outTrimGetPoint"></td>
+					    		<td rowspan="2"><input   class="form-control" value="${pingfen.outTrimRemark }" name="pingfen.outTrimRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>2、绿篱、地被、草坪等未按技术标准修剪，每10㎡扣1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outTrimLosePoint2 }" name="pingfen.outTrimLosePoint2"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>病虫害防治(10分)</td>
+					    		<td>1、苗木发生病虫危害，未及时防治，每处扣2分</td>
+					    		<td><input   class="form-control" value="${pingfen.outPestLosePoint }" name="pingfen.outPestLosePoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.outPestGetPoint }" name="pingfen.outPestGetPoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.outPestRemark }" name="pingfen.outPestRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="2">保洁(5分)</td>
+					    		<td>1、绿化养护作业后的施工垃圾应及时清理出场，每处扣1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outCleaningLosePoint1 }" name="pingfen.outCleaningLosePoint1"></td>
+					    		<td rowspan="2"><input   class="form-control" value="${pingfen.outCleaningGetPoint }" name="pingfen.outCleaningGetPoint" > </td>
+					    		<td rowspan="2"><input   class="form-control" value="${pingfen.outCleaningRemark }" name="pingfen.outCleaningRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>2、养护区域出现大面积杂草，杂草高度超过植物高度，每10㎡扣1分</td>
+					    		<td><input   class="form-control" value="${pingfen.outCleaningLosePoint2 }" name="pingfen.outCleaningLosePoint2"></td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="1">安全作业(5分)</td>
+					    		<td>1、施工车辆、人员、施工现场安全设施不齐整，扣5分</td>
+					    		<td><input   class="form-control" value="${pingfen.outSafeLosePoint }" name="pingfen.outSafeLosePoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.outSafeGetPoint }" name="pingfen.outSafeGetPoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.outSafeRemark }" name="pingfen.outSafeRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td rowspan="5">单项考评(40分)</td>
+					    		<td>1、水，8分：未按合同要求及时浇水的，造成植物死亡的每处扣0.5分</td>
+					    		<td><input   class="form-control" value="${pingfen.outSingleLosePoint1 }" name="pingfen.outSingleLosePoint1"></td>
+					    		<td rowspan="5"><input   class="form-control" value="${pingfen.outSingleGetPoint }" name="pingfen.outSingleGetPoint"></td>
+					    		<td rowspan="5"><input   class="form-control" value="${pingfen.outSingleRemark }" name="pingfen.outSingleRemark"></td>
+					    	</tr>
+					
+					    	<tr>
+					    		<td>2、肥，8分：未及时施肥或者施肥量不足的，每次扣2分</td>
+					    		<td><input   class="form-control" value="${pingfen.outSingleLosePoint2 }" name="pingfen.outSingleLosePoint2"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>3、病虫害防治，8分：未按合同要求提前做好病虫害防治工作，发生大面积死亡每处扣2分</td>
+					    		<td><input   class="form-control" value="${pingfen.outSingleLosePoint3 }" name="pingfen.outSingleLosePoint3"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>4、修剪，8分：未按合同要求修剪次数，每次扣2分</td>
+					    		<td><input   class="form-control" value="${pingfen.outSingleLosePoint4 }" name="pingfen.outSingleLosePoint4"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>5、保洁，4分：按要求保证绿地的清洁、整洁</td>
+					    		<td><input   class="form-control" value="${pingfen.outSingleLosePoint5 }" name="pingfen.outSingleLosePoint5"></td>
+					    	</tr>
+					    	<tr>
+					    		<td>不定期检查100分(站综合考评得分的20%)</td>
+					    		<td colspan="3">在日常巡查过程中，对现场发现的问题要求养护单位限期整改，并根据整改情况进行评分。</td>
+					    		<td><input   class="form-control" value="${pingfen.notRegularlyLosePoint }" name="pingfen.notRegularlyLosePoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.notRegularlyGetPoint }" name="pingfen.notRegularlyGetPoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.notRegularlyZongHePoint }" name="pingfen.notRegularlyZongHePoint"></td>
+					    		<td><input   class="form-control" value="${pingfen.notRegularlyRemark }" name="pingfen.notRegularlyRemark"></td>
+					    	</tr>
+					    	<tr>
+					    		<td colspan="4">总得分</td>
+					    		<td colspan="4"><input   class="form-control" value="${pingfen.totalScore }" name="pingfen.totalScore"></td>
+					    	</tr>
+					    </table>
+					    
+					    <table style="width: 85%;">
+					    	<tr>
+					    	<td style="width: 30%;"></td>
+					    		<td>&nbsp;&nbsp;&nbsp;&nbsp;审核：</td>
+					    		<td><input class="form-control" value="${pingfen.shenHe }" name="pingfen.shenHe"> </td>
+					    	<td style="width: 10%;"></td>
+					    		<td >评分人：</td>
+					    		<td><input value="${pingfen.pingFenPeople }" class="form-control" name="pingfen.pingFenPeople"> </td>
+					    		<td style="width: 10%;"></td>
+					    	</tr>
+					    </table>
+					    <input class="form-control" style="display: none;" value="${pingfen.ids }" name="pingfen.ids">
+					  <div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+					
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+    
+    $("#planTime").val(currentdate)
+}
+getNowFormatDate();
+	
+
+
+
+
+
+
+
+
+
+	function mySubmit(){
+		var v = 1;
+		$("#editForm input").each(function(index, element) {
+			if($(this).val() == ""){
+				$(this).focus();
+				layer.msg("内容不能为空！");
+				v = 0;
+				return false;
+			} else {
+				v =1;
+			}
+		});
+		if(v==0)
+			return false;
+		
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/pingfen");
+			}
+		}
+		
+	}
+</script>	
+<script type="text/javascript">
+$(function(){//第一次加载时所要做的加载默认值的操作
+	//根据路线 选择位置 
+	var luXianId = $("#luXian").find("option:selected").attr("p");
+	var wzTypeId = "";
+	var wzName="";
+	$.ajax({  
+	    type:'post',      
+	    url:'${cxt}/jf/manage/weizhi/getWzType',  
+	    data:{"luXianId":luXianId},  
+	    cache:false,  
+	    dataType:'json',  
+        success:function(data){  
+        	//定义位置的options
+        	var option_wzType="";
+        	$.each(data.result,function(i,dataObj){
+        		if(i==0){
+        			wzTypeId=dataObj.value;
+        		}
+        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+        	});
+        	$("#wzType").append(option_wzType);
+        	
+        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+        	$.ajax({  
+        	    type:'post',      
+        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+        	    cache:false,  
+        	    dataType:'json',  
+                success:function(data){  
+                	//定义位置的options
+                	var option_wzName="";
+                	$.each(data.result,function(i,dataObj){
+                		if(i==0){
+                			wzName=dataObj.value;
+                		}
+                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                	});
+                	$("#wzName").append(option_wzName);
+                	
+                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+                	$.ajax({  
+                	    type:'post',      
+                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+                	    cache:false,  
+                	    dataType:'json',  
+                        success:function(data){  
+                        	//定义位置的options
+                        	var option_wzMiaoShu="";
+                        	$.each(data.result,function(i,dataObj){
+                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                        	});
+                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+                        }
+                	});
+                }
+        	});
+        }
+	});
+	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	$('input').bind('input propertychange', function() { 
+		 var a = $("[name='pingfen.inGetPoint']").val();
+		 if(a==""){
+			 a=0;
+		 }
+		var b = $("[name='pingfen.outLiveGetPoint']").val();
+		if(b==""){
+			b=0;
+		}
+		var c = $("[name='pingfen.outGrowGetPoint']").val();
+		if(c==""){
+			c=0;
+		}
+		var d = $("[name='pingfen.outTrimGetPoint']").val();
+		if(d==""){
+			d=0;
+		}
+		var e = $("[name='pingfen.outPestGetPoint']").val();
+		if(e==""){
+			e=0;
+		}
+		var f = $("[name='pingfen.outCleaningGetPoint']").val();
+		if(f==""){
+			f=0;
+		}
+		var g = $("[name='pingfen.outSafeGetPoint']").val();
+		if(g==""){
+			g=0;
+		}
+		var h = $("[name='pingfen.outSingleGetPoint']").val();
+		if(h==""){
+			h=0;
+		}
+		
+		$("[name='pingfen.zongHeScore']").val(parseInt(a)+parseInt(b)+parseInt(c)+parseInt(d)+parseInt(e)+parseInt(f)+parseInt(g)+parseInt(h));
+	});
+	//路线改变时
+	$("#luXian").change(function(){
+		
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId = "";
+		var wzName="";
+		$("#wzType").children().remove(); 
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzType',  
+		    data:{"luXianId":luXianId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzType="";
+	        	$.each(data.result,function(i,dataObj){
+	        		if(i==0){
+	        			wzTypeId=dataObj.value;
+	        		}
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzType").append(option_wzType);
+	        	
+	        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+	        	$.ajax({  
+	        	    type:'post',      
+	        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+	        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+	        	    cache:false,  
+	        	    dataType:'json',  
+	                success:function(data){  
+	                	//定义位置的options
+	                	var option_wzName="";
+	                	$.each(data.result,function(i,dataObj){
+	                		if(i==0){
+	                			wzName=dataObj.value;
+	                		}
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                	});
+	                	$("#wzName").append(option_wzName);
+	                	
+	                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+	                	$.ajax({  
+	                	    type:'post',      
+	                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+	                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+	                	    cache:false,  
+	                	    dataType:'json',  
+	                        success:function(data){  
+	                        	//定义位置的options
+	                        	var option_wzMiaoShu="";
+	                        	$.each(data.result,function(i,dataObj){
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                        	});
+	                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	                        }
+	                	});
+	                }
+	        	});
+	        }
+		});
+	});
+	
+	//位置的选择事件
+	$("#wzType").change(function(){
+		var wzTypeVal=$(this).val();
+		var zhk="";
+		var zhm="";
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		//清除子选项的option
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+    	    type:'post',      
+    	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+    	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+    	    cache:false,  
+    	    dataType:'json',  
+            success:function(data){  
+            	//定义位置的options
+            	var option_wzName="";
+            	$.each(data.result,function(i,dataObj){
+            		if(i==0){
+            			wzName=dataObj.value;
+            			zhk=dataObj.zhk;
+            			zhm=dataObj.zhm;
+            		}
+            		option_wzName+="<option p="+dataObj.value+" zhk="+zhk+" zhm="+zhm+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+            	});
+            	if(wzTypeVal!="主线"){
+            		$("#startZHK").val(zhk);
+            		$("#startZHM").val(zhm);
+            	}else{
+            		$("#startZHK").val('');
+            		$("#startZHM").val('');
+            	}
+            	$("#wzName").append(option_wzName);
+            	
+            	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+            	$.ajax({  
+            	    type:'post',      
+            	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+            	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+            	    cache:false,  
+            	    dataType:'json',  
+                    success:function(data){  
+                    	//定义位置的options
+                    	var option_wzMiaoShu="";
+                    	$.each(data.result,function(i,dataObj){
+                    		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                    	});
+                    	$("#wzMiaoShu").append(option_wzMiaoShu);
+                    }
+            	});
+            }
+    	});
+	});
+
+
+	//方向/互通/收费站/服务区 选择事件
+	$("#wzName").change(function(){
+		var wzTypeVal=$("#wzType").val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		$("#wzMiaoShu").children().remove(); 
+		if(wzTypeVal!="主线"){
+			var zhk=$("#wzName").find("option:selected").attr("zhk");
+			var zhm=$("#wzName").find("option:selected").attr("zhm");
+    		$("#startZHK").val(zhk);
+    		$("#startZHM").val(zhm);
+    	}else{
+    		$("#startZHK").val('');
+    		$("#startZHM").val('');
+    	}
+		
+		//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+		    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzMiaoShu="";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	        }
+		});
+	});
+});
+</script>

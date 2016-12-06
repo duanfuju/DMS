@@ -1,0 +1,56 @@
+<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body" style="height:100%;overflow:auto;">
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'appName')">
+									名称 ${orderBy("appName")}
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'versions')">
+									版本${orderBy("versions")}
+		      					</th>
+		      					<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'updateContent')">
+									修改内容${orderBy("updateContent")}
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'createDate')">
+									提交时间${orderBy("createDate")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="">
+									二维码
+								</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(downloadApp in resultList){ %>
+								<tr>
+									<td class="hidden-xs">${downloadApp.appName!}</td>
+									<td class="hidden-xs">${downloadApp.versions!}</td>
+									<td class="hidden-xs">${downloadApp.updateContent!}</td>
+									<td class="hidden-xs">${downloadApp.createDate!}${downloadApp.uploadPath!}</td>
+									<td class="hidden-xs">
+										<img src="${downloadApp.qrCodeHttpPath!}"/>
+									</td>
+									<td class="hidden-xs">
+										<button type="button" title='编辑' class="btn btn-green edit-row" onClick="updateDownloadApp('${downloadApp.ids!}')" > 
+											<i class="fa fa-edit"></i>
+										</button>
+										<button type="button" onclick="downloadApk('${downloadApp.uploadPath!}')" title="下载" style="width:45px;background-color:green;color:white;border-radius:4px;border:0px;height:33px;margin-top:-3px">
+												<i class="fa fa-arrow-circle-o-down"></i>
+										</button>
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>

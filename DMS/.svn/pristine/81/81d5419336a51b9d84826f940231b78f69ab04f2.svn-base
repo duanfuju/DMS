@@ -1,0 +1,56 @@
+package com.junl.dms.mvc.rwtask;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.luxian.LuXian;
+import com.junl.dms.mvc.xunchainfo.XunChaInfo;
+import com.platform.annotation.Table;
+import com.platform.mvc.base.BaseModel;
+import com.platform.mvc.base.BaseModelCache;
+import com.platform.mvc.param.Param;
+import com.platform.plugin.ParamInitPlugin;
+import com.platform.tools.ToolCache;
+import com.test.mvc.blog.Blog;
+
+
+@SuppressWarnings("unused")
+@Table(tableName = "DMS_RW_task")
+public class RwTask extends BaseModel<RwTask> {
+	
+	private static final long serialVersionUID = 5979434062234466436L;
+
+	private static Logger log = Logger.getLogger(RwTask.class);
+	
+	public static final RwTask dao = new RwTask();
+	
+	public static final String sqlId_splitPageSelect = "manage.rwtask.splitPageSelect";
+	public static final String sqlId_splitPageFrom = "manage.rwtask.splitPageFrom";
+	//单表
+	public static final String sqlId_splitPageSelect_d = "manage.rwtask.splitPageSelect_d";
+	public static final String sqlId_splitPageFrom_d = "manage.rwtask.splitPageFrom_d";
+	//获取本月的任务数
+	public List<RwTask> getTaskNo(){
+		String sql = getSql("manage.rwtask.getTaskNo");
+		List<RwTask> list = RwTask.dao.find(sql);
+		return list;
+	}
+	public List<Record> getTaskNossss(String ids){
+		String sql = getSql("manage.rwtask.getTaskNossss");
+		List<Record> list = Db.find(sql,ids);
+		return list;
+	}
+	
+	public RwTask getTaskInfoById(String ids){
+		String sql = getSql("manage.rwtask.getTaskInfoById");
+		RwTask rwTask = RwTask.dao.findFirst(sql, ids);
+		return rwTask;
+	}
+	
+}

@@ -1,0 +1,129 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/fangxiang');">方向配置</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增方向</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" action="${cxt!}/jf/manage/fangxiang/save" method="POST" role="form" class="form-horizontal">	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线名称</label>
+						<div class="col-sm-7">
+							<select name="fangXiang.luXianId" class="form-control" onchange="mySelectChange()">
+								<%for(luXian in luXianList){%>
+									<option value="${luXian.ids!}" >${luXian.luXianName!}</option>
+								<%}%>
+							</select>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向名称</label>
+						<div class="col-sm-3">
+							<select name="fangXiang.name" class="form-control" >
+							</select>
+						</div>
+						<label class="col-sm-1 control-label">方向名称拼音缩写</label>
+						<div class="col-sm-3">
+							<input type="text" id="idcardId" name="fangXiang.pinYinSx" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+		mySelectChange();
+	});
+	
+	function mySelectChange(){
+		var luXianId=$("select[name='fangXiang.luXianId']").val();
+		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + "/jf/manage/weizhi/getWzName")),
+			data : {
+				"luXianId":luXianId,
+				"wzTypeId":"a44cf55d54524bf0bbea33bbe2e2405b"
+			},
+			dataType : "JSON",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			async: false,
+			cache: false,
+			success:function(data){
+				if(data.result_code==1){
+					$("select[name='fangXiang.name']").html("");
+					var nameSelect=$("select[name='fangXiang.name']").get(0);
+					for(var i=0;i<data.result.length;i++){
+						nameSelect.options.add(new Option(data.result[i].value,data.result[i].name));
+					}
+				}
+			}
+		});
+	}
+	
+	function myVail(){
+		var luXianId=$("select[name='fangXiang.luXianId']").val();
+		if(luXianId==null){
+			layer.msg("路线名称不能为空！");
+			return false;
+		}
+		var name=$("select[name='fangXiang.name']").val();
+		if(name==null){
+			layer.msg("方向名称不能为空！");
+			return false;
+		}
+		var pinYinSx=$("input[name='fangXiang.pinYinSx']").val();
+		if(pinYinSx==""){
+			layer.msg("方向名称拼音缩写不能为空！");
+			return false;
+		}
+		return true;
+	}
+	function mySubmit(){
+		if(!myVail()){
+			return;
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/fangxiang");
+			}
+		}
+		
+	}
+</script>	

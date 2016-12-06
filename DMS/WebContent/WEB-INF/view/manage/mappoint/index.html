@@ -1,0 +1,886 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a>
+			</li>
+			<li class="active">
+				地图展示
+			</li>
+		</ol>
+	</div>
+</div>
+<form id="splitPage" action="${cxt}/jf/manage/luxian" method="POST" role="form" class="form-horizontal">
+	<div class="row" style="margin-right:1px;">
+		<div class="col-md-3" style="padding-right:1px;">
+			<div class="panel panel-white" style="height: 100%">
+
+				<div class="panel-heading"> 
+					<h4 class="panel-title"><span class="text-bold">地图菜单</span></h4>
+				</div>
+				<div class="tabbable">
+					<ul id="myTab" class="nav nav-tabs">
+						<li class="active">
+							<a id="xuncha" aria-expanded="true" onclick="loadCheckedXC()" href="#myTab_example1" data-toggle="tab">  巡查 </a>
+						</li>
+						<li class="">
+							<a id="weixiu" aria-expanded="false" onclick="loadCheckedWX()" href="#myTab_example2" data-toggle="tab"> 维修 </a>
+						</li>
+						<li class="">
+							<a id="dinwei" aria-expanded="false" onclick="searchPointByDateAndUserId('locationTree','')" href="#myTab_example3" data-toggle="tab"> 定位 </a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade active in" id="myTab_example1" style="height: 652px">
+							<!-- 巡查 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="28%"><b>开始日期：</b></td>
+									<td width="75%"><input id="xcStartTime" type="text" name="startTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td width="28%"><b>结束日期：</b></td>
+									<td><input id="xcEndTime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><button type="button" onclick="xunChaByDate()" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+							<div class="ztree_c">
+  								 <ul id="xuchaTree" class="ztree"></ul>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="myTab_example2" style="height: 652px">
+							<!-- 维修 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="28%"><b>开始日期：</b></td>
+									<td width="75%"><input id="wxStartTime" type="text" name="startTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td width="28%"><b>结束日期：</b></td>
+									<td><input id="wxEndTime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><button type="button" onclick="weixiuByDate()" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+							<div class="ztree_c">
+  								 <ul id="weixiuTree" class="ztree"></ul>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="myTab_example3" style="height: 652px">
+							<!-- 维修 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="28%"><b>查询日期：</b></td>
+									<td width="75%"><input id="locationDate" type="text" name="searchTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+<!-- 								<tr> -->
+<!-- 									<td width="28%"><b>结束日期：</b></td> -->
+<!-- 									<td><input id="wxEndTime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td> -->
+<!-- 								</tr> -->
+								<tr>
+									<td colspan="2"><button type="button" onclick="searchPoint()" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+							<div class="ztree_c">
+  								 <ul id="locationTree" class="ztree"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9" style="padding-right:1px;padding-left:12px;">
+			<div class="panel panel-white" style="height: 100%">
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold"> 地图信息</span></h4>
+				</div>
+				<div id="baiduMapContainer" class="panel-body">
+					<!-- 地图信息 -->
+					
+					
+				</div>
+				<div id="bh_info_li" style="width: 220px; position: absolute; top: 51px; right: 1px;">
+						<ul id="xcwx">
+							<li><a href="#"><img src=""><b>路面病害</b><span class="aspan">巡查：<b id="lumianXC">0</b>处;维修：<b>0</b>处</span></a></li>
+							<li><a href="#"><img src="">裂缝处理<span class="aspan">巡查：<b id="liefengXC">0</b>处;维修：<b>0</b>处</span></a></li>
+							<li><a href="#"><img src="">油污处理<span class="aspan">巡查：<b id="youwuXC">0</b>处;维修：<b>0</b>处</span></a></li>
+							<li><a href="#"><img src="">通用维修<span class="aspan">巡查：<b id="tongyongXC">0</b>处;维修：<b>0</b>处</span></a></li>
+							<li><a href="#"><img src="">交通安全<span class="aspan">巡查：<b id="jiaotongXC">0</b>处;维修：<b>0</b>处</span></a></li>
+							<li><a href="#"><img src="">防撞护栏<span class="aspan">巡查：<b id="fangzhuangXC">0</b>处;维修：<b>0</b>处</span></a></li>
+						</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</form>
+<style type="text/css">  
+    #baiduMapContainer{
+    		height:715px;
+    }    
+    .anchorBL{display:none;}
+    .ztree_c{
+    	width:100%; height:475px; overflow:auto;
+    }
+  
+  
+ /*这个是悬浮在百度地图上的div样式*/
+  ul, li {
+          list-style: outside none none;
+          margin: 0;
+          padding: 1px;
+  }
+
+  #bh_info_li, #bh_linfo li {
+      border-bottom: 1px solid #ccc;
+  }
+
+  #bh_info_li, #bh_linfo {
+      background: #ffffff none repeat scroll 0 0;
+      border-radius: 4px 3px 6px 10px;
+      opacity: 0.8;
+  }
+
+   #bh_info_li li a {
+       border-radius: 4px 3px 6px 10px;
+       color: #000;
+       display: block;
+       font-weight: bolder;
+       text-decoration: none;
+       transition: font-size 0.3s ease 0s, background-color 0.3s ease 0s;
+       width: 220px;
+   }
+    
+</style>
+<script type="text/javascript">
+
+	//全局变量
+	var xcStartDate;
+    var xcEndDate;
+    var wxStartDate;
+    var wxEndDate;
+    var locationDate;
+    //存放巡查所有的maker
+    var makerWXArray = new Array();
+    //存放维修所有的maker
+    var makerXCArray = new Array();
+    //存放定位所有的maker
+    var makerLocationArray;
+    //存放所有父节点
+    var treeNodeArray = new Array();
+	//---------------------------初始化 百度地图
+	var map = new BMap.Map("baiduMapContainer",{enableMapClick:false});  // 创建地图实例   禁止显示景点信息
+	
+	
+	//为array 添加 方法
+  	Array.prototype.contains = function(item)
+  	{
+  		for(i=0;i<this.length;i++){
+  	        if(this[i]==item){return true;}
+  	    }
+  		return false;
+  	}
+  	Array.prototype.indexOf = function(val) 
+  	{ 
+  		for (var i = 0; i < this.length; i++) 
+  		{ 
+  			if (this[i] == val) return i; 
+  		} 
+  		return -1; 
+  	};
+  	Array.prototype.remove = function(val) 
+  	{ 
+  		var index = this.indexOf(val); 
+  		if (index > -1) 
+  		{ 
+  			this.splice(index, 1); 
+  		} 
+  	};
+	
+	
+    //页面初始化
+    $(function(){
+    	
+        initBaidu();
+        initTreeMenu();
+        //查询巡查有几处  为维修有几处
+        initXunchaWeixiu();
+        initDateSearch();
+       
+        //加载定位
+        loadLocation();
+    });
+    
+    function initDateSearch()
+    {
+    	var date = getNowDate();
+		$("#wxEndTime").val(date);
+		$("#xcEndTime").val(date);
+		$("#locationDate").val(date);
+		locationDate = date;
+		xcEndDate = date;
+		wxEndDate = date;
+		var dateAfterSeven = getNowDateAfterSeven();
+        $("#wxStartTime").val(dateAfterSeven);
+        $("#xcStartTime").val(dateAfterSeven);
+        wxStartDate = dateAfterSeven;
+        xcStartDate = dateAfterSeven;
+        //先只查询巡查
+        xunChaByDate();
+    }
+    
+  //获取当前时间  年月日
+    function getNowDate()
+    {
+    	
+		var nowDate = new Date();
+		var year = nowDate.getFullYear();
+		var month = nowDate.getMonth();
+		var strDate = nowDate.getDate();
+	  	if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+		var m = (month+1);
+		if(m < 10)
+		{
+			m = "0"+m;
+		}
+		var date = year+"-"+m+"-"+strDate;
+		return date;
+    }
+    
+    //当前 前第7天的时间
+    function getNowDateAfterSeven()
+    {
+    	var nowDate = new Date();
+		
+		var date = new Date(nowDate.getTime() - 7 * 24 * 3600 * 1000);
+		var year = date.getFullYear();
+		var month = date.getMonth();
+		m = date.getMonth() + 1;
+		strDate = date.getDate();
+		if (strDate >= 0 && strDate <= 9) { 
+	        strDate = "0" + strDate;
+	    }
+		var m = (month+1);
+		if(m < 10)
+		{
+			m = "0"+m;
+		}
+		date = year+"-"+m+"-"+strDate;
+		return date;
+    }
+    
+    //查询巡查有几处  为维修有几处
+    function initXunchaWeixiu()
+    {
+    	//默认是 传 当前 和 前第七天的时间
+    	var nowDate = getNowDate();
+    	var nowDateAfterSeven = getNowDateAfterSeven();
+    	$.ajax({
+			url:cxt+"/jf/manage/mapPoint/getTreeMenuAndChildren",
+			async:true,
+			type:"post",
+			data:{"startDate":nowDate,"endDate":nowDateAfterSeven},
+			success:function(data)
+			{
+				var list = data.nameAndCount;
+				var html = '';
+				for(var i=0;i<list.length;i++)
+				{
+					var name = list[i].name;
+					var imgPath = getUrlByName(name);
+					if(name.length > 4)
+					{
+						name = name.substring(0,4);
+					}
+					var xcCount = list[i].xcCount;
+					var wxCount = list[i].wxCount;
+					var id = list[i].id;
+					html += '<li><a href="#"><img src="'+imgPath+'"><b>'+name+'</b><span class="aspan">巡查：<b id="'+id+'XC">'+xcCount+'</b>处;维修：<b id="'+id+'WX">'+wxCount+'</b>处</span></a></li>';
+					$("#xcwx").html(html);
+				}
+			}
+		});
+    }
+    
+    //根据菜单类型 获取图片url
+    function getUrlByName(name)
+    {
+    	if(name.indexOf("路面") != -1)
+    	{
+    		return "${cxt}/img/mapImg/lumian.png";
+    	}
+    	else if(name.indexOf("裂缝") != -1)
+    	{
+    		return "${cxt}/img/mapImg/liefeng.png";
+    	}
+    	else if(name.indexOf("油污") != -1)
+    	{
+    		return "${cxt}/img/mapImg/youwu.png";
+    	}
+    	else if(name.indexOf("通用") != -1)
+    	{
+    		return "${cxt}/img/mapImg/tongyong.png";
+    	}
+    	else if(name.indexOf("交通") != -1)
+    	{
+    		return "${cxt}/img/mapImg/jiaotong.png";
+    	}
+    	else if(name.indexOf("防撞") != -1)
+    	{
+    		return "${cxt}/img/mapImg/fangzhuang.png";
+    	}
+    	else if(name.indexOf("巡查") != -1)
+    	{
+    		return "${cxt}/img/mapImg/xc.png";
+    	}
+    	else if(name.indexOf("维修") != -1)
+    	{
+    		return "${cxt}/img/mapImg/wx.png";
+    	}
+    }
+   
+    //根据日期  查询巡查
+    function xunChaByDate()
+    {
+    	xcStartDate = $("#xcStartTime").val();
+    	xcEndDate = $("#xcEndTime").val();
+    	$.ajax({
+			url:cxt+"/jf/manage/mapPoint/getTreeMenuAndChildren",
+			async:true,
+			type:"post",
+			data:{"startDate":xcStartDate,"endDate":xcEndDate},
+			success:function(data)
+			{
+				var list = data.nameAndCount;
+				var html = '';
+				for(var i=0;i<list.length;i++)
+				{
+					var xcCount = list[i].xcCount;
+					var id = list[i].id;
+					$("#"+id+"XC").html(xcCount);
+				}
+				//加载已经勾选的checked标注
+				loadCheckedXC();
+			}
+		});
+    }
+    //重新加载   巡查选中的标注
+    function loadCheckedXC()
+    {
+    	var treeObj = $.fn.zTree.getZTreeObj("xuchaTree");
+    	var nodes = treeObj.getCheckedNodes(true);
+    	//移除定位的maker
+    	removeMakerAll();
+    	if(nodes.length > 0)
+    	{
+    		for(var i=0;i<nodes.length;i++)
+    		{
+    			if(nodes[i].isParent == false)
+        		{
+    				//获取父节点
+    				var parentNode = nodes[i].getParentNode();
+    				var parentNodeName = parentNode.name;
+    				var name = nodes[i].name;
+        			$.ajax({
+        				url:cxt+"/jf/manage/mapPoint/getXCLngAndLat",
+        				async:true,
+        				type:"post",
+        				data:{"name":nodes[i].name,"startDate":xcStartDate,"endDate":xcEndDate},
+        				success:function(data)
+        				{
+        					if(data.lngAndLat != "noData")
+        					{
+        						var isCheck = true;
+        						loadBaiduMapMaker(data,name,isCheck,"XC",parentNodeName)
+        					}
+        				}
+        			});
+        		}
+    		}
+    	}
+    }
+    
+    //根据日期查询维修
+    function weixiuByDate()
+    {
+    	wxStartDate = $("#wxStartTime").val();
+    	wxEndDate = $("#wxEndTime").val();
+    	$.ajax({
+			url:cxt+"/jf/manage/mapPoint/getTreeMenuAndChildren",
+			async:true,
+			type:"post",
+			data:{"startDate":wxStartDate,"endDate":wxEndDate},
+			success:function(data)
+			{
+				var list = data.nameAndCount;
+				var html = '';
+				for(var i=0;i<list.length;i++)
+				{
+					var wxCount = list[i].wxCount;
+					var id = list[i].id;
+					$("#"+id+"WX").html(wxCount);
+				}
+				//加载已经勾选的checked标注
+				loadCheckedWX();
+			}
+		});
+    	
+    }
+    
+    //加载维修  选中的标注
+    function loadCheckedWX()
+    {
+    	var treeObj = $.fn.zTree.getZTreeObj("weixiuTree");
+    	var nodes = treeObj.getCheckedNodes(true);
+    	//移除定位的maker
+    	removeMakerAll();
+    	if(nodes.length > 0)
+    	{
+    		for(var i=0;i<nodes.length;i++)
+    		{
+    			if(nodes[i].isParent == false)
+        		{
+    				//获取父节点
+    				var parentNode = nodes[i].getParentNode();
+    				var parentNodeName = parentNode.name;
+    				var name = nodes[i].name;
+        			$.ajax({
+        				url:cxt+"/jf/manage/mapPoint/getWXLngAndLat",
+        				async:true,
+        				type:"post",
+        				data:{"name":nodes[i].name,"startDate":wxStartDate,"endDate":wxEndDate},
+        				success:function(data)
+        				{
+        					if(data.lngAndLat != "noData")
+        					{
+        						var isCheck = true;
+        						loadBaiduMapMaker(data,name,isCheck,"WX",parentNodeName)
+        					}
+        				}
+        			});
+        		}
+    		}
+    	}
+    }
+    
+    
+    
+    
+    
+   	//初始化百度地图
+    function initBaidu()
+    {
+    	var point = new BMap.Point(120.598272,31.778381);  // 创建点坐标  
+    	map.centerAndZoom(point, 11);  					// 初始化地图，设置中心点坐标和地图级别  
+    	map.enableScrollWheelZoom(true);			  //缩放
+    	var tmp = new BMap.Polyline([
+    		 new BMap.Point(120.460867,31.482733),
+    		 new BMap.Point(120.44017,31.515246),
+    		 new BMap.Point(120.495937,31.590575),
+    		 new BMap.Point(120.622993,31.937862),
+    		 new BMap.Point(120.671286,31.948648),
+    		 new BMap.Point(120.675885,31.916287),
+    		 new BMap.Point(120.541355,31.554642),
+    		 new BMap.Point(120.502261,31.496528),
+    		 new BMap.Point(120.460867,31.482733)
+    	],{strokeColor:"blue",strokeWeight:2,storkeOpacity:0.5});
+    	map.addOverlay(tmp);
+//     	var sContent =
+//     		"<h4 style='margin:0 0 5px 0;padding:0.2em 0;font-weight:bold;'>天安门</h4>" + 
+//     		"<img style='float:right;margin:4px' id='img' src='http://app.baidu.com/map/images/tiananmen.jpg' width='139' height='104' title='天安门'/>" + 
+//     		"<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>天安门坐落在中国北京市中心,故宫的南侧,与天安门广场隔长安街相望,是清朝皇城的大门...</p>" + 
+//     		"</div>";
+    }
+    
+   
+  	//添加标注
+    function addSign(point,title,contents,isCheck,type,parentNodeName)
+    {
+    	var imgPath = getUrlByName(parentNodeName);
+    	var myIcon = new BMap.Icon(imgPath, new BMap.Size(40,40));
+    	var marker = new BMap.Marker(point,{icon:myIcon});
+    	marker.setTitle(title);
+    	//是否选中checkbox  选中 显示标注   取消选中 移除标注
+    	
+    	if(isCheck == true)
+    	{
+    		map.addOverlay(marker);
+    		if(type == "WX")
+        	{
+    			makerWXArray.push(marker);
+        	}
+        	else if(type == "XC")
+        	{
+    			makerXCArray.push(marker);
+        	}
+        	else if(type == "location")
+        	{
+        		makerLocationArray.push(marker);
+        	}
+    	}
+    	else
+    	{
+    		var markArray = new Array();
+    		if(type == "WX")
+        	{
+    			markArray = makerWXArray;
+        	}
+        	else if(type == "XC")
+        	{
+        		markArray = makerXCArray;
+        	}
+    		for (var i = 0; i < markArray.length; i++){
+    			if(markArray[i].getTitle() == title){
+    				map.removeOverlay(markArray[i]);
+    				if(type == "WX")
+    	        	{
+    	    			makerWXArray.remove(markArray[i]);
+    	        	}
+    	        	else if(type == "XC")
+    	        	{
+    	        		makerXCArray.remove(markArray[i]);
+    	        	}
+    			}
+    		}
+    	}
+    	
+    	
+    	if(contents)
+    	{
+    		var infoWindow = new BMap.InfoWindow(contents);//创建信息窗口
+        	//设置标注的点击事件
+        	marker.addEventListener("click", function(){          
+      		   this.openInfoWindow(infoWindow);
+      		   //图片加载完毕重绘infowindow
+//       		   document.getElementById('img').onload = function (){
+//       			   infoWindow.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+//       		   }
+      		});
+    	}
+    }
+  	
+  	
+  	//初始化树状菜单
+  	function initTreeMenu()
+  	{
+  		
+  		var setting1 = {
+  				check: {
+  					enable: true,
+  					chkStyle: "checkbox",
+  					chkboxType: { "Y": "ps", "N": "ps" },
+  					autoCheckTrigger: true
+  				},
+  				data:{
+  					simpleData:{
+  						enable: true,
+  						idKey: "id",
+  						pIdKey: "pId",
+  						rootPId: 0
+  					}
+  				},
+  				view: {
+  	                dblClickExpand: true,
+  	                showLine: false
+  	            },
+  	          callback: {
+  	    		beforeExpand: nodeExpand,
+  	    		onCheck: nodeXCCheck
+  	    	  }
+  		};
+  		var setting2 = {
+  				check: {
+  					enable: true,
+  					chkStyle: "checkbox",
+  					chkboxType: { "Y": "ps", "N": "ps" },
+  					autoCheckTrigger: true
+  				},
+  				data:{
+  					simpleData:{
+  						enable: true,
+  						idKey: "id",
+  						pIdKey: "pId",
+  						rootPId: 0
+  					}
+  				},
+  				view: {
+  	                dblClickExpand: true,
+  	                showLine: false
+  	            },
+  	          callback: {
+  	    		beforeExpand: nodeExpand,
+  	    		onCheck: nodeWXCheck
+  	    	  }
+  		};
+  		
+  		//ajax 请求数据
+		$.ajax({
+			url:cxt+"/jf/manage/mapPoint/getTreeMenuAndChildren",
+			async:true,
+			type:"post",
+			data:{},
+			success:function(data)
+			{
+				var treeObj1 = $.fn.zTree.init($("#xuchaTree"), setting1,data.menu);
+				var nodes = treeObj1.getNodes();
+				if(nodes)
+				{
+					for(var i=0;i<nodes.length;i++)
+					{
+						if(nodes[i].isParent == true)
+						{
+							nodeExpand("xuchaTree", nodes[i]);
+						}
+					}
+				}
+				
+				var treeObj2 =$.fn.zTree.init($("#weixiuTree"), setting2,data.menu);
+				nodes = treeObj2.getNodes();
+				if(nodes)
+				{
+					for(var i=0;i<nodes.length;i++)
+					{
+						if(nodes[i].isParent == true)
+						{
+							nodeExpand("weixiuTree", nodes[i]);
+						}
+					}
+				}
+			}
+		});
+  	}
+  	
+  	
+  	//巡查
+  	//展开父节点  获取子节点
+	function nodeExpand(treeId, treeNode)
+	{
+  		if(treeNode.isParent == true)
+  		{
+  			if(treeNodeArray.contains(treeNode))
+  			{
+  				return true;
+  			}
+  			else
+  			{
+  				treeNodeArray.push(treeNode);
+  			}
+  		}
+		var treeObj = $.fn.zTree.getZTreeObj(treeId);
+		treeObj.removeChildNodes(treeNode);
+		// treeNode 当前选中的节点
+		$.ajax({
+			url:cxt+"/jf/manage/mapPoint/getChildrenMenuByParentId",
+			async:true,
+			type:"post",
+			data:{"parentId":treeNode.id},
+			success:function(data)
+			{
+				treeObj.addNodes(treeNode, data.childrenMenu);  
+			}
+		});
+		return true;
+	}
+  	
+  	//巡查菜单被选中触发的事件
+  	function nodeXCCheck(event, treeId, treeNode)
+  	{
+		if(treeNode.isParent == false)
+		{
+			//获取父节点
+			var parentNode = treeNode.getParentNode();
+			var parentNodeName = parentNode.name;
+			$.ajax({
+				url:cxt+"/jf/manage/mapPoint/getXCLngAndLat",
+				async:true,
+				type:"post",
+				data:{"name":treeNode.name,"startDate":xcStartDate,"endDate":xcEndDate},
+				success:function(data)
+				{
+					if(data.lngAndLat != "noData")
+					{
+						var isCheck = false;
+						if(treeNode.checked == true)
+						{
+							isCheck = true;
+						}
+						loadBaiduMapMaker(data,treeNode.name,isCheck,"XC",parentNodeName)
+					}
+				}
+			});
+		}
+  	}
+  	
+  	//维修菜单被选中触发的事件
+  	function nodeWXCheck(event, treeId, treeNode)
+  	{
+  		if(treeNode.isParent == false)
+		{
+  			//获取父节点
+			var parentNode = treeNode.getParentNode();
+			var parentNodeName = parentNode.name;
+			$.ajax({
+				url:cxt+"/jf/manage/mapPoint/getWXLngAndLat",
+				async:true,
+				type:"post",
+				data:{"name":treeNode.name,"startDate":wxStartDate,"endDate":wxEndDate},
+				success:function(data)
+				{
+					if(data.lngAndLat != "noData")
+					{
+						var isCheck = false;
+						if(treeNode.checked == true)
+						{
+							isCheck = true;
+						}
+						loadBaiduMapMaker(data,treeNode.name,isCheck,"WX",parentNodeName);
+					}
+				}
+			});
+		}
+  	}
+  	
+	//根据经纬度加载百度地图的标志
+  	function loadBaiduMapMaker(data,title,isCheck,type,parentNodeName)
+  	{
+  		$.each(data.lngAndLat,function(i,item){
+  			var lng = item.lng;
+			var lat = item.lat;
+  			addSign(new BMap.Point(lat,lng),title,null,isCheck,type,parentNodeName);
+  		});
+  	}
+
+
+//----------------------------------------------------------------------------定位
+
+	function loadLocation()
+	{
+		var resultData = common_ajax.ajaxFunc("/jf/manage/mapPoint/getLocationMenuAndPointAll",{"locationDate":locationDate},"JSON");
+		var setting1 = {
+  				data:{
+  					simpleData:{
+  						enable: true,
+  						idKey: "id",
+  						pIdKey: "pId",
+  						rootPId: 0
+  					}
+  				},
+  				view: {
+  	                dblClickExpand: true,
+  	                showLine: false
+  	            },
+  	          callback: {
+  	        	onClick: searchPointByDateAndUserId
+  	    	  }
+  		};
+		var treeObj1 = $.fn.zTree.init($("#locationTree"), setting1,resultData.menuList);
+	}
+	
+	function searchPoint()
+	{
+		locationDate = $("#locationDate").val();
+		loadLocation();
+		searchPointByDateAndUserId(null,null,null);
+	}
+	
+	function searchPointByDateAndUserId(event,treeId,treeNode)
+	{
+		locationDate = $("#locationDate").val();
+		if(locationDate == null || locationDate == "")
+		{
+			layer.msg("请输入选择查询日期");
+			return;
+		}
+		//移除所有定位marker
+		
+		//移除locationMaker
+		removeMakerAll();
+		
+		//获取当前选中的节点
+		var treeObj = $.fn.zTree.getZTreeObj("locationTree");
+		var nodes = treeObj.getSelectedNodes();
+		var userId = "";
+		if(nodes.length > 0)
+		{
+			userId = nodes[nodes.length-1].id
+		}
+		var resultData = common_ajax.ajaxFunc("/jf/manage/mapPoint/getPointByUserIdAndDate",{"locationDate":locationDate,"userId":userId},"JSON");
+		//标注
+		if(resultData.lngLatList.length > 0)
+		{
+			$.each(resultData.lngLatList,function(i,item){
+				var lng = item.lng;
+				var lat = item.lat;
+				var wxORxc = "";
+				var userName = item.userName;
+				var date = item.createTime;
+				var name = "巡查";
+				if(item.isXC && item.isWX)
+				{
+					wxORxc = "正在该处进行巡查和维修";	
+				}
+				else if(item.isXC)
+				{
+					wxORxc = "正在该处进行巡查";
+					name = "巡查";
+				}
+				else if(item.isWX)
+				{
+					wxORxc = "正在该处进行维修";
+					name = "维修";
+				}
+				var contents = "<div>";
+				contents += "<p><b>时间：</b>"+date+"</p>";
+				contents += "<p><b>人员：</b>"+userName+"</p>";
+				contents += "<p><b>"+wxORxc+"</b></p>";
+				contents += "</div>";
+				var point = new BMap.Point(lng,lat);
+				addSign(point,"",contents,true,"location",name);
+			});
+		}
+		
+	}
+	
+	//移除所有Maker
+	function removeMakerAll()
+	{
+		//移除locationMaker
+		if(makerLocationArray != null && makerLocationArray.length > 0)
+		{
+			for(var i=0;i<makerLocationArray.length;i++)
+			{
+				map.removeOverlay(makerLocationArray[i]);
+			}
+		}
+		makerLocationArray = new Array();
+		
+		//巡查
+    	if(makerXCArray.length > 0)
+    	{
+    		for(var i=0;i<makerXCArray.length;i++)
+    		{
+    			map.removeOverlay(makerXCArray[i]);
+    			makerXCArray.remove(makerXCArray[i]);
+    		}
+    	}
+    	//维修
+    	if(makerWXArray.length > 0)
+    	{
+    		for(var i=0;i<makerWXArray.length;i++)
+    		{
+    			map.removeOverlay(makerWXArray[i]);
+    			makerWXArray.remove(makerWXArray[i]);
+    		}
+    	}
+	}
+	
+	
+	
+</script>
+
+

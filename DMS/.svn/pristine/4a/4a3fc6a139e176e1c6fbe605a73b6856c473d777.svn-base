@@ -1,0 +1,336 @@
+<style>
+<!--
+#fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+-->
+</style>
+<script src="${cxt!}/jsFile/webuploader/js/upload_fzhl.js"></script>
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+<script type="text/javascript">
+function mySubmit(){
+	var baoYanPeople = $("[name='baoYan.baoYanPeople']").val();
+	console.log($("#taskIds_h").val());
+	if(baoYanPeople==""){
+		layer.msg("报验人不能为空");
+		return;
+	}
+	var baoYanTime = $("[name='baoYan.baoYanTime']").val();
+	if(baoYanTime==""){
+		layer.msg("报验日期不能为空");
+		return;
+	}
+	
+	var shenHePeople = $("[name='baoYan.shenHePeople']").val();
+	if(shenHePeople==""){
+		layer.msg("审核人不能为空");
+		return;
+	}
+	var shenHeTime = $("[name='baoYan.shenHeTime']").val();
+	if(shenHeTime==""){
+		layer.msg("审核日期不能为空");
+		return;
+	}
+	
+	var yanShouPeople = $("[name='baoYan.yanShouPeople']").val();
+	if(yanShouPeople==""){
+		layer.msg("报验收人不能为空");
+		return;
+	}
+	var yanShouTime = $("[name='baoYan.yanShouTime']").val();
+	if(yanShouTime==""){
+		layer.msg("验收日期不能为空");
+		return;
+	}
+	var resultData=common_ajax.ajaxForm("editForm","JSON");
+	if(resultData==""){
+		layer.msg("请求失败！");
+	}else{
+		layer.msg(resultData.result_desc);
+		if(resultData.result){
+			//common_ajax.ajaxMainPanel("/jf/manage/baoyan",{"pageNumber":2});
+		}
+	}
+	
+}
+//删除当前选中的需要报验的
+function delMode(id){
+	layer.confirm('确定删除此条数据？', {
+		  btn: ['确定','取消'] ,//按钮
+		  scrollbar:false
+	}, function(){
+		var tr=$(".trDom"+id);
+		//删除此条记录下的隐藏
+		if(tr.next().hasClass('pad')){
+			tr.next().remove();
+		}
+		//删除
+		$(".trDom"+id).remove();
+		//重新设置隐藏域的值
+		resetHidden();
+		layer.closeAll();
+	});
+}
+	//重新设置隐藏域的值
+function resetHidden(){
+	var taskIds="";
+	
+	
+	$(".eachTd").each(function(i,n){
+		taskIds+=$(this).attr("p")+"\',\'";
+	});
+
+	taskIds=taskIds.substring(0,taskIds.length-3);
+	$("#taskIds").val(taskIds);
+}
+//显示子级菜单编辑弹出层
+	function showEditChildrenMenu(){	
+		var taskIds=$("#taskIds").val();
+		var url="/jf/manage/rwtask/choose_checkBox";
+		var width=1320;
+		var height=780;
+		var title="选择报验维修记录";
+		$.ajax({
+		type : "post",
+		url : encodeURI(encodeURI(cxt + url)),
+		data : {"_query.taskRelateState":1,"_query.notInTaskIds":taskIds},
+		dataType : "HTML",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		async: false,
+		cache: false,
+		success:function(response){
+			result = response;
+			layer.open({
+			  type: 1, //page层
+			  area: [width+'px', height+'px'],
+			  title: title,
+			  shade: 0.6, //遮罩透明度
+			  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+			  shift: 0, //0-6的动画形式，-1不开启
+			  content: result,
+			  btn:['确定'],
+			  btn1:function(){
+				  //设置需要传到后台的值
+				  var taskIds_h="";
+				  $("#tr_checked").html("");
+				  var wxjlIds = window.getTaskIds.split(",");
+				  for(var i=0;i<wxjlIds.length;i++){
+					  var wxjlId=wxjlIds[i];
+					  var trObj=$(".trDom"+wxjlId);
+					  trObj.find("td:eq(0)").remove();
+					  $("#tr_checked").append(trObj);  
+					  
+					  taskIds_h+=wxjlIds[i]+"\',\'";
+				  }
+				  //将巡查信息的编号放到隐藏域中
+				  wxjl_str=taskIds_h.substring(0,taskIds_h.length-2);
+				  wxjl_str="'"+wxjl_str;
+				  $("#taskIds_h").val(wxjl_str);
+				  $("#showSelectTable").show();
+				  layer.closeAll();
+			  }
+			});
+		}
+	});
+	}
+</script>
+
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/baoyan');">维修报验</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	 <img src="" id='fix' alt="图片损坏,点击返回" style="display: none;">	
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增维修报验</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">
+			
+				<table class="table table-bordered table-hover" id="showSelectTable" style="display:none" style="font-size: 13px" >
+					<thead>
+						<tr>
+							<td class="hidden-xs" width="10%" >
+									桩号范围
+								</td>
+								<td class="hidden-xs" width="10%" >
+									位置
+								</td>
+								<td class="hidden-xs" width="5%" >
+									天气状况
+								</td>
+								<td class="hidden-xs" width="5%" >
+									气温 
+								</td>
+								<td class="hidden-xs" width="10%" >
+									施工机械
+								</td>
+								<td class="hidden-xs" width="10%" >
+									维修人员
+								</td>
+								<td class="hidden-xs" width="10%" >
+									现场专职安全员
+								</td>
+								<td class="hidden-xs" width="10%" >
+									现场施工负责人
+								</td>
+								<td class="hidden-xs" width="10%" >
+									质量评价
+								</td>
+								<td class="hidden-xs" width="10%" >
+									损害类型
+								</td>
+								<td class="hidden-xs" width="10%" >
+									图片
+								</td>
+
+						</tr>
+					</thead>
+						<tbody id="tr_checked">
+							
+						</tbody>
+					</table>
+				<form id="editForm" action="${cxt!}/jf/manage/baoyan/save" method="POST" role="form" class="form-horizontal">	
+					
+					<input type="hidden" id="byPre" name="baoYan.byPre" value="${byPre}" class="form-control">
+					<input type="hidden" id="byNum" name="baoYan.byNum" value="${byNum}" class="form-control">
+					<!-- 查询条件 -->
+					<input type="hidden" id="taskIds" name="taskIds" class="form-control">
+					<!-- 需要带到后台的值-->			
+					<input type="hidden" id="taskIds_h" name="taskIds_h" class="form-control">
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							维修中心
+						</label>
+						<div class="col-sm-2"   >
+						<select id="byu" name="baoYan.byu"  maxlength="20" class="form-control">
+								<% for(by in byList){ %>
+										<option value="${by.name }">${by.name  }</option>
+									<% } %>
+						</select>
+						</div> 
+						<label class="col-sm-2 control-label">
+							维修报验单序列
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="byNo" name="baoYan.byNo" readonly="readonly" value="${byNo!}" class="form-control">
+						</div>
+					</div>		
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修记录</label>
+						<span class="help-inline col-sm-2"> 
+							<a href="#"  class="btn btn-blue" onclick="showEditChildrenMenu()" >选择</a>
+						</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">报验人</label>
+						<div class="col-sm-2">
+							<input type="text" name="baoYan.baoYanPeople" value="${baoYan.baoYanPeople!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">报验日期</label>
+						<div class="col-sm-2">
+							<input type="text"  name="baoYan.baoYanTime" value="${baoYan.baoYanTime!}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">审核人</label>
+						<div class="col-sm-2">
+							<input type="text" name="baoYan.shenHePeople" value="${baoYan.shenHePeople!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">审核日期</label>
+						<div class="col-sm-2">
+							<input type="text"  name="baoYan.shenHeTime" value="${baoYan.shenHeTime!}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">验收人</label>
+						<div class="col-sm-2">
+							<input type="text" name="baoYan.yanShouPeople" value="${baoYan.yanShouPeople!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">验收日期</label>
+						<div class="col-sm-2">
+							<input type="text"  name="baoYan.yanShouTime" value="${baoYan.yanShouTime!}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+				
+				
+				
+				
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-6">
+							<textarea  name="baoYan.remark" class="form-control" rows="4" cols="20"></textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+						        <div id="container">
+						            <!--头部，相册选择和格式选择-->
+						
+						            <div id="uploader">
+						                <div class="queueList">
+						                    <div id="dndArea" class="placeholder">
+						                        <div id="filePicker"></div>
+						                        <p>或将照片拖到这里，单次最多可选3张</p>
+						                    </div>
+						                </div>
+						                <div class="statusBar" style="display:none;">
+						                    <div class="progress">
+						                        <span class="text">0%</span>
+						                        <span class="percentage"></span>
+						                    </div><div class="info"></div>
+						                    <div class="btns">
+						                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

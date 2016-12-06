@@ -1,0 +1,221 @@
+package com.junl.dms.mvc.xunchainfo;
+
+
+
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.xunchainfofzhlrelate.XunChaInfoFzhlRelate;
+import com.junl.dms.mvc.xunchatou.XunChaTou;
+import com.platform.mvc.base.BaseService;
+
+
+public class XunChaInfoService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(XunChaInfoService.class);
+
+	public static final XunChaInfoService service=new XunChaInfoService();
+	
+	
+	/**
+	 * 保存
+	 */
+	public boolean save(XunChaInfo xunChainfo, String[] paras, List<XunChaInfoFzhlRelate> chaInfoFzhlRelates) {
+		boolean flag=false;
+		//获取文件名
+		StringBuffer sb = new StringBuffer();		
+		if(paras != null) {
+			for(int i=0;i<paras.length;i++){
+				sb.append(paras[i]+",");
+				String newStr = sb.toString();
+				//去掉最后一个逗号
+				String newStr1 = newStr.substring(0, newStr.length()-1);
+				xunChainfo.set("imgs",newStr1);
+			}
+		}else{
+			xunChainfo.set("imgs","");
+		}
+		xunChainfo.set("state", 0);
+	
+		xunChainfo.set("createTime", new Timestamp(System.currentTimeMillis()));
+		flag=xunChainfo.save();
+		//根据巡查信息关联的巡查头的状态设置为1，已有关联任务
+		String xunChaTouIds=xunChainfo.getStr("xunChaTouId");
+		if (StringUtil.isNotEmpty(xunChaTouIds)) {
+			XunChaTou chaTou=XunChaTou.dao.findById(xunChaTouIds);
+			chaTou.set("state", 1);
+			chaTou.update();
+		}
+		//添加巡查信息的防撞护栏的所需要添加的子表信息
+		if (flag) {
+			if (chaInfoFzhlRelates.size()>0) {
+				for (XunChaInfoFzhlRelate fzhlRelate : chaInfoFzhlRelates) {
+					if(fzhlRelate.toJson().length()>2){
+						fzhlRelate.set("xunChaInfoId", xunChainfo.getStr("ids"));
+						fzhlRelate.save();
+					}
+				}
+			}
+		}
+		return flag;
+	}
+
+	
+
+	/**
+	 * 更新
+	 * @param paras 
+	 * @param file 
+	 * @param xunChaTou
+	 */
+	public boolean update(XunChaInfo xunChainfo,List<XunChaInfoFzhlRelate> chaInfoFzhlRelates, String[] paras) {
+		boolean flag=false;
+		StringBuffer sb = new StringBuffer();
+		if(paras != null) {
+			for(int i=0;i<paras.length;i++){
+				sb.append(paras[i]+",");
+				String newStr = sb.toString();
+				//去掉最后一个逗号
+				String newStr1 = newStr.substring(0, newStr.length()-1);
+				xunChainfo.set("imgs",newStr1);
+			}
+		}else{
+			xunChainfo.set("imgs","");
+		}
+		flag=xunChainfo.update();
+		//根据巡查信息关联的巡查头的状态设置为1，已有关联任务
+		String xunChaTouIds=xunChainfo.getStr("xunChaTouId");
+		if (StringUtil.isNotEmpty(xunChaTouIds)) {
+			XunChaTou chaTou=XunChaTou.dao.findById(xunChaTouIds);
+			chaTou.set("state", 1);
+			chaTou.update();
+		}
+		
+		if (flag) {
+			if (chaInfoFzhlRelates.size()>0){
+				for (XunChaInfoFzhlRelate fzhlRelate : chaInfoFzhlRelates) {
+					if(fzhlRelate.toJson().length()>2){
+						if(fzhlRelate.get("ids") == null){
+							fzhlRelate.set("xunChaInfoId", xunChainfo.getStr("ids"));
+							fzhlRelate.save();
+						}else{
+							fzhlRelate.update();
+						}
+					}
+				}
+			}
+		}
+		return flag;
+	}
+
+	/**
+	 * 删除
+	 * @param id
+	 */
+	public boolean delete(String ids){
+		boolean flag=false;
+		//1.根据当前的ids或巡查信息数据中的关联的巡查头编号
+		XunChaInfo xunChaInfo = XunChaInfo.dao.findById(ids);
+		String xunChaTouId=xunChaInfo.getStr("xunChaTouId");
+		//2.删除当前的数据
+		flag = XunChaInfo.dao.deleteById(ids);
+		//3.判断是否还有其他关联此巡查头的巡查信息数据
+		List<XunChaInfo> list=XunChaInfo.dao.findListByXunChaTouId(xunChaTouId);
+		//4.如果除此数据外没有任何关联的巡查信息，就设置巡查头state=0
+		if (list.size()==0) {
+			XunChaTou chaTou=XunChaTou.dao.findById(xunChaTouId);
+			chaTou.set("state", 0);
+			chaTou.update();
+		}
+		return flag;
+	}
+	
+	/**
+	 * 根据主键查询
+	 * @param ids
+	 * @return
+	 */
+	public XunChaInfo findById(String ids) {
+		XunChaInfo xunChaInfo = XunChaInfo.dao.findById(ids);
+		return xunChaInfo;
+	}
+	/**
+	 * 删除主表
+	 */
+	public boolean delete_DMS_XC_xunChaInfo(String ids) {
+		return XunChaInfo.dao.deleteById(ids);
+	}
+	
+	/**
+	 * 查询子表
+	 */
+	public List<Record> select_DMS_XC_xunChaInfo_fzhl_relate(String xunChaInfoId){
+		List<Record> list = Db.find("SELECT * FROM DMS_XC_xunChaInfo_fzhl_relate where xunChaInfoId =  '"+xunChaInfoId+"'");
+		return list;
+	}
+	/**
+	 * 删除子表
+	 */
+	public boolean delete_DMS_XC_xunChaInfo_fzhl_relate(String xunChaInfoId) {
+		int result =Db.update("DELETE FROM  DMS_XC_xunChaInfo_fzhl_relate where xunChaInfoId =  '"+xunChaInfoId+"'");
+		return result ==0?false:true;
+	}
+
+
+
+	public Map<String, Object> getXunChaInfoByIds(String ids) {
+		Map<String, Object> map=new HashMap<String, Object>();
+		Record record=Db.find("SELECT xunChaStartZHK,xunChaStartZHM,xunChaEndZHK,xunChaEndZHM,xiuBuBiaoZhi,wxmkId,binghaiOrQueXianType,binghaiOrQueXianMiaoShu,level," + 
+				"yuGuGongChengLiang,yuGuGongChengLiangDw,xunChaTime,remark,imgs,xunChaUserId,xunChaTouId,luXian,wzType,wzName,wzMiaoShu,createTime,state from DMS_XC_xunChaInfo"
+				+ " where ids='"+ids+"'").get(0);
+		map.put("xunChaStartZHK", record.get("xunChaStartZHK"));
+		map.put("xunChaStartZHM", record.get("xunChaStartZHM"));
+		map.put("xunChaEndZHK", record.get("xunChaEndZHK"));
+		map.put("xunChaEndZHM", record.get("xunChaEndZHM"));
+		map.put("xiuBuBiaoZhi", record.get("xiuBuBiaoZhi"));
+		/*map.put("binghaiOrQueXianType", record.get("binghaiOrQueXianType"));
+		map.put("binghaiOrQueXianMiaoShu", record.get("binghaiOrQueXianMiaoShu"));
+		map.put("level", record.get("level"));*/
+		map.put("yuGuGongChengLiang", record.get("yuGuGongChengLiang"));
+		map.put("yuGuGongChengLiangDw", record.get("yuGuGongChengLiangDw"));
+		map.put("imgs", record.get("imgs"));
+		map.put("luXian", record.get("luXian"));
+		map.put("wzType", record.get("wzType"));
+		map.put("wzName", record.get("wzName"));
+		map.put("wzMiaoShu", record.get("wzMiaoShu"));
+		return map;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

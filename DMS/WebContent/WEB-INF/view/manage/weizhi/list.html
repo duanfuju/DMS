@@ -1,0 +1,352 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+	
+}
+var _luXian;
+var _wzType;
+var _wzName;
+var _wzMiaoShu;
+function mySelect(){
+	//设置查询条件
+	_luXian=$("#luXian").val();
+	$("#luXian_hidden").attr("value",_luXian);
+	
+	_wzType=$("#wzType").val();
+	$("#wzType_hidden").attr("value",_wzType);
+	
+	_wzName=$("#wzName").val();
+	$("#wzName_hidden").attr("value",_wzName);
+	
+	_wzMiaoShu=$("#wzMiaoShu").val();
+	$("#wzMiaoShu_hidden").attr("value",_wzMiaoShu);
+	
+	common_ajax.ajaxFormMainPanel("splitPage");
+	//selectCondition();
+}
+function selectCondition(){
+	$("#luXian").val(_luXian);
+	$("#wzType").val(_wzType);
+	$("#wzName").val(_wzName);
+	$("#wzMiaoShu").val(_wzMiaoShu);
+}
+</script>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">位置信息配置</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/weizhi" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">位置信息查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-3 control-label">路线名称</label>
+						<div class="col-sm-2">
+					  		<input id="luXian_hidden" class="form-control focused" type="hidden" name="_query.luXianName" value='${escapeXml(paramMap["_query.luXianName"])}' maxlength="20" >
+					  		<select	id="luXian" name="xunChaInfo.luXian" value="${xunChaInfo.luXian!}" class="form-control">
+								<option p=""  value=""   >请选择</option>
+								<% for(luxian in luXianList){ %>
+									<option p="${luxian.ids }"  value="${luxian.luXianName }"   >${luxian.luXianName }</option>
+								<% } %>
+							</select>
+						</div>
+						
+						<label class="col-sm-3 control-label">位置类型</label>
+						<div class="col-sm-2">
+					  		<input id="wzType_hidden" class="form-control" type="hidden" name="_query.wzTypeName" value='${escapeXml(paramMap["_query.wzTypeName"])}' maxlength="40" >
+					  		<select	id="wzType" name="xunChaInfo.wzType" value="${xunChaInfo.wzType!}" class="form-control">
+							</select>
+						</div>
+				  	</div>
+				  	<div class="form-group">
+						<label class="col-sm-3 control-label">方向、互通、收费站、服务区</label>
+						<div class="col-sm-2">
+					  		<input id="wzName_hidden" class="form-control focused" type="hidden" name="_query.wzName" value='${escapeXml(paramMap["_query.wzName"])}' maxlength="20" >
+					  		<select	id="wzName" name="xunChaInfo.wzName"  value="${xunChaInfo.wzName!}" class="form-control">
+							</select>
+						</div>
+						
+						<label class="col-sm-3 control-label">车道/匝道/广场 </label>
+						<div class="col-sm-2">
+					  		<input id="wzMiaoShu_hidden" class="form-control" type="hidden" name="_query.wzMiaoShu" value='${escapeXml(paramMap["_query.wzMiaoShu"])}' maxlength="40" >
+					  		<select	id="wzMiaoShu" name="xunChaInfo.wzMiaoShu"  value="${xunChaInfo.wzMiaoShu!}" class="form-control">
+							</select>
+						</div>
+				  	</div>
+					
+				  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='mySelect()'>查询</button>
+							<button type="reset" class="btn" onclick="resetCondition()" >重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">位置信息列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<div class="row">
+						<div class="col-md-12 space20">
+							<% if(authUrl("/jf/manage/weizhi/showAdd")){ %>
+							<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/weizhi/showAdd',undefined,undefined,'back');">
+								新增 <i class="fa fa-plus"></i>
+							</button>
+							<% } %>	
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'lx.luXianName')">
+									路线名称  ${orderBy("lx.luXianName")}
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzTypeName')">
+									位置类型  ${orderBy("wzTypeName")}
+		      					</th>
+								<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzName')">
+									方向/互通/收费站/服务区  ${orderBy("wzName")}
+								</th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzMiaoShu')">
+									车道/匝道/广场 ${orderBy("wzMiaoShu")}
+								</th>
+								<th class="hidden-xs" width="14%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'ZHK')">
+									桩号 ${orderBy("ZHK")}
+								</th>
+								<th class="hidden-xs" width="8%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'sort')">
+									排序 ${orderBy("sort")}
+								</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(obj in splitPage.list){ %>
+								<tr id="trDom${obj.ids}">
+									
+									<td class="hidden-xs">${obj.luXianName!}</td>
+									<td class="hidden-xs">${obj.wzTypeName!}</td>
+									<td class="hidden-xs">${obj.wzName!}</td>
+									<td class="hidden-xs">${obj.wzMiaoShu!}</td>
+									<td class="hidden-xs">K${obj.ZHK!} +${obj.ZHM!}</td>
+									<td class="hidden-xs">${obj.sort!}</td>
+									<td class="hidden-xs">
+										<% if(authUrl("/jf/manage/weizhi/delete")){ %>
+										<button type="button" title='删除' class="btn btn-red delete-row" onClick="luXianDelete('${obj.ids}')" > 
+											<i class="fa fa-trash-o"></i>
+										</button>
+										<% } %>	
+										<% if(authUrl("/jf/manage/weizhi/showUpdate")){ %>
+										<button type="button" title='修改' class="btn btn-green edit-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/weizhi/showUpdate',{ids:'${obj.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');"> 
+											<i class="fa fa-edit"></i>
+										</button>
+										<% } %>	
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+	function luXianDelete(ids){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var resultData=common_ajax.ajaxFunc("/jf/manage/weizhi/delete",{"ids":ids},"JSON");
+			if(resultData==""){
+				layer.msg("请求失败！")
+			}else{
+				layer.msg(resultData.result_desc);
+				if(resultData.result){
+					$("#trDom"+ids).fadeOut('fast',function(){
+						$("#trDom"+ids).remove()();
+					});
+				}
+				
+			}
+		});
+	}
+</script>
+
+
+<script type="text/javascript">
+$(function(){
+	//路线改变时
+	$("#luXian").change(function(){
+		
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId = "";
+		var wzName="";
+		$("#wzType").children().remove(); 
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzType',  
+		    data:{"luXianId":luXianId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzType="<option p=''  value=''   >请选择</option>";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzType").append(option_wzType);
+	        	
+	        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+	        	$.ajax({  
+	        	    type:'post',      
+	        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+	        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+	        	    cache:false,  
+	        	    dataType:'json',  
+	                success:function(data){  
+	                	//定义位置的options
+	                	var option_wzName="<option p=''  value=''   >请选择</option>";
+	                	$.each(data.result,function(i,dataObj){
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                	});
+	                	$("#wzName").append(option_wzName);
+	                	
+	                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+	                	$.ajax({  
+	                	    type:'post',      
+	                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+	                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+	                	    cache:false,  
+	                	    dataType:'json',  
+	                        success:function(data){  
+	                        	//定义位置的options
+	                        	var option_wzMiaoShu="<option p=''  value=''   >请选择</option>";
+	                        	$.each(data.result,function(i,dataObj){
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                        	});
+	                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	                        }
+	                	});
+	                }
+	        	});
+	        }
+		});
+	});
+	
+	//位置的选择事件
+	$("#wzType").change(function(){
+		var wzTypeVal=$(this).val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		//清除子选项的option
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+    	    type:'post',      
+    	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+    	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+    	    cache:false,  
+    	    dataType:'json',  
+            success:function(data){  
+            	//定义位置的options
+            	var option_wzName="<option p=''  value=''   >请选择</option>";
+            	$.each(data.result,function(i,dataObj){
+            		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+            	});
+            	$("#wzName").append(option_wzName);
+            	
+            	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+            	$.ajax({  
+            	    type:'post',      
+            	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+            	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+            	    cache:false,  
+            	    dataType:'json',  
+                    success:function(data){  
+                    	//定义位置的options
+                    	var option_wzMiaoShu="<option p=''  value=''   >请选择</option>";
+                    	$.each(data.result,function(i,dataObj){
+                    		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                    	});
+                    	$("#wzMiaoShu").append(option_wzMiaoShu);
+                    }
+            	});
+            }
+    	});
+	});
+
+
+	//方向/互通/收费站/服务区 选择事件
+	$("#wzName").change(function(){
+		var wzTypeVal=$("#wzType").val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		$("#wzMiaoShu").children().remove(); 
+		//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+		    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzMiaoShu="<option p=''  value=''   >请选择</option>";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	        }
+		});
+	});
+});
+</script>

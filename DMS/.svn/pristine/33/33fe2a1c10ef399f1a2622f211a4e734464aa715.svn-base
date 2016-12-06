@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.xunchainfo">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_XZ_XC_xunChaTou order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_XZ_XC_xunChaInfo) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_XZ_XC_xunChaTou where ids not in ( select top {1, number, #.#} ids from DMS_XZ_XC_xunChaTou )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_XZ_XC_xunChaTou ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				info.*,ci.name wxmkName
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_XC_xunChaInfo info 
+			LEFT JOIN DMS_PZ_chooseInfo ci on ci.ids=info.wxmkId
+				
+			where 1=1
+			
+				<% if(!isEmpty(state)){ %>
+					and info.state = #'$state$'#
+				<% } %>
+				<% if(!(isEmpty(sdate))){ %>
+					and info.xunChaTime  between #'$sdate$'# 
+						<% if(!(isEmpty(edate))){ %>
+					and #'$edate$'#
+						<% } %>
+					<% if((isEmpty(edate))){ %>
+					and getdate()
+						<% } %>
+				<% } %>		
+				<% if(!isEmpty(xunChaInofType)){ %>
+					and info.wxmkId = #'$xunChaInofType$'#
+				<% } %>
+				<% if(1==2){ %>
+					<% if(!isEmpty(xunChaUserId)&&xunChaUserId!="03a44ba0aa4e4905bea726d4da976ba5"){ %>
+						and info.xunChaUserId like #'%$xunChaUserId$%'#
+					<% } %>
+				<% } %>
+				<% if(!isEmpty(notInTaskIds)){ %>
+					and info.Ids not in ('${notInTaskIds}')
+				<% } %>
+				
+				
+				<% if(!isEmpty(sql)){ %>
+						${sql}
+				<% } %>
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+	
+	
+	<sql id="findListByXunChaTouId">
+		<![CDATA[ 
+			select * from DMS_XC_xunChaInfo x where x.xunChaTouId=?
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+</sql-statement>

@@ -1,0 +1,1005 @@
+<script src="${cxt!}/jsFile/webuploader/js/upload_xunchainfo.js"></script>
+
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+
+<script type="text/javascript">
+jQuery(function() {
+	$.ajax({
+		url:cxt+"/jf/manage/fangzhl/getFzhl",
+		type:"post",
+		dateType:"JSON",
+		async: false,
+		success:function(data){
+			var result = data.result;
+			for(var i = 0;i<result.length;i++){
+				$("#bujian").append("<option >"+result[i].name+"</option>");
+			}
+		}
+	});
+	
+	
+	
+	//病害或缺陷类型(病害指标)	和 	预估工程量单位  联动
+	$("#binghaiOrQueXianType").change(function(){
+		var value = $(this).find("option:selected").attr("p");
+		$("#yuGuGongChengLiangDw").attr("value",value);
+	});
+	//设置下拉框的默认
+	//病害或缺陷类型(病害指标)
+	var binghaiOrQueXianType="${xunChaInfo.binghaiOrQueXianType!}";
+	if(binghaiOrQueXianType){
+		$("#binghaiOrQueXianType").val(binghaiOrQueXianType); 
+	}else{
+		var value = $("#binghaiOrQueXianType").find("option:selected").attr("p");
+		$("#yuGuGongChengLiangDw").attr("value",value);
+	}
+	
+
+	//根据病害指标不同改变下拉框严重程度 和预估工程量单位  中的下拉的值
+	$("#binghaiOrQueXianType").change(function(){
+		var level=$(this).find("option:selected").attr("l");
+		$("#level").children().remove(); 
+		if(level){
+			//设置默认值
+    		var val_1="";
+    		var options_level="";
+    		//转换成字符串，level+="";是必要的
+    		level+="";
+    		var level_split=level.split(",");
+    		$.each(level_split,function(i,obj){
+	        	options_level+="<option value="+obj+">"+obj+"</option>";
+        	});
+        	$("#level").append(options_level);
+    	}
+	});
+	
+	//设置默认
+	var wxmkId=$("#wxmkId").val();
+	//根据病害类型，查询病害指标
+	$.ajax({  
+	    type:'post',      
+	    url:'${cxt}/jf/manage/binghaiindex/getBingHai',  
+	    data:{"wxmkId":wxmkId},  
+	    cache:false,  
+	    dataType:'json',  
+        success:function(data){  
+        	//清除病害指标、严重程度 之前添加的值
+        	$("#binghaiOrQueXianType").children().remove(); 
+        	$("#level").children().remove(); 
+        	//默认给工程量单位设置默认值
+        	var gclDws="";
+        	//默认给严重程度设置默认值
+        	var level="";
+        	//定义病害指标的option的集合
+        	var options="";
+        	
+        	$.each(data.result,function(i,dataObj){
+        		options+="<option value="+dataObj.name+" p="+dataObj.gclDws+" l="+dataObj.levels+" >"+dataObj.name+"</option>";
+        		if(i==0){
+        			gclDws=dataObj.gclDws;
+        			level=dataObj.levels;
+        		}
+        	});
+        	
+        	$("#yuGuGongChengLiangDw").attr("value",gclDws);
+        	$("#binghaiOrQueXianType").append(options);
+        	
+        	//如果严重程度不为空，则分隔成下拉列表
+        	if(level){
+        		var val_1="";
+        		var options_level="";
+        		//转换成字符串，level+="";是必要的
+        		level+="";
+        		var level_split=level.split(",");
+        		$.each(level_split,function(i,obj){
+	        		if(i==0){
+	        			val_m=obj;
+	        		}
+	        		options_level+="<option value="+obj+">"+obj+"</option>";
+	        	});
+	        	$("#level").append(options_level);
+        	}
+        }  
+	 });  
+	//根据病害模块的不同隐藏以及显示不同的字段
+	$('[modehide="2"]').hide();
+	$("#wxmkId").change(function(){
+		var value=$(this).find("option:selected").text();
+		var wxmkId=$(this).find("option:selected").val();
+		if(value=='防撞护栏'){
+			$('[modehide="1"]').hide();
+			$('[modehide="2"]').show();
+		}else{
+			$('[modehide="1"]').show();
+			$('[modehide="2"]').hide();
+
+		}
+		//根据病害类型，查询病害指标
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/binghaiindex/getBingHai',  
+		    data:{"wxmkId":wxmkId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//清除病害指标、严重程度 之前添加的值
+	        	$("#binghaiOrQueXianType").children().remove(); 
+	        	$("#level").children().remove(); 
+	        	//默认给工程量单位设置默认值
+	        	var gclDws="";
+	        	//默认给严重程度设置默认值
+	        	var level="";
+	        	//定义病害指标的option的集合
+	        	var options="";
+	        	
+	        	$.each(data.result,function(i,dataObj){
+	        		options+="<option value="+dataObj.name+" p="+dataObj.gclDws+" l="+dataObj.levels+" >"+dataObj.name+"</option>";
+	        		if(i==0){
+	        			gclDws=dataObj.gclDws;
+	        			level=dataObj.levels;
+	        		}
+	        	});
+	        	
+	        	$("#yuGuGongChengLiangDw").attr("value",gclDws);
+	        	$("#binghaiOrQueXianType").append(options);
+	        	
+	        	//如果严重程度不为空，则分隔成下拉列表
+	        	if(level){
+	        		var val_1="";
+	        		var options_level="";
+	        		//转换成字符串，level+="";是必要的
+	        		level+="";
+	        		var level_split=level.split(",");
+	        		$.each(level_split,function(i,obj){
+		        		if(i==0){
+		        			val_m=obj;
+		        		}
+		        		options_level+="<option value="+obj+">"+obj+"</option>";
+		        	});
+		        	$("#level").append(options_level);
+	        	}
+	        }  
+		 });  
+		
+	});
+
+});
+
+//显示子级菜单编辑弹出层
+	function showEditChildrenMenu(){	
+		$("#dataTable").show();
+		var url="/jf/manage/xunChaInfo/bindingXunChaTouId";
+		var data={"":""};
+		var width=850;
+		var height=500;
+		var title="选择巡查头";
+		$.ajax({
+		type : "post",
+		url : encodeURI(encodeURI(cxt + url)),
+		data : data,
+		dataType : "HTML",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		async: false,
+		cache: false,
+		success:function(response){
+			result = response;
+			layer.open({
+			  type: 1, //page层
+			  area: [width+'px', height+'px'],
+			  title: title,
+			  shade: 0.6, //遮罩透明度
+			  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+			  shift: 0, //0-6的动画形式，-1不开启
+			  content: result,
+			 /*  btn:['确定'],
+			  btn1:function(){
+				  layer.closeAll();
+			  } */
+			});
+		}
+	});
+	}
+/* //设置全局变量
+window.xunChaXinTouId="";
+	//设置全局的方法
+window.closeAndGetValue=function(){
+	$("#xunChaTouId").attr("value",xunChaXinTouId);
+}
+ */
+//jquery动态生成元素添加点击事件	只允许输入数字
+$(document).on('keyup', '.NumText', function() {
+	 $(this).val($(this).val().replace(/\D/g,""));  
+}).bind("paste",'.NumText', function(){  //CTR+V事件处理    
+    $(this).val($(this).val().replace(/D|^0/g,""));     
+});
+ $("#clone-target").hide();
+function addlist(){
+	var temp = $('#clone-target').clone();
+	temp.show();	
+	
+	temp.find("[name='buJian']").addClass("buJian");
+	temp.find("[name='buJian']").attr("name","xunChaInfoFzhlRelateList[0].buJian");
+	temp.find("[name='num']").addClass("num");
+	temp.find("[name='num']").attr("name","xunChaInfoFzhlRelateList[0].num");
+	
+	
+	temp.find('input').val('');	
+	var lfrlSize =parseInt($("#xunChaInfoFzhlRelateListSize").val());
+	temp.find('input').each(function(){
+	    var name = $(this).prop('name');
+	    var newNameIndex = lfrlSize+1;
+	    $(this).attr("name",name.replace("0",newNameIndex));
+	  });
+	temp.find('select').each(function(){
+	    var name = $(this).prop('name');
+	    var newNameIndex = lfrlSize+1;
+	    $(this).attr("name",name.replace("0",newNameIndex));
+	 });
+	$("#xunChaInfoFzhlRelateListSize").val(lfrlSize+1);
+	$('#tbody-list').append(temp);
+}
+
+function del(me){
+	$(me).parent().parent().remove();
+}
+
+
+
+
+function mysubmit(){
+	//是否符合提交条件
+	var submit=true;
+	//验证非空
+	submit=validateIsNull();
+	//如果不符合提交条件就不再往下验证
+	if(!submit){
+		return;
+	}
+	//验证m位数字是否符合范围
+	submit=validateMetre();
+	//如果不符合提交条件就不再往下验证
+	if(!submit){
+		return;
+	}
+	
+	var value=$("#wxmkId").find("option:selected").text();
+
+	var num = $(".num").val();
+	if(num ==""){
+		layer.msg("维修项 数量不能为空");
+		return;
+	} 
+	var xunChaTouId = $("#xunChaTouId").val();
+	if(xunChaTouId ==""){
+		layer.msg("选择关联巡查登记");
+		return;
+	} 
+	
+	
+	//是否符合提交条件						
+	if(submit){
+		//提交
+		var formId=$("#editForm");
+		var fromAction=formId.attr("action");
+		 $(formId).ajaxSubmit({  
+                type:"post",  //提交方式  
+                dataType:"json", //数据类型  
+                url:fromAction, //请求url  
+                //data:{"buJian":array_buJian,"num":array_num},
+                success:function(data){ //提交成功的回调函数  
+	                layer.msg(data.result_desc);
+                    common_ajax.ajaxMainPanel("/jf/manage/xunChaInfo");
+                }
+                
+            });  
+	}
+}
+//验证m位数字是否符合范围
+function validateMetre(){
+	//开始米位
+	var xunChaStartZHM=$.trim($("#xunChaStartZHM").val());
+	if(!(xunChaStartZHM>=0&&xunChaStartZHM<=999)){
+		layer.msg("方向1  巡查开始米位请填写错误,范围(0-999)！");
+		return false;
+	}
+	//结束米位
+	var xunChaEndZHM=$.trim($("#xunChaEndZHM").val());
+	if(xunChaEndZHM.length!=0&&xunChaEndZHM!=null){
+		if(!(xunChaEndZHM>=0&&xunChaEndZHM<=999)){
+			layer.msg("方向1  巡查结束米位请填写错误,范围(0-999)！");
+			return false;
+		}
+	}
+	return true;
+}
+//验证开市桩号、数量、巡查时间为必填
+function validateIsNull(){
+	//开始桩号
+	var xunChaStartZHK=$.trim($("#xunChaStartZHK").val());
+	var xunChaStartZHM=$.trim($("#xunChaStartZHM").val());
+	//结束桩号
+	var xunChaEndZHK=$.trim($("#xunChaEndZHK").val());
+	var xunChaEndZHM=$.trim($("#xunChaEndZHM").val());
+	
+	var yuGuGongChengLiangDw=$.trim($("#yuGuGongChengLiangDw").val());
+	var xunChaTime=$.trim($("#xunChaTime").val());
+	if(xunChaStartZHK.length==0||xunChaStartZHK==null){
+		layer.msg("巡查开始桩号千米位 请填写！");
+		return false;
+	}
+	if(xunChaStartZHM.length==0||xunChaStartZHM==null){
+		layer.msg("巡查开始桩号米位 请填写！");
+		return false;
+	}
+	if(xunChaEndZHK.length==0||xunChaEndZHK==null){
+		layer.msg("巡查结束桩号千米位 请填写！");
+		return false;
+	}
+	if(xunChaEndZHM.length==0||xunChaEndZHM==null){
+		layer.msg("巡查结束桩号米位 请填写！");
+		return false;
+	}
+	
+	if(xunChaTime.length==0||xunChaTime==null){
+		layer.msg("巡查时间  请填写！");
+		return false;
+	}
+	return true;
+	
+}
+  
+$(function(){
+	var now = new Date();
+	var   year=now.getFullYear();     
+    var   month=now.getMonth()+1;     
+    var   date=now.getDate();     
+    var   hour=now.getHours();     
+    var   minute=now.getMinutes();
+    var   second=now.getSeconds(); 
+	month = month<10?("0"+ month):month ;
+	date = date<10?("0"+ date):date ;
+	hour = hour<10?("0"+ hour):hour ;
+	minute = minute<10?("0"+ minute):minute ;
+	second = second<10?("0"+ second):second ;
+    var t = year+"-"+month+"-"+date+" "+hour+":"+minute+":"+second; 
+    $("#xunChaTime").val(t);
+});
+</script>
+
+					<div class="row" style="font-size: 13px" >
+						<div class="col-md-12">
+							<ol class="breadcrumb">
+								<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">${i18nMap["admin.common.mainPage"]}</a></li>
+								<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/xunChaInfo');">查询</a></li>
+								<li class="active">添加巡查信息</li>
+							</ol>
+						</div>
+					</div>
+						
+					<div class="row" style="font-size: 13px" > 
+						<div class="col-md-12">
+							<!-- start: BORDERED TABLE PANEL -->
+							<div class="panel panel-white">
+								
+								<div class="panel-heading">
+									<h4 class="panel-title"><span class="text-bold">添加</span></h4>
+									
+								</div>
+								
+								<div class="panel-body">	
+									<form   role="form" class="form-horizontal" id="top_from" style="display: none;" >
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="form-field-1">
+												管理单位
+											</label>
+											<div class="col-sm-6">
+												<input type="text" readonly="readonly" id="guanLiDanWei" name="xunChaTou.guanLiDanWei" value="${xunChaTou.guanLiDanWei!}" class="form-control"> 
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="form-field-1">
+												巡查开始时间
+											</label>
+											<div class="col-sm-2">
+												<input readonly type="text" id="xunChaStartTime" name="xunChaTou.xunChaStartTime" value="${xunChaTou.xunChaStartTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}"  class="form-control" >
+											</div>
+											<label class="col-sm-2 control-label" for="form-field-1">
+												巡查结束时间
+											</label>
+											<div class="col-sm-2">
+												<input readonly type="text" id="xunChaEndTime" name="xunChaTou.xunChaEndTime"  value="${xunChaTou.xunChaEndTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" class="form-control" >
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="form-field-1">
+												天气状况
+											</label>
+											<div class="col-sm-2">
+												<input  type="text"  readonly name="xunChaTou.weatherState" id="weatherState" class="form-control" />
+											</div>
+											<label class="col-sm-2 control-label" for="form-field-1">
+												巡查类型
+											</label>
+											<div class="col-sm-2">
+												<input  type="text" readonly name="xunChaTou.xunChaType" id="xunChaType" class="form-control" />
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-2 control-label">
+												锡张
+											</label>
+											<label class="col-sm-1 control-label">
+												开始桩号K
+											</label>
+											<input type="hidden" readonly name="xunChaTou.xunChaFangXiang1" value="xz"/>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaStartZHK1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHK1" value="${xunChaTou.xunChaStartZHK1!}"   class="form-control">
+											</div>
+											<label class="col-sm-1 " readonly style="width:1%;font-size:20px;margin-left:-12px">+</label>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaStartZHM1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHM1" value="${xunChaTou.xunChaStartZHM1!}"   class="form-control">
+											</div>
+											<label class="col-sm-1 control-label">
+												结束桩号K
+											</label>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaEndZHK1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHK1" value="${xunChaTou.xunChaEndZHK1!}"    class="form-control">
+											</div>
+											<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaEndZHM1" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHM1" value="${xunChaTou.xunChaEndZHM1!}"   class="form-control">
+											</div>
+										</div>
+										
+										
+										<div class="form-group">
+											
+											<label class="col-sm-2 control-label">
+												张锡
+											</label>
+											<label class="col-sm-1 control-label">
+												开始桩号K
+											</label>
+											<input type="hidden" name="xunChaTou.xunChaFangXiang1" value="zx"/>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaStartZHK2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHK2" value="${xunChaTou.xunChaStartZHK2!}"     class="form-control">
+											</div>
+											<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaStartZHM2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaStartZHM2" value="${xunChaTou.xunChaStartZHM2!}"   class="form-control">
+											</div>
+											<label class="col-sm-1 control-label">
+												结束桩号K
+											</label>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaEndZHK2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHK2" value="${xunChaTou.xunChaEndZHK2!}"   class="form-control">
+											</div>
+											<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+											<div class="col-sm-1">
+												<input type="text" readonly id="xunChaEndZHM2" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaEndZHM2" value="${xunChaTou.xunChaEndZHM2!}"   class="form-control">
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-2 control-label" for="form-field-1">
+												巡查里程
+											</label>
+											<div class="col-sm-5">
+												<input type="text" readonly id="xunChaLiCheng" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" name="xunChaTou.xunChaLiCheng" value="${xunChaTou.xunChaLiCheng!}"  class="form-control">
+											</div>
+											<label class="col-sm-1 control-label" for="form-field-1">
+												Km
+											</label>
+										</div>
+										
+										<div class="form-group">
+											<label class="col-sm-2 control-label">备注</label>
+											<div class="col-sm-6">
+												<textarea readonly rows="4" cols="20" id="remark" name="xunChaTou.remark"  value="" class="form-control">${xunChaTou.remark!}</textarea>
+											</div>
+											<span class="help-inline col-sm-2"> </span>
+										</div>
+									</form>									
+									<form id="editForm" action="${cxt!}/jf/manage/xunChaInfo/save" method="POST"  role="form" class="form-horizontal">
+										
+										
+										
+										
+										
+										
+										
+<script type="text/javascript">
+$(function(){//第一次加载时所要做的加载默认值的操作
+	//根据路线 选择位置 
+	var luXianId = $("#luXian").find("option:selected").attr("p");
+	var wzTypeId = "";
+	var wzName="";
+	$.ajax({  
+	    type:'post',      
+	    url:'${cxt}/jf/manage/weizhi/getWzType',  
+	    data:{"luXianId":luXianId},  
+	    cache:false,  
+	    dataType:'json',  
+        success:function(data){  
+        	//定义位置的options
+        	var option_wzType="";
+        	$.each(data.result,function(i,dataObj){
+        		if(i==0){
+        			wzTypeId=dataObj.value;
+        		}
+        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>";
+        	});
+        	$("#wzType").append(option_wzType);
+        	
+        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+        	$.ajax({  
+        	    type:'post',      
+        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+        	    cache:false,  
+        	    dataType:'json',  
+                success:function(data){  
+                	//定义位置的options
+                	var option_wzName="";
+                	$.each(data.result,function(i,dataObj){
+                		if(i==0){
+                			wzName=dataObj.value;
+                		}
+                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>";
+                	});
+                	$("#wzName").append(option_wzName);
+                	
+                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+                	$.ajax({  
+                	    type:'post',      
+                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+                	    cache:false,  
+                	    dataType:'json',  
+                        success:function(data){  
+                        	//定义位置的options
+                        	var option_wzMiaoShu="";
+                        	$.each(data.result,function(i,dataObj){
+                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>";
+                        	});
+                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+                        }
+                	});
+                }
+        	});
+        }
+	});
+	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	//路线改变时
+	$("#luXian").change(function(){
+		
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId = "";
+		var wzName="";
+		$("#wzType").children().remove(); 
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzType',  
+		    data:{"luXianId":luXianId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzType="";
+	        	$.each(data.result,function(i,dataObj){
+	        		if(i==0){
+	        			wzTypeId=dataObj.value;
+	        		}
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzType").append(option_wzType);
+	        	
+	        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+	        	$.ajax({  
+	        	    type:'post',      
+	        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+	        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+	        	    cache:false,  
+	        	    dataType:'json',  
+	                success:function(data){  
+	                	//定义位置的options
+	                	var option_wzName="";
+	                	$.each(data.result,function(i,dataObj){
+	                		if(i==0){
+	                			wzName=dataObj.value;
+	                		}
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                	});
+	                	$("#wzName").append(option_wzName);
+	                	
+	                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+	                	$.ajax({  
+	                	    type:'post',      
+	                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+	                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+	                	    cache:false,  
+	                	    dataType:'json',  
+	                        success:function(data){  
+	                        	//定义位置的options
+	                        	var option_wzMiaoShu="";
+	                        	$.each(data.result,function(i,dataObj){
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                        	});
+	                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	                        }
+	                	});
+	                }
+	        	});
+	        }
+		});
+	});
+	
+	//位置的选择事件
+	$("#wzType").change(function(){
+		var wzTypeVal=$(this).val();
+		var zhk="";
+		var zhm="";
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		//清除子选项的option
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+    	    type:'post',      
+    	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+    	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+    	    cache:false,  
+    	    dataType:'json',  
+            success:function(data){  
+            	//定义位置的options
+            	var option_wzName="";
+            	$.each(data.result,function(i,dataObj){
+            		if(i==0){
+            			wzName=dataObj.value;
+            			zhk=dataObj.zhk;
+            			zhm=dataObj.zhm;
+            		}
+            		option_wzName+="<option p="+dataObj.value+" zhk="+zhk+" zhm="+zhm+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+            	});
+            	if(wzTypeVal!="主线"){
+            		$("#xunChaStartZHK").val(zhk);
+            		$("#xunChaStartZHM").val(zhm);
+            	}else{
+            		$("#xunChaStartZHK").val('');
+            		$("#xunChaStartZHM").val('');
+            	}
+            	$("#wzName").append(option_wzName);
+            	
+            	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+            	$.ajax({  
+            	    type:'post',      
+            	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+            	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+            	    cache:false,  
+            	    dataType:'json',  
+                    success:function(data){  
+                    	//定义位置的options
+                    	var option_wzMiaoShu="";
+                    	$.each(data.result,function(i,dataObj){
+                    		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                    	});
+                    	$("#wzMiaoShu").append(option_wzMiaoShu);
+                    }
+            	});
+            }
+    	});
+	});
+
+
+	//方向/互通/收费站/服务区 选择事件
+	$("#wzName").change(function(){
+		var wzTypeVal=$("#wzType").val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		$("#wzMiaoShu").children().remove(); 
+		if(wzTypeVal!="主线"){
+			var zhk=$("#wzName").find("option:selected").attr("zhk");
+			var zhm=$("#wzName").find("option:selected").attr("zhm");
+    		$("#xunChaStartZHK").val(zhk);
+    		$("#xunChaStartZHM").val(zhm);
+    	}else{
+    		$("#xunChaStartZHK").val('');
+    		$("#xunChaStartZHM").val('');
+    	}
+		
+		//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+		    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzMiaoShu="";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	        }
+		});
+	});
+});
+</script>
+										
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							选择关联巡查登记
+						</label>
+						<div class="col-sm-4">
+							<input type="hidden" id="xunChaTouId"  name="xunChaInfo.xunChaTouId" value="${xunChaInfo.xunChaTouId!}"  class="form-control" >
+							<a href="#"  class="btn btn-blue" onclick="showEditChildrenMenu()" >点击关联</a>
+						</div>
+					</div>					
+										
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							巡查时间
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaTime" name="xunChaInfo.xunChaTime"  placeholder="此处必填"  value="${xunChaInfo.xunChaTime!}" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="form-control">
+						</div>
+					</div>	
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							路线
+						</label>
+						<div class="col-sm-2">
+							<!-- <input type="text" id="luXian" name="xunChaInfo.luXian" value="${xunChaInfo.luXian!}"   class="form-control"> -->
+							<select	id="luXian" name="xunChaInfo.luXian" value="${xunChaInfo.luXian!}" class="form-control">
+								<% for(luxian in luXianList){ %>
+									<option p="${luxian.ids }"  value="${luxian.luXianName }"   >${luxian.luXianName }</option>
+								<% } %>
+							</select>
+							
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							位置
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzType" name="xunChaInfo.wzType" value="${xunChaInfo.wzType!}" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							方向/互通/收费站/服务区
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzName" name="xunChaInfo.wzName"  value="${xunChaInfo.wzName!}" class="form-control">
+							</select>
+						</div>
+					
+						<label class="col-sm-2 control-label" for="form-field-1">
+							车道/匝道/广场
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzMiaoShu" name="xunChaInfo.wzMiaoShu"  value="${xunChaInfo.wzMiaoShu!}" class="form-control">
+							</select>
+						</div>
+					</div>
+					
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="xunChaStartZHK" name="xunChaInfo.xunChaStartZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaEndZHM!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="xunChaStartZHM" name="xunChaInfo.xunChaStartZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaEndZHM!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="xunChaEndZHK" name="xunChaInfo.xunChaEndZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaEndZHM!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="xunChaEndZHM" name="xunChaInfo.xunChaEndZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaEndZHM!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							病害模块
+						</label>
+						<div class="col-sm-2">
+							<select	id="wxmkId" name="xunChaInfo.wxmkId" value="${xunChaInfo.wxmkId!}" class="form-control">
+								<% for(choose in chooseInfo){ %>
+									<option value="${choose.ids }">${choose.name }</option>
+								<% } %>
+							</select>
+							<!-- <input type="text" name="xunChaInfo.wxmkId" value="${xunChaInfo.wxmkId!}"  class="form-control" > -->
+						</div>
+						
+						<label class="col-sm-2 control-label" for="form-field-1" modehide="1">
+							病害或缺陷类型
+						</label>
+						<div class="col-sm-2" modehide="1">
+							<select id="binghaiOrQueXianType" name="xunChaInfo.binghaiOrQueXianType" value="${xunChaInfo.binghaiOrQueXianType!}"  class="form-control">
+								
+							</select>
+						</div> 
+						
+						
+					</div>
+					<div class="form-group" >
+						<label class="col-sm-2 control-label" for="form-field-1" >
+							病害或缺陷描述
+						</label>
+						<div class="col-sm-2" >
+							<input type="text" id="binghaiOrQueXianMiaoShu" name="xunChaInfo.binghaiOrQueXianMiaoShu" value="${xunChaInfo.binghaiOrQueXianMiaoShu!}"   class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1" >
+							严重程度
+						</label>
+						<div class="col-sm-2">
+							<select id="level" name="xunChaInfo.level" value="${xunChaInfo.level!}"  class="form-control">
+							</select>
+						</div>
+						
+						
+						
+					</div> 
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1" modehide="1">
+							预估工程量
+						</label>
+						<div class="col-sm-2" modehide="1">
+							<input type="text" id="yuGuGongChengLiang" name="xunChaInfo.yuGuGongChengLiang" value="${xunChaInfo.yuGuGongChengLiang!}"   class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1" modehide="1">
+							预估工程量单位
+						</label>
+						<div class="col-sm-2" modehide="1">
+							<input type="text"  id="yuGuGongChengLiangDw" name="xunChaInfo.yuGuGongChengLiangDw" value="${xunChaInfo.yuGuGongChengLiangDw!}"  class="form-control">
+						</div>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							修补损坏标识
+						</label>
+						<div class="col-sm-2">
+							<select id="xiuBuBiaoZhi" name="xunChaInfo.xiuBuBiaoZhi" value="${xunChaInfo.xiuBuBiaoZhi!}"  class="form-control">
+						        <option selected value="√">√</option>
+						        <option value="△">△</option>
+						    </select>
+						</div>
+<!-- 						<label class="col-sm-2 control-label" for="form-field-1">
+							巡查时间
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="xunChaTime" name="xunChaInfo.xunChaTime"  placeholder="此处必填"  value="${xunChaInfo.xunChaTime!}" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="form-control">
+						</div> -->
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							备注
+						</label>
+						<div class="col-sm-6">
+							<textarea id="remark" name="xunChaInfo.remark" class="form-control"> ${xunChaInfo.remark!}</textarea>
+						</div>
+					</div>
+					
+					<div class="form-group" modehide="2">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							维修项
+							<input type="hidden" name="buJian" id="buJian"/>
+							<input type="hidden" name="num" id="num"/>
+						</label>
+						<div class="col-sm-9">	
+							<input type="hidden"  id="xunChaInfoFzhlRelateListSize"  value="0">
+							<table class="table table-striped table-bordered bootstrap-datatable " style="width:66%;">
+								<thead>
+									<th width="40%">部件</th>
+									<th width="40%">数量</th>
+									<th width="20%"><a href="javascript:void(0)" onclick="addlist();">添加</a></th>
+								</thead>
+								<tbody id="tbody-list">
+									<tr id="clone-target">
+										<td>							
+											<!-- <input type="text"  name="xunChaInfoFzhlRelateList[0].buJian" class="form-control"> -->
+											<select id="bujian"  name="buJian" class="form-control"></select>
+										</td>
+										<td>
+											<input type="text"  name="num" class='form-control NumText'  >
+										</td>
+										<td><a href="javascript:void(0)" onclick="del(this);">删除</a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+						        <div id="container">
+						            <!--头部，相册选择和格式选择-->
+						
+						            <div id="uploader">
+						                <div class="queueList">
+						                    <div id="dndArea" class="placeholder">
+						                        <div id="filePicker"></div>
+						                        <p>或将照片拖到这里，单次最多可选3张</p>
+						                    </div>
+						                </div>
+						                <div class="statusBar" style="display:none;">
+						                    <div class="progress">
+						                        <span class="text">0%</span>
+						                        <span class="percentage"></span>
+						                    </div><div class="info"></div>
+						                    <div class="btns">
+						                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<% if(authUrl("/jf/manage/xunChaInfo/save")){ %>
+								<button type="button" class="btn btn-red" onclick="mysubmit()">
+									提交	<i class="fa fa-arrow-circle-right"></i>
+								</button>
+							<% } %>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>	
+

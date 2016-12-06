@@ -1,0 +1,14 @@
+package com.junl.dms.mvc.roadassessment.roadtechnicstate;
+
+import com.platform.annotation.Controller;
+import com.platform.mvc.base.BaseController;
+
+@Controller(controllerKey = "/jf/manage/roadassessment/roadTechnicState")
+public class RoadTechnicStateController extends BaseController {
+	
+	public void index()
+	{
+		render("/manage/roadassessment/roadtechnicstate/list.html");
+	}
+
+}

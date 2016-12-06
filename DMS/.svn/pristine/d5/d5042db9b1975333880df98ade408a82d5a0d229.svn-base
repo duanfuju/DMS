@@ -1,0 +1,69 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">手机客户端下载</li>
+		</ol>
+	</div>
+</div>
+<div id="list">
+<!-- 	<div class="sidemain-mhead" align="center" style="padding-top: 100px;"> -->
+<!--          <img alt="扫一扫，下载手机客户端" src="${cxt!}/img/systemHelpImg/2weima.jpg"> -->
+<!--     </div> -->
+<!--     <div class="sidedetail"> -->
+<!-- 		     <p style="text-align:center; padding-top: 20px;" > -->
+<!-- 		     		<span style="font-size:16px;"> -->
+<!-- 			         	<span style="font-size:16px;color:#000000;font-family:'times new roman';"> -->
+<!-- 				         	扫一扫，下载手机客户端 -->
+<!-- 	        	 		</span> -->
+<!-- 		         	</span> -->
+<!-- 	          </p> -->
+	         	
+<!-- 		</div> -->
+	
+</div>
+
+
+<script type="text/javascript">
+	
+	$(function(){
+		init();
+	});
+	
+	function init()
+	{
+		var resultData=common_ajax.ajaxFunc("/jf/manage/systemhelp/mobileClientDownload/getList",undefined,"html");
+  		$("#list").html(resultData);
+	}
+	
+	
+	function updateDownloadApp(ids)
+	{
+		var result = common_ajax.ajaxFunc('/jf/manage/systemhelp/mobileClientDownload/getDownloadAppById',{"ids":ids},"html");
+		openUpdateHtml(result);
+	}
+	
+	function downloadApk(uploadPath)
+	{
+		window.location.href = uploadPath;
+	}
+	
+
+	function openUpdateHtml(result)
+	{
+		var title = "编辑";
+		//信息层
+        layer.open({
+        	move: false,
+            type: 0,
+            title: title,
+            shade: 0.6, //遮罩透明度
+            skin: 'layui-layer-rim', //加上边框
+            area: ['1000px', 'auto'], //宽高
+            content: result
+        });
+		//隐藏确认按钮
+        $(".layui-layer-btn0").css('display','none');
+	}
+	
+</script>

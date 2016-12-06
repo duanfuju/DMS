@@ -1,0 +1,172 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/luxian');">路线配置</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增路线</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" action="${cxt!}/jf/manage/luxian/save" method="POST" role="form" class="form-horizontal">	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线编号</label>
+						<div class="col-sm-7">
+							<input type="text"  name="luXian.luXianNO" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线名称</label>
+						<div class="col-sm-7">
+							<input type="text" name="luXian.luXianName" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" name="luXian.startZHK" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">		
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" name="luXian.startZHM" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" name="luXian.endZHK" class="form-control"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" name="luXian.endZHM" class="form-control"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+					</div>
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	function myVail(){
+		var luXianNO=$("input[name='luXian.luXianNO']").val();
+		if(luXianNO==""){
+			layer.msg("路线编号不能为空！");
+			return false;
+		}
+		var luXianName=$("input[name='luXian.luXianName']").val();
+		if(luXianName==""){
+			layer.msg("路线名称不能为空！");
+			return false;
+		}
+		var startZHK=$("input[name='luXian.startZHK']").val();
+		if(startZHK==""){
+			layer.msg("开始桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startZHK)){
+				if(startZHK<=0){
+					layer.msg("开始桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var startZHM=$("input[name='luXian.startZHM']").val();
+		if(startZHM==""){
+			layer.msg("开始桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startZHM)){
+				if(startZHM<=0){
+					layer.msg("开始桩号M不能小于等于零！");
+					return false;
+				}else if(startZHM>999){
+					layer.msg("开始桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var endZHK=$("input[name='luXian.endZHK']").val();
+		if(endZHK==""){
+			layer.msg("结束桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endZHK)){
+				if(endZHK<=0){
+					layer.msg("结束桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var endZHM=$("input[name='luXian.endZHM']").val();
+		if(endZHM==""){
+			layer.msg("结束桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endZHM)){
+				if(endZHM<=0){
+					layer.msg("结束桩号M不能小于等于零！");
+					return false;
+				}else if(endZHM>999){
+					layer.msg("结束桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+		return true;
+	}
+	function mySubmit(){
+		if(!myVail()){
+			return;
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/luxian");
+			}
+		}
+		
+	}
+</script>	

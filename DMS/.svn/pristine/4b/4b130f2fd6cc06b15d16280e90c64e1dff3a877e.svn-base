@@ -1,0 +1,175 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+	 $("#sdate").val(start);
+	 $("#edate").val(end);
+}
+var start;
+var end;
+function mySelect(){
+	//设置查询条件
+	 start = $("#sdate").val();
+	 end = $("#edate").val();
+	common_ajax.ajaxFormMainPanel("splitPage");
+	resetCondition();
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">养护日计划</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/dayplan" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">养护日计划查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							养护日计划日期
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="sdate" name="_query.sdate" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+						<label class="col-sm-1 control-label" style="text-align: left;width: 1%" for="form-field-1">
+							~
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="edate" name="_query.edate"  value='${escapeXml(paramMap["_query.edate"])}'   class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" >
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-5 col-sm-offset-5">
+						<button type="button" class="btn btn-primary" onclick='mySelect()' >查询</button>
+						<button type="reset" class="btn"  onclick='resetCondition()' >重置</button>
+					</div>
+			  	</div><br/>
+			
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">养护日计划列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<div class="row">
+						<div class="col-md-12 space20">
+							<% if(authUrl("/jf/manage/dayplan/add")){ %>
+							<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/dayplan/add');">
+								新增 <i class="fa fa-plus"></i>
+							</button>
+							<% } %>	
+						</div>
+					</div>
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'planTime')">
+									日期 	${orderBy("planTime")}
+		      					</th>
+								<th class="hidden-xs" width="20%" >
+									路线 	
+		      					</th>
+		      					<th class="hidden-xs" width="20%">
+									桩号范围 	
+		      					</th>
+		      					<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'fuZePeople')">
+									负责人	${orderBy("fuZePeople")}
+		      					</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(dayplan in splitPage.list){ %>
+								<tr id="trDom${dayplan.ids}">
+									
+									<td class="hidden-xs">${dayplan.planTime!,dateFormat="yyyy-MM-dd"}</td>
+									<td class="hidden-xs">${dayplan.luXian!}/${dayplan.wzType!}/${dayplan.wzName!}/${dayplan.wzMiaoShu!}</td>
+									<td class="hidden-xs">K${dayplan.startZHK!}  +  ${dayplan.startZHM!}  ~  K${dayplan.endZHK!} +${dayplan.endZHM!}</td>
+									<td class="hidden-xs">${dayplan.fuZePeople!}</td>
+									<td class="hidden-xs">
+										<% if(authUrl("/jf/manage/dayplan/delete")){ %>
+											<button type="button" title='查看' class="btn btn-dark-yellow add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/dayplan/view',{ids:'${dayplan.ids}',pageNumber:'${splitPage.pageNumber!}'});">
+												 <i class="fa fa-eye"></i>
+											</button>
+										<% } %>	
+										
+										<% if(authUrl("/jf/manage/dayplan/delete")){ %>
+										<button type="button" title='删除' class="btn btn-red delete-row" onClick="del('${dayplan.ids}')" > 
+											<i class="fa fa-trash-o"></i>
+										</button>
+										<% } %>	
+										<% if(authUrl("/jf/manage/dayplan/edit")){ %>
+										<button type="button" title='修改' class="btn btn-green edit-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/dayplan/edit',{ids:'${dayplan.ids}',pageNumber:'${splitPage.pageNumber!}'});"> 
+											<i class="fa fa-edit"></i>
+										</button>
+										<% } %>	
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+	function del(ids){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var resultData=common_ajax.ajaxFunc("/jf/manage/dayplan/delete",{"ids":ids},"JSON");
+			if(resultData==""){
+				layer.msg("请求失败！")
+			}else{
+				layer.msg(resultData.result_desc);
+				if(resultData.result){
+					$("#trDom"+ids).fadeOut('fast',function(){
+						$("#trDom"+ids).remove()();
+					});
+				}
+				
+			}
+		});
+	}
+</script>

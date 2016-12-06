@@ -1,0 +1,473 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/dayplan');">日计划</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">计划表单</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" action="${cxt!}/jf/manage/dayplan/update" method="POST" role="form" class="form-horizontal">
+					<input type="hidden" name="dayPlan.ids" value="${dayPlan.ids!}" >
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							计划日期
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="planTime" name="dayPlan.planTime" value="${dayPlan.planTime!}" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							路线
+						</label>
+						<div class="col-sm-2">
+							<select	id="luXian" name="dayPlan.luXian" value="${dayPlan.luXian!}" class="form-control">
+								<% for(luxian in luXianList){ %>
+									<option p="${luxian.ids }"  value="${luxian.luXianName }"   >${luxian.luXianName }</option>
+								<% } %>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							位置
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzType" name="dayPlan.wzType" value="${dayPlan.wzType!}" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							方向/互通/收费站/服务区
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzName" name="dayPlan.wzName"  value="${dayPlan.wzName!}" class="form-control">
+							</select>
+						</div>
+					
+						<label class="col-sm-2 control-label" for="form-field-1">
+							车道/匝道/广场
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzMiaoShu" name="dayPlan.wzMiaoShu"  value="${dayPlan.wzMiaoShu!}" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="startZHK" name="dayPlan.startZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${dayPlan.startZHK!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="startZHM" name="dayPlan.startZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${dayPlan.startZHM!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="endZHK" name="dayPlan.endZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${dayPlan.endZHK!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="endZHM" name="dayPlan.endZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${dayPlan.endZHM!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">工作内容</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="content" name="dayPlan.content" class="form-control">${dayPlan.content}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							负责人
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="fuZePeople" name="dayPlan.fuZePeople" value="${dayPlan.fuZePeople!}" class="form-control" >
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">机械设备</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="jiXieSheBei" name="dayPlan.jiXieSheBei" class="form-control">${dayPlan.jiXieSheBei}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="remarks" name="dayPlan.remarks" class="form-control">${dayPlan.remarks}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+    
+    $("#planTime").val(currentdate)
+}
+getNowFormatDate();
+	
+
+
+
+
+
+
+
+
+
+	function mySubmit(){
+		var planTime = $("[name='dayPlan.planTime']").val();
+		if(planTime==""){
+			layer.msg("计划日期不能为空");
+			return;
+		}
+		var startZHK = $("[name='dayPlan.startZHK']").val();
+		if(startZHK==""){
+			layer.msg("开始桩号千米位不能为空");
+			return;
+		}
+		var startZHM = $("[name='dayPlan.startZHM']").val();
+		if(startZHM==""){
+			layer.msg("开始桩号米位不能为空");
+			return;
+		}
+		var endZHK = $("[name='dayPlan.endZHK']").val();
+		if(endZHK==""){
+			layer.msg("结束桩号千米位不能为空");
+			return;
+		}
+		var endZHM = $("[name='dayPlan.endZHM']").val();
+		if(endZHM==""){
+			layer.msg("结束桩号米位不能为空");
+			return;
+		}
+
+
+
+		var content = $("[name='dayPlan.content']").val();
+		if(content==""){
+			layer.msg("工作内容不能为空");
+			return;
+		}
+		var fuZePeople = $("[name='dayPlan.fuZePeople']").val();
+		if(fuZePeople==""){
+			layer.msg("负责人不能为空");
+			return;
+		}var jiXieSheBei = $("[name='dayPlan.jiXieSheBei']").val();
+		if(jiXieSheBei==""){
+			layer.msg("机械设备不能为空");
+			return;
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/dayplan");
+			}
+		}
+		
+	}
+</script>	
+<script type="text/javascript">
+$(function(){//第一次加载时所要做的加载默认值的操作
+	//设置选中项	
+
+	 /* $("#luXian").attr("value","${xunChaInfo.luXian!}");
+	$("#wzType").attr("value","${xunChaInfo.wzType!}");
+	$("#wzName").attr("value","${xunChaInfo.wzName!}");
+	$("#wzMiaoShu").attr("value","${xunChaInfo.wzMiaoShu!}"); */
+	
+	var _luXian="${dayPlan.luXian!}";
+	var _wzType="${dayPlan.wzType!}";
+	var _wzName="${dayPlan.wzName!}";
+	var _wzMiaoShu="${dayPlan.wzMiaoShu!}";
+	
+	
+	//根据路线 选择位置 
+	 $("#luXian").val(_luXian);
+	var luXianId = $("#luXian").find("option:selected").attr("p");
+	var wzTypeId = "";
+	var wzName="";
+	$.ajax({  
+	    type:'post',      
+	    url:'${cxt}/jf/manage/weizhi/getWzType',  
+	    data:{"luXianId":luXianId},  
+	    cache:false,  
+	    dataType:'json',  
+        success:function(data){  
+        	//定义位置的options
+        	var option_wzType="";
+        	$.each(data.result,function(i,dataObj){
+        		if(_wzType==dataObj.name){
+        			option_wzType+="<option p="+dataObj.value+" selected = 'selected'  value="+dataObj.name+" >"+dataObj.name+"</option>"
+        			wzTypeId=dataObj.value;
+        		}else{
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+        			
+        		}
+        	});
+        	$("#wzType").append(option_wzType);
+        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+        	$.ajax({  
+        	    type:'post',      
+        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+        	    cache:false,  
+        	    dataType:'json',  
+                success:function(data){  
+                	//定义位置的options
+                	var option_wzName="";
+                	$.each(data.result,function(i,dataObj){
+                		if(_wzName==dataObj.name){
+                			option_wzName+="<option selected = 'selected'  p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                			wzName=dataObj.value;
+                		}else{
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                		}
+                	});
+                	$("#wzName").append(option_wzName);
+                	
+                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+                	$.ajax({  
+                	    type:'post',      
+                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+                	    cache:false,  
+                	    dataType:'json',  
+                        success:function(data){  
+                        	//定义位置的options
+                        	var option_wzMiaoShu="";
+                        	$.each(data.result,function(i,dataObj){
+                        		if(_wzMiaoShu==dataObj.name){
+                        			option_wzMiaoShu+="<option selected = 'selected'  p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                        		}else{
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                        		}
+                        	});
+                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+                        	
+                        }
+                	});
+                }
+        	});
+        }
+	});
+	
+	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	
+	
+		
+	//路线改变时
+	$("#luXian").change(function(){
+		
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId = "";
+		var wzName="";
+		$("#wzType").children().remove(); 
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzType',  
+		    data:{"luXianId":luXianId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzType="";
+	        	$.each(data.result,function(i,dataObj){
+	        		if(i==0){
+	        			wzTypeId=dataObj.value;
+	        		}
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzType").append(option_wzType);
+	        	
+	        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+	        	$.ajax({  
+	        	    type:'post',      
+	        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+	        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+	        	    cache:false,  
+	        	    dataType:'json',  
+	                success:function(data){  
+	                	//定义位置的options
+	                	var option_wzName="";
+	                	$.each(data.result,function(i,dataObj){
+	                		if(i==0){
+	                			wzName=dataObj.value;
+	                		}
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                	});
+	                	$("#wzName").append(option_wzName);
+	                	
+	                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+	                	$.ajax({  
+	                	    type:'post',      
+	                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+	                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+	                	    cache:false,  
+	                	    dataType:'json',  
+	                        success:function(data){  
+	                        	//定义位置的options
+	                        	var option_wzMiaoShu="";
+	                        	$.each(data.result,function(i,dataObj){
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                        	});
+	                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	                        }
+	                	});
+	                }
+	        	});
+	        }
+		});
+	});
+	//位置的选择事件
+	$("#wzType").change(function(){
+		var wzTypeVal=$(this).val();
+		var zhk="";
+		var zhm="";
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		//清除子选项的option
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+    	    type:'post',      
+    	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+    	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+    	    cache:false,  
+    	    dataType:'json',  
+            success:function(data){  
+            	//定义位置的options
+            	var option_wzName="";
+            	$.each(data.result,function(i,dataObj){
+            		if(i==0){
+            			wzName=dataObj.value;
+            			zhk=dataObj.zhk;
+            			zhm=dataObj.zhm;
+            		}
+            		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+            	});
+            	if(wzTypeVal!="主线"){
+            		$("#startZHK").val(zhk);
+            		$("#startZHM").val(zhm);
+            	}else{
+            		$("#startZHK").val('');
+            		$("#startZHM").val('');
+            	}
+            	$("#wzName").append(option_wzName);
+            	
+            	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+            	$.ajax({  
+            	    type:'post',      
+            	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+            	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+            	    cache:false,  
+            	    dataType:'json',  
+                    success:function(data){  
+                    	//定义位置的options
+                    	var option_wzMiaoShu="";
+                    	$.each(data.result,function(i,dataObj){
+                    		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                    	});
+                    	$("#wzMiaoShu").append(option_wzMiaoShu);
+                    }
+            	});
+            }
+    	});
+	});
+
+
+	//方向/互通/收费站/服务区 选择事件
+	$("#wzName").change(function(){
+		var wzTypeVal=$("#wzType").val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		$("#wzMiaoShu").children().remove(); 
+		
+		if(wzTypeVal!="主线"){
+			var zhk=$("#wzName").find("option:selected").attr("zhk");
+			var zhm=$("#wzName").find("option:selected").attr("zhm");
+    		$("#startZHK").val(zhk);
+    		$("#startZHM").val(zhm);
+    	}else{
+    		$("#startZHK").val('');
+    		$("#startZHM").val('');
+    	}
+		//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+		    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzMiaoShu="";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	        }
+		});
+	});
+});
+</script>

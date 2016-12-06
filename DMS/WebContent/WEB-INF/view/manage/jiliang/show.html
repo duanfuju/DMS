@@ -1,0 +1,84 @@
+<div id="childrenPanel">
+<form id="childrenSplitPage" action="${cxt!}/jf/manage/rwtask/bindingXunChaInfo" method="POST" role="form" class="form-horizontal">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body">
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<td class="hidden-xs" width="10%">
+									计量细目
+								</td>
+								<td class="hidden-xs" width="10%">
+									验收日期
+								</td>
+								<td class="hidden-xs" width="5%">
+									单价
+								</td>
+								<td class="hidden-xs" width="5%">
+									计量单位
+								</td>
+								<td class="hidden-xs" width="12%">
+									验收工程量(天)
+								</td>
+								<td class="hidden-xs" width="20%">
+									备注
+								</td>
+								<td class="hidden-xs" width="10%">
+									图片
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(xiMu in list){ %>
+								<tr>
+									<td class="hidden-xs" width="10%">${xiMu.yanShouXiMuLevel }  ${xiMu.yanShouXiMu }</td>
+									<td class="hidden-xs" width="10%">${xiMu.yanShouTime!,dateFormat="yyyy-MM-dd HH:mm:ss" }</td>
+									<td class="hidden-xs" width="5%">${xiMu.price } </td>
+									<td class="hidden-xs" width="5%">${xiMu.dw } </td>
+									<td class="hidden-xs" width="5%">${xiMu.yanShouGongChengLiang } </td>
+									<td class="hidden-xs" width="20%">${xiMu.remark } </td>
+									<td class="hidden-xs" id="td_img${xiMu.ids }" width="10%">
+										<script type="text/javascript">
+									    	//图片存在多个
+									    	var a="";
+									    	var img='${xiMu.imgs }'.split(",");
+									    	$.each(img,function(i,imgs){
+									    		a+='<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\''+imgs+'\')">图片'+(i+1)+'</a>';
+									    	});
+									    	$("#td_img${xiMu.ids }").append(a);
+										</script>
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					
+						
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+</form>			
+</div>
+
+<script type="text/javascript">
+function showImg(path){
+	layer.photos({
+	    photos: {
+    	  	"data": [{
+    	      	"src": path//原图地址
+    	    }]
+	    },
+	    tab: function (pic, layero) {
+	    	var css = {
+	    			width: window.width,
+		    		height: window.height
+	    	}
+	    	$(layero.selector).find('img').css(css);
+	    	
+	    }
+	});
+
+}
+</script>

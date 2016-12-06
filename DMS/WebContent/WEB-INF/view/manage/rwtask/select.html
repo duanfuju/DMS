@@ -1,0 +1,183 @@
+<script type="text/javascript">
+function getCheckboxs(){   
+	var vals="";
+	 vals = $("input[name=checkIds]:checked") .map(function() { 
+        return this.value; 
+    }).get().join();
+	window.getXunChaInfoIds=vals;
+}
+
+$('.td_i').on('click', function () {
+	var expandId=$(this).attr("id");
+	var tr=$(".trDom"+expandId);
+	if($(this).hasClass("fa-arrow-circle-down")){
+		//如果图标是向下的就换成向上的
+		$(this).removeClass("fa-arrow-circle-down");
+		$(this).addClass("fa-arrow-circle-up");
+		//如果下一行没有pad样式就获取数据添加
+		if(!tr.next().hasClass('pad')){
+			 $.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/xunChaInfo/getXunChaInfoByIds',
+			    cache:false,  
+			    data:{ids:expandId},
+			    dataType:'json',  
+			    success:function(entity){
+			    	if(!entity.flag){
+			    		layer.msg("巡查记录不存在或被删除");
+			    		return;
+			    	}
+			    	var data=entity.result;
+			    	//图片存在多个
+			    	var a="";
+			    	var img=data.imgs.split(",");
+			    	$.each(img,function(i,imgs){
+			    		a+='<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\''+imgs+'\')">图片'+(i+1)+'</a>';
+			    	});
+			    	html= '<table style="width:100%;border:1px" > <tr>  <td style="text-align:right">桩号范围  ：  </td><td>K'+ data.xunChaStartZHK+' + ' +data.xunChaStartZHM;
+			    	if(typeof(data.xunChaEndZHK) != "undefined" || typeof(data.xunChaEndZHM) != "undefined")
+			    	{
+			    		html += '  ~  K  '+ data. xunChaEndZHK +' + ' + data.xunChaEndZHM;
+			    	}
+			    	
+			    	html = html+'</td><td style="text-align:right">工程量  ：  </td><td>'+data.yuGuGongChengLiang;
+			    				
+			    	if(data.isFZHL == false && typeof(data.yuGuGongChengLiangDw) != "undefined")
+			    	{
+			    		html += '('+data.yuGuGongChengLiangDw+')';
+			    	}
+			    	html = html +'</td> </tr>'+
+			        '<tr> <td style="text-align:right">位置  ：  </td> <td> '+data. luXian +'/'+data.wzType +'/'+ data. wzName +'/'+ data. wzMiaoShu+'</td> '+
+			       ' </tr><tr> <td style="text-align:right">图片  ：  </td><td colspan="3">'+a+'</td> </tr>  </table>';
+					tr.after("<tr class='pad'><td colspan='8'>"+html+"</td></tr>");
+			    }
+			}); 
+		}else{
+			//直接显示
+			tr.next().show();
+		}
+	}else{
+		$(this).addClass("fa-arrow-circle-down");
+		$(this).removeClass("fa-arrow-circle-up");
+		if(tr.next().hasClass("pad")){
+			tr.next().hide();
+		}
+	}
+});
+
+$(".fix").click(function(){
+	$(".fix").hide();
+});
+function showImg(path){
+	/* $("#fix").attr("src","${cxt}"+path); */
+	/* $(".fix").attr("src",path);
+	$(".fix").show(); */
+	layer.photos({
+	    photos: {
+    	  	"data": [{
+    	      	"src": path//原图地址
+    	    }]
+	    },
+	    tab: function (pic, layero) {
+	    	/* console.log(pic)
+	    	console.log(layero) */
+	    	//console.log(layero.selector);
+	    	var css = {
+	    			width: window.width,
+		    		height: window.height
+	    	};
+	    	//$(layero.selector).css(css);
+	    	$(layero.selector).find('img').css(css);
+	    	
+	    }
+	});
+
+}
+</script>
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+<style>
+<!--
+.fix{width:500px; height:200px;position: absolute;top:0;left:0;width:100%;height:100%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+-->
+
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+</style>
+<div id="childrenPanel">
+<img src="" class='fix' alt="图片损坏" style="display: none">
+<form style="font-size: 13px;"  id="childrenSplitPage" action="${cxt!}/jf/manage/rwtask/bindingXunChaInfo" method="POST" role="form" class="form-horizontal">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body">
+					<table class="table table-bordered table-hover" style="font-size: 13px;" id="dataTable">
+						<thead>
+							<tr>
+								<th  width="5%">
+								</th>	
+								<th>
+									<input type="checkbox" name="checkAll" id="checkAll" class="flat-grey selectall" onchange="common_common.checkFunc('dataTable', this.checked);getCheckboxs();"> 
+								</th>	
+								<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('childrenPanel', 'childrenSplitPage', 'xunChaTime')">
+									巡查日期${orderBy("xunChaTime")}
+								</td>
+								<td class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('childrenPanel', 'childrenSplitPage', 'xiuBuBiaoZhi')">
+									修补损坏标识${orderBy("xiuBuBiaoZhi")}
+								</td>
+								<td class="hidden-xs"  width="20%" onclick="common_splitPage.orderbyFun('childrenPanel', 'childrenSplitPage', 'wxmkName')">
+									维修模块	${orderBy("wxmkName")}
+								</td>
+								<td class="hidden-xs" width="25%" onclick="common_splitPage.orderbyFun('childrenPanel', 'childrenSplitPage', 'binghaiOrQueXianType')">
+									病害或缺陷类型(病害指标)${orderBy("binghaiOrQueXianType")}
+								</td>
+								<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('childrenPanel', 'childrenSplitPage', 'binghaiOrQueXianMiaoShu')">
+									病害或缺陷描述	${orderBy("binghaiOrQueXianMiaoShu")}
+								</td>
+								<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('childrenPanel', 'childrenSplitPage', 'level')">
+									严重程度${orderBy("level")}
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(xunChaInfo in splitPage.list){ %>
+								<tr class="trDom${xunChaInfo.ids!}">
+									<td class="hidden-xs">
+										<i class="fa fa-arrow-circle-down td_i" id="${xunChaInfo.ids!}"> </i>
+									</td>
+									<td class="center hidden-xs">
+										<input type="checkbox"  name='checkIds' onclick="getCheckboxs()" value="${xunChaInfo.ids!}" class="flat-grey foocheck">
+									</td>
+									<td class="hidden-xs">${xunChaInfo.xunChaTime ,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+									<td class="hidden-xs">${xunChaInfo.xiuBuBiaoZhi }</td>
+									<td class="hidden-xs">${xunChaInfo.wxmkName }</td>
+									<% if(xunChaInfo.wxmkId == '1a435846fb7e42af9dadd1d1bcae9f38'){%>
+									<td class="hidden-xs">${xunChaInfo.fzhl!}</td>
+									<% }else{ %>
+									<td class="hidden-xs">${xunChaInfo.binghaiOrQueXianType!} ${xunChaInfo.yuGuGongChengLiang!} ${xunChaInfo.yuGuGongChengLiangDw!}</td>
+									<% } %>
+									<td class="hidden-xs">${xunChaInfo.binghaiOrQueXianMiaoShu }</td>
+									<td class="hidden-xs">${xunChaInfo.level }</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="childrenSplitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "childrenPanel", "formId" : "childrenSplitPage", "splitPageDiv" : "childrenSplitPageDiv"}){} %>
+					</div>
+						
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+</form>			
+</div>
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		common_form.init();
+	});
+	
+	
+</script>

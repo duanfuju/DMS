@@ -1,0 +1,214 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a>
+			</li>
+			<li class="active">
+				地图展示
+			</li>
+		</ol>
+	</div>
+</div>
+<form id="splitPage" action="${cxt}/jf/manage/luxian" method="POST" role="form" class="form-horizontal">
+	<div class="row" style="margin-right:1px;">
+		<div class="col-md-3" style="padding-right:1px;">
+			<div class="panel panel-white" style="height: 100%">
+
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">地图菜单</span></h4>
+				</div>
+				<div class="tabbable">
+					<ul id="myTab" class="nav nav-tabs">
+						<li class="active">
+							<a aria-expanded="true" href="#myTab_example1" data-toggle="tab">  巡查 </a>
+						</li>
+						<li class="">
+							<a aria-expanded="false" href="#myTab_example2" data-toggle="tab"> 维修 </a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade active in" id="myTab_example1" style="height: 652px">
+							<!-- 巡查 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="28%"><b>开始日期：</b></td>
+									<td width="75%"><input id="foundtime" type="text" name="startTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td width="28%"><b>结束日期：</b></td>
+									<td><input id="foundtime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><button type="button" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+							<div class="ztree_c">
+  								 <ul id="xuchaTree" class="ztree"></ul>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="myTab_example2" style="height: 652px">
+							<!-- 维修 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="28%"><b>开始日期：</b></td>
+									<td width="75%"><input id="foundtime" type="text" name="startTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td width="28%"><b>结束日期：</b></td>
+									<td><input id="foundtime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><button type="button" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+							<div class="ztree_c">
+  								 <ul id="weixiuTree" class="ztree"></ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9" style="padding-right:1px;padding-left:12px;">
+			<div class="panel panel-white" style="height: 100%">
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold"> 地图信息</span></h4>
+				</div>
+				<div id="baiduMapContainer" class="panel-body">
+					<!-- 地图信息 -->
+					
+					
+				</div>
+				<div id="bh_info_li" style="width: 220px; position: absolute; top: 51px; right: 1px;">
+						<ul>
+							<li><a href="#"><img src="/Demo/Content/mapicon/裂缝类.png">裂缝类<span class="aspan">巡查：0处;维修：0处</span></a></li>
+							<li><a href="#"><img src="/Demo/Content/mapicon/路面类.png">路面类<span class="aspan">巡查：0处;维修：0处</span></a></li>
+							<li><a href="#"><img src="/Demo/Content/mapicon/交安类.png">交安类<span class="aspan">巡查：0处;维修：0处</span></a></li>
+							<li><a href="#"><img src="/Demo/Content/mapicon/绿化类.png">绿化类<span class="aspan">巡查：0处;维修：0处</span></a></li>
+							<li><a href="#"><img src="/Demo/Content/mapicon/沿线类.png">沿线类<span class="aspan">巡查：0处;维修：0处</span></a></li>
+							<li><a href="#"><img src="/Demo/Content/mapicon/路基类.png">路基类<span class="aspan">巡查：0处;维修：0处</span></a></li>
+						</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</form>
+<style type="text/css">  
+    #baiduMapContainer{
+    		height:715px;
+    }    
+    .anchorBL{display:none;}
+    .ztree_c{
+    	width:100%; height:475px; overflow:auto;
+    }
+  
+  
+ /*这个是悬浮在百度地图上的div样式*/
+  ul, li {
+          list-style: outside none none;
+          margin: 0;
+          padding: 1px;
+  }
+
+  #bh_info_li, #bh_linfo li {
+      border-bottom: 1px solid #ccc;
+  }
+
+  #bh_info_li, #bh_linfo {
+      background: #ffffff none repeat scroll 0 0;
+      border-radius: 4px 3px 6px 10px;
+      opacity: 0.6;
+  }
+
+   #bh_info_li li a {
+       border-radius: 4px 3px 6px 10px;
+       color: #000;
+       display: block;
+       font-weight: bolder;
+       text-decoration: none;
+       transition: font-size 0.3s ease 0s, background-color 0.3s ease 0s;
+       width: 220px;
+   }
+    
+</style>
+<script type="text/javascript">
+
+	//---------------------------初始化 百度地图
+	var map = new BMap.Map("baiduMapContainer",{enableMapClick:false});  // 创建地图实例   禁止显示景点信息
+	
+	
+	
+	// 初始化数据
+	var setting = {};
+    // zTree 的数据属性，深入使用请参考 API 文档（zTreeNode 节点数据详解）
+    var zNodes = [
+    {name:"裂缝类", open:true, children:[
+       {name:"test1_1"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}]},
+    {name:"路面类", open:true, children:[
+       {name:"test2_1"}, {name:"test2_2"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}]},
+    {name:"交安类", open:true, children:[
+       {name:"test1_1"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}]},
+    {name:"绿化类", open:true, children:[
+		{name:"test1_1"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}]},
+	{name:"沿线类", open:true, children:[
+		{name:"test1_1"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}]},
+	{name:"路基类", open:true, children:[
+		{name:"test1_1"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}, {name:"test1_2"}]}
+    ];
+    
+    //页面初始化
+    $(function(){
+    	//加载ztree
+    	$.fn.zTree.init($("#xuchaTree"), setting, zNodes);
+        $.fn.zTree.init($("#weixiuTree"), setting, zNodes);
+        initBaidu();
+    });
+    
+   	//初始化百度地图
+    function initBaidu()
+    {
+    	var point = new BMap.Point(120.598272,31.778381);  // 创建点坐标  
+    	map.centerAndZoom(point, 11);  					// 初始化地图，设置中心点坐标和地图级别  
+    	map.enableScrollWheelZoom(true);			  //缩放
+    	var tmp = new BMap.Polyline([
+    		 new BMap.Point(120.460867,31.482733),
+    		 new BMap.Point(120.44017,31.515246),
+    		 new BMap.Point(120.495937,31.590575),
+    		 new BMap.Point(120.622993,31.937862),
+    		 new BMap.Point(120.671286,31.948648),
+    		 new BMap.Point(120.675885,31.916287),
+    		 new BMap.Point(120.541355,31.554642),
+    		 new BMap.Point(120.502261,31.496528),
+    		 new BMap.Point(120.460867,31.482733)
+    	],{strokeColor:"blue",strokeWeight:2,storkeOpacity:0.5});
+    	map.addOverlay(tmp);
+    	var sContent =
+    		"<h4 style='margin:0 0 5px 0;padding:0.2em 0;font-weight:bold;'>天安门</h4>" + 
+    		"<img style='float:right;margin:4px' id='img' src='http://app.baidu.com/map/images/tiananmen.jpg' width='139' height='104' title='天安门'/>" + 
+    		"<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>天安门坐落在中国北京市中心,故宫的南侧,与天安门广场隔长安街相望,是清朝皇城的大门...</p>" + 
+    		"</div>";
+    	addSign(new BMap.Point(120.460867,31.482733),sContent);
+    	addSign(new BMap.Point(120.44017,31.515246),sContent);
+    	
+    }
+    
+    
+  	//添加标注
+    function addSign(point,contents)
+    {
+    	var marker = new BMap.Marker(point);
+    	map.addOverlay(marker);
+    	var infoWindow = new BMap.InfoWindow(contents);//创建信息窗口
+    	//设置标注的点击事件
+    	marker.addEventListener("click", function(){          
+  		   this.openInfoWindow(infoWindow);
+  		   //图片加载完毕重绘infowindow
+  		   document.getElementById('img').onload = function (){
+  			   infoWindow.redraw();   //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+  		   }
+  		});
+    }
+    
+</script>

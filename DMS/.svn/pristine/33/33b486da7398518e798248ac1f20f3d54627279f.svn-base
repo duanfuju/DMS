@@ -1,0 +1,329 @@
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	
+	//病害或缺陷类型(病害指标)	和 	预估工程量单位  联动
+	$("#binghaiOrQueXianType").change(function(){
+		var value = $(this).find("option:selected").attr("p");
+		$("#yuGuGongChengLiangDw").attr("value",value);
+	});
+	//设置下拉框的默认
+	//病害或缺陷类型(病害指标)
+	var binghaiOrQueXianType="${xunChaInfo.binghaiOrQueXianType!}";
+	if(binghaiOrQueXianType){
+		$("#binghaiOrQueXianType").val(binghaiOrQueXianType); 
+	}else{
+		var value = $("#binghaiOrQueXianType").find("option:selected").attr("p");
+		$("#yuGuGongChengLiangDw").attr("value",value);
+	}
+	//修补损坏标识 
+	var xiuBuBiaoZhi="${xunChaInfo.xiuBuBiaoZhi!}";
+	if(xiuBuBiaoZhi){
+		$("#xiuBuBiaoZhi").val(xiuBuBiaoZhi); 
+	}
+	//位置类型 
+	var wzType="${xunChaInfo.wzType!}";
+	if(wzType){
+		$("#wzType").val(wzType); 
+	}
+});
+   	//显示子级菜单编辑弹出层
+   	function showEditChildrenMenu(){	
+   		var url="/jf/manage/xunChaInfo/bindingXunChaTouId";
+   		var data={"":""};
+   		var width=850;
+   		var height=500;
+   		var title="选择巡查头";
+   		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + url)),
+			data : data,
+			dataType : "HTML",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			async: false,
+			cache: false,
+			success:function(response){
+				result = response;
+				layer.open({
+				  type: 1, //page层
+				  area: [width+'px', height+'px'],
+				  title: title,
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  content: result,
+				  btn:['确定'],
+				  btn1:function(){
+					  layer.closeAll();
+				  }
+				});
+			}
+		});
+   	}
+   	
+   	
+   	
+   	
+   	//设置全局变量
+   	window.xunChaXinTouId="";
+   	//设置全局的方法
+	window.closeAndGetValue=function(){
+		$("#xunChaTouId").attr("value",xunChaXinTouId);
+	}
+</script>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查开始桩号千米位
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="xunChaStartZHK" placeholder="此处必填" name="xunChaInfo.xunChaStartZHK"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaStartZHK!}"  class="form-control">
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查开始桩号米位
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="xunChaStartZHM" placeholder="此处必填" name="xunChaInfo.xunChaStartZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaStartZHM!}"   class="form-control">
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查结束桩号千米位
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="xunChaEndZHK"  name="xunChaInfo.xunChaEndZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaEndZHK!}"  class="form-control">
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查结束桩号米位
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="xunChaEndZHM" name="xunChaInfo.xunChaEndZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${xunChaInfo.xunChaEndZHM!}" class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		选择关联信息头部
+	</label>
+	<div class="col-sm-3">
+			<input type="text" id="xunChaTouId" readonly name="xunChaInfo.xunChaTouId" value="${xunChaInfo.xunChaTouId!}"  class="form-control" >
+	</div>
+	<div class="col-sm-1">
+			<input type="button" value="点击关联" onclick="showEditChildrenMenu()" >
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		病害模块
+	</label>
+	<div class="col-sm-4">
+		<select	id="wzType" name="xunChaInfo.wxmkId" value="${xunChaInfo.wxmkId!}" class="form-control">
+			<option selected value="1">病害模块1</option>
+			<option value="2">病害模块1</option>
+		</select>
+		<!-- <input type="text" name="xunChaInfo.wxmkId" value="${xunChaInfo.wxmkId!}"  class="form-control" > -->
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		修补损坏标识
+	</label>
+	<div class="col-sm-4">
+		<select id="xiuBuBiaoZhi" name="xunChaInfo.xiuBuBiaoZhi" value="${xunChaInfo.xiuBuBiaoZhi!}"  class="form-control">
+	        <option selected value="√">√</option>
+	        <option value="△">△</option>
+	    </select>
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		病害或缺陷类型(病害指标)
+	</label>
+	<div class="col-sm-4">
+		<select id="binghaiOrQueXianType" name="xunChaInfo.binghaiOrQueXianType" value="${xunChaInfo.binghaiOrQueXianType!}"  class="form-control">
+			<option value="波浪拥包" selected p="m2">波浪拥包</option>
+			<option value="车辙" p="m">车辙</option>
+			<option value="沉陷" p="m2">沉陷</option>
+			<option value="泛油" p="m2">泛油</option>
+			<option value="龟裂" p="m2">龟裂</option>
+			<option value="横向裂缝" p="m">横向裂缝</option>
+			<option value="划痕" p="m2">划痕</option>
+			<option value="唧浆" p="m2">唧浆</option>
+			<option value="坑塘" p="m2">坑塘</option>
+			<option value="块状裂缝" p="m2">块状裂缝</option>
+			<option value="其他" p="">其他</option>
+			<option value="烧伤" p="m2">烧伤</option>
+			<option value="松散" p="m2">松散</option>
+			<option value="推移" p="m2">推移</option>
+			<option value="网裂" p="m2">网裂</option>
+			<option value="修补" p="m2">修补</option>
+			<option value="拥包" p="m2">拥包</option>
+			<option value="纵向裂缝" p="m">纵向裂缝</option>
+		</select>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		预估工程量
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="yuGuGongChengLiang" name="xunChaInfo.yuGuGongChengLiang" value="${xunChaInfo.yuGuGongChengLiang!}"   class="form-control">
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		预估工程量单位
+	</label>
+	<div class="col-sm-4">
+		<input type="text" readonly id="yuGuGongChengLiangDw" name="xunChaInfo.yuGuGongChengLiangDw" value="${xunChaInfo.yuGuGongChengLiangDw!}"  class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		病害或缺陷描述
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="binghaiOrQueXianMiaoShu" name="xunChaInfo.binghaiOrQueXianMiaoShu" value="${xunChaInfo.binghaiOrQueXianMiaoShu!}"   class="form-control">
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		紧急程度
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="level" name="xunChaInfo.level" value="${xunChaInfo.level!}"   class="form-control">
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		位置类型
+	</label>
+	<div class="col-sm-4">
+		<select	id="wzType" name="xunChaInfo.wzType" value="${xunChaInfo.wzType!}" class="form-control">
+			<option selected value="主线">主线</option>
+			<option value="收费站广场">收费站广场</option>
+			<option value="互通枢纽">互通枢纽</option>
+			<option value="辅道">辅道</option>
+			<option value="服务区">服务区</option>
+		</select>
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		位置名称
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="wzName" name="xunChaInfo.wzName" value="${xunChaInfo.wzName!}"  class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		位置描述
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="wzMiaoShu" name="xunChaInfo.wzMiaoShu" value="${xunChaInfo.wzMiaoShu!}"   class="form-control">
+	</div>
+	<label class="col-sm-2 control-label" for="form-field-1">
+		巡查时间
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="xunChaTime" name="xunChaInfo.xunChaTime"  placeholder="此处必填"  value="${xunChaInfo.xunChaTime!}" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="form-control">
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		路线
+	</label>
+	<div class="col-sm-4">
+		<input type="text" id="luXian" name="xunChaInfo.luXian" value="${xunChaInfo.luXian!}"   class="form-control">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label" for="form-field-1">
+		备注
+	</label>
+	<div class="col-sm-9">
+		<input type="text" id="remark" name="xunChaInfo.remark" value="${xunChaInfo.remark!}"   class="form-control">
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		common_form.init();
+	});
+	function mysubmit(){
+		//是否符合提交条件
+		var submit=true;
+		//验证非空
+		submit=validateIsNull();
+		//如果不符合提交条件就不再往下验证
+		if(!submit){
+			return;
+		}
+		//验证m位数字是否符合范围
+		submit=validateMetre();
+		//如果不符合提交条件就不再往下验证
+		if(!submit){
+			return;
+		}
+		//是否符合提交条件						
+		if(submit){
+			//提交
+			var formId=$("#editForm");
+			var fromAction=formId.attr("action");
+			 $(formId).ajaxSubmit({  
+	                type:"post",  //提交方式  
+	                dataType:"json", //数据类型  
+	                url:fromAction, //请求url  
+	                success:function(data){ //提交成功的回调函数  
+	                	layer.msg(data.result);
+	                    common_ajax.ajaxMainPanel("/jf/manage/xunChaInfo");
+	                }  
+	            });  
+		}
+	}
+	//验证m位数字是否符合范围
+	function validateMetre(){
+		//开始米位
+		var xunChaStartZHM=$.trim($("#xunChaStartZHM").val());
+		if(!(xunChaStartZHM>=0&&xunChaStartZHM<=999)){
+			layer.msg("方向1  巡查开始米位请填写错误,范围(0-999)！");
+			return false;
+		}
+		//结束米位
+		var xunChaEndZHM=$.trim($("#xunChaEndZHM").val());
+		if(xunChaEndZHM.length!=0&&xunChaEndZHM!=null){
+			if(!(xunChaEndZHM>=0&&xunChaEndZHM<=999)){
+				layer.msg("方向1  巡查结束米位请填写错误,范围(0-999)！");
+				return false;
+			}
+		}
+		return true;
+	}
+	//验证开市桩号、数量、巡查时间为必填
+	function validateIsNull(){
+		var xunChaStartZHK=$.trim($("#xunChaStartZHK").val());
+		var xunChaStartZHM=$.trim($("#xunChaStartZHM").val());
+		var yuGuGongChengLiangDw=$.trim($("#yuGuGongChengLiangDw").val());
+		var xunChaTime=$.trim($("#xunChaTime").val());
+		if(xunChaStartZHK.length==0||xunChaStartZHK==null){
+			layer.msg("巡查开始桩号千米位 请填写！");
+			return false;
+		}
+		if(xunChaStartZHM.length==0||xunChaStartZHM==null){
+			layer.msg("巡查开始桩号米位 请填写！");
+			return false;
+		}
+		if(yuGuGongChengLiangDw.length==0||yuGuGongChengLiangDw==null){
+			layer.msg("巡预估工程量 请填写！");
+			return false;
+		}
+		if(xunChaTime.length==0||xunChaTime==null){
+			layer.msg("巡查时间  请填写！");
+			return false;
+		}
+		return true;
+		
+	}
+</script>

@@ -1,0 +1,143 @@
+<style>
+<!--
+.fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+-->
+</style>
+<script src="${cxt!}/ui/rapido/assets/js/subview-examples.js"></script>
+<script src="${cxt!}/ui/rapido/assets/plugins/bootstrap-fileupload/bootstrap-fileupload.min.js"></script>
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li id="twomenu"><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/youwu');">${className!}</a></li>
+			<li class="active">导入${className!}</li>
+		</ol>
+	</div>
+</div>
+	<img src="" class='fix' alt="图片损坏,点击返回" style="display: none;">	
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">${className!}数据导入</span></h4>
+				
+			</div>
+			<div class="panel-heading">
+				<div style="margin-left: 30px;">
+					<button type="button" class="btn btn-red" onclick="downLoadTemp('${fileName!}')">
+						下载${className!}数据导入模板<i class="fa fa-arrow-circle-down"> </i>
+					</button>
+				</div>
+			</div>
+			
+			<div class="panel-body">
+				<form id="editForm" action="${cxt!}/jf/manage/basemethod/importInfo" method="POST" enctype="multipart/form-data" role="form" class="form-horizontal">	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="hidden" id="fileName"  name="fileName" value="${fileName!}" />
+							<input type="hidden" id="taskInfoRelateId"  name="taskInfoRelate" />
+							<input type="text" id="taskInfoRelate"   
+								class="form-control focused" readonly="readonly"   maxlength="100">
+						</div>
+							<a href="#"  class="btn btn-blue" onclick="chooseTask()" >选择</a>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							文件
+						</label>
+						<div data-provides="fileupload" class="fileupload fileupload-new">
+							<span class="btn btn-file btn-light-grey"><i class="fa fa-folder-open-o"></i> <span class="fileupload-new">选择文件</span><span class="fileupload-exists">重新选择</span>
+								<input type="file" id="file" name="file"></input>
+							</span>
+							<span class="fileupload-preview"> </span>
+							<a data-dismiss="fileupload" class="close fileupload-exists float-none" href="#">
+								&times; 
+							</a>
+						</div>
+					</div>
+					
+					<div class="form-group">
+<!-- 					<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								导入<i class="fa fa-arrow-circle-right"> </i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"> </i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function downLoadTemp(fileName){
+	var url ="/jf/manage/basemethod/downExcelTemp";
+	var resultData=common_ajax.ajaxFunc(url,{"tempName":fileName},"JSON");
+	if(resultData==""){
+		layer.msg("请求失败！");
+	}else{
+		window.location.href=resultData.resultUrl;
+	}
+}
+function chooseTask(){
+	var url="/jf/manage/rwtask/choose";
+	var wxmkid = "61779b19aed4490490899807f8745001";
+	if(fileName =="import_liefeng"){
+		wxmkid = "124d4d5e84e544d4aef67dae70939fc4";
+	}else if(fileName =="import_jiaotonganquan"){
+		wxmkid = "eadf1e9672b344b59683b8af0d4758a7";
+	}else if(fileName =="import_lumianzaihai"){
+		wxmkid = "61779b19aed4490490899807f8745001";
+	}else if(fileName =="import_yanghutongyong"){
+		wxmkid = "70fd1f7030e14697ab00e2fcd00e2b6d";
+	}
+	popup.show(url,{"_query.wxmkId":wxmkid,"_query.taskRelateState":0},1100,650,"选择任务");
+}
+function mySubmit(){
+	var file = $("#file").val();
+	var fileName = $("#fileName").val();
+	var taskInfoRelateId = $("#taskInfoRelateId").val();
+	if(taskInfoRelateId==""){
+		layer.msg("请先选择维修任务编号");
+		return;
+	}
+	if(file==""){
+		layer.msg("请选择要导入的文件");
+		return;
+	}
+	var data ={"file":file,"taskInfoRelateId":taskInfoRelateId,"fileName":fileName};
+	var resultData=common_ajax.ajaxFileForm("editForm","JSON",data);
+	if(resultData==""){
+		layer.msg("请求失败！");
+	}else{
+		layer.msg(resultData.result_desc);
+		if(resultData.result){
+			var url = "/jf/manage/youwu";
+			if(fileName =="import_liefeng"){
+				url = "/jf/manage/liefeng";
+			}else if(fileName =="import_jiaotonganquan"){
+				url = "/jf/manage/jiaotong";
+			}else if(fileName =="import_lumianzaihai"){
+				url = "/jf/manage/waydisease";
+			}else if(fileName =="import_yanghutongyong"){
+				url = "/jf/manage/yanghu";
+			}
+			common_ajax.ajaxMainPanel(url);
+		}
+	}
+}
+	
+</script>	

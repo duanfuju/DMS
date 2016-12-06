@@ -1,0 +1,46 @@
+package com.junl.dms.mvc.fangxiang;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.platform.mvc.base.BaseService;
+
+public class FangXiangService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(FangXiangService.class);
+
+	public static final FangXiangService service = new FangXiangService();
+
+	public boolean save(FangXiang fangXiang) {
+		return fangXiang.save();
+	}
+
+	public boolean delete(String id) {
+		return FangXiang.dao.deleteById(id);
+	}
+
+	public FangXiang findById(String id) {
+		return FangXiang.dao.findById(id);
+	}
+	
+	public boolean update(FangXiang fangXiang) {
+		return fangXiang.update();
+	}
+	public List<Map<String, String>> findByLuXianId(String luXianId) {
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		List<FangXiang> fangXiangList = FangXiang.dao.findByLuXianId(luXianId);
+		for (FangXiang weiZhi : fangXiangList) {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("value", weiZhi.getStr("ids"));
+			map.put("name", weiZhi.getStr("name"));
+			list.add(map);
+		}
+		return list;
+	}
+
+}

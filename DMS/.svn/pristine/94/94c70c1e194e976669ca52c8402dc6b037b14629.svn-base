@@ -1,0 +1,319 @@
+package com.junl.dms.mvc.baoyan;
+
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.jiling.JiLiang;
+import com.junl.dms.mvc.taskinforelate.TaskInfoRelate;
+import com.junl.dms.mvc.taskinforelate.TaskInfoRelateService;
+import com.junl.dms.mvc.xunchainfo.StringUtil;
+import com.platform.mvc.base.BaseService;
+
+
+public class BaoYanService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(BaoYanService.class);
+
+	public static final BaoYanService service = new BaoYanService();
+	//获取油污的维修记录			DMS_WX_youWuDispose
+	//获取养护通用的维修记录		DMS_WX_yangHuTongYongWeiXiu
+	//获取路面病害的维修记录		DMS_WX_luMianBingHaiWeiXiu
+	//获取裂缝处理的维修记录		DMS_WX_lieFengDispose
+	//获取交通安全设施维修记录	DMS_WX_jtaqssWeiXiu
+	//防撞护栏的维修记录			DMS_WX_fzhlWeiXiu
+	public static String[] weiXiuJiLu_Array={"DMS_WX_youWuDispose","DMS_WX_yangHuTongYongWeiXiu",
+		"DMS_WX_luMianBingHaiWeiXiu","DMS_WX_lieFengDispose",
+		"DMS_WX_jtaqssWeiXiu","DMS_WX_fzhlWeiXiu"};
+	
+	
+	//在修改的界面的时候删除报验所绑定的任务关系编号
+	public boolean deleteTaskRelateInUpdate(String taskRelateIds,String baoYanIds){
+		boolean flag=false;
+		//根据主键的ids获取外建表的集合
+		List<BaoYanRelate> byrList=BaoYanRelate.dao.selectDMS_BY_weiXiuBaoYanFByByIds(baoYanIds);
+		if (byrList.size()>0) {
+			for (int j = 0; j < byrList.size(); j++) {
+				BaoYanRelate bry=byrList.get(j);
+				if (bry.getStr("taskId").equals(taskRelateIds)) {
+					//修改任务关联表
+					 TaskInfoRelate tir = TaskInfoRelateService.service.findById(taskRelateIds);
+					 tir.set("state", 1);
+					 tir.update();
+					 //删除子表
+					 flag=bry.delete();
+				}
+				 
+			}
+		}
+		return flag;
+	}
+	
+	
+	
+	
+	
+	
+	
+	public boolean save(BaoYan baoyan, String[] paras, String choose_checkBox) {
+		boolean flag=false;
+		//保存图片
+		StringBuffer sb = new StringBuffer();		
+		if(paras != null) {
+			for(int i=0;i<paras.length;i++){
+				sb.append(paras[i]+",");
+				String newStr = sb.toString();
+				//去掉最后一个逗号
+				String newStr1 = newStr.substring(0, newStr.length()-1);
+				baoyan.set("imgs",newStr1);
+			}
+		}else{
+			baoyan.set("imgs","");
+		}
+		//设置创建时间
+		baoyan.set("createTime",new Timestamp(System.currentTimeMillis()));
+		baoyan.set("state",0);
+		
+		if (StringUtil.isNotEmpty(choose_checkBox)) {
+			String[] strs=choose_checkBox.split(",");
+			//设置子表的关联数
+			baoyan.set("byFNum", strs.length);
+			flag = baoyan.save();
+			if (strs.length>0) {
+				//添加子项表
+				 for (int i = 0; i < strs.length; i++) {
+					 BaoYanRelate baoYanRelate = new BaoYanRelate();
+					 baoYanRelate.set("byIds", baoyan.get("ids"));
+					 baoYanRelate.set("taskId", strs[i]);
+					 baoYanRelate.set("state", 0);
+					 baoYanRelate.save();
+					 //修改任务关联表
+					 TaskInfoRelate tir = TaskInfoRelateService.service.findById(strs[i]);
+					 tir.set("state", 2);
+					 tir.update();
+				}
+			}
+		}
+		
+		//在报验时，同时新增中间计量的数据
+		JiLiang jiliang = new JiLiang();
+		jiliang.set("byIds", baoyan.get("ids"));
+		jiliang.set("returnNum", 0);
+		jiliang.set("state", 0);
+		jiliang.set("meteringNum", 0);
+		jiliang.set("meteringMoney", 0);
+		jiliang.save();
+		return flag;
+	}
+
+	public boolean delete(String baoyanids) {
+		boolean flag=false;
+		//根据主键的ids获取外建表的集合
+		List<BaoYanRelate> byrList=BaoYanRelate.dao.selectDMS_BY_weiXiuBaoYanFByByIds(baoyanids);
+		if (byrList.size()>0) {
+			for (int j = 0; j < byrList.size(); j++) {
+				BaoYanRelate bry=byrList.get(j);
+				//修改任务关联表
+				 TaskInfoRelate tir = TaskInfoRelateService.service.findById(bry.getStr("taskId"));
+				 tir.set("state", 1);
+				 tir.update();
+				 //删除子表
+				 bry.delete();
+			}
+		}
+		flag = BaoYan.dao.deleteById(baoyanids);
+		//再删除时，同时删除中间计量
+		delete_DMS_JL_jiLing_BybyIds(baoyanids);
+		return flag;
+	}
+	
+	//删除中间计量表
+	public int delete_DMS_JL_jiLing_BybyIds(String ids){
+		int num=-1;
+		num=Db.update("delete from DMS_JL_jiLing where byIds='"+ids+"'");
+		return num;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	public BaoYan findById(String ids) {
+		BaoYan baoyan = BaoYan.dao.findById(ids);
+		return baoyan;
+	}
+	
+	public boolean update(BaoYan baoyan, String[] paras, String choose_checkBox){
+		boolean flag = false;
+		//保存图片
+		StringBuffer sb = new StringBuffer();
+		if(paras != null) {
+			for(int i=0;i<paras.length;i++){
+				sb.append(paras[i]+",");
+				String newStr = sb.toString();
+				//去掉最后一个逗号
+				String newStr1 = newStr.substring(0, newStr.length()-1);
+				baoyan.set("imgs",newStr1);
+			}
+		}else{
+			baoyan.set("imgs","");
+		}
+		
+		//1.首先将之前的子表关联全部解绑
+		String baoyanids=baoyan.get("ids");
+		//2.根据主键的ids获取外建表的集合
+		List<BaoYanRelate> byrList=BaoYanRelate.dao.selectDMS_BY_weiXiuBaoYanFByByIds(baoyanids);
+		if (byrList.size()>0) {
+			for (int j = 0; j < byrList.size(); j++) {
+				BaoYanRelate bry=byrList.get(j);
+				//3.修改任务关联表
+				 TaskInfoRelate tir = TaskInfoRelateService.service.findById(bry.getStr("taskId"));
+				 tir.set("state", 1);
+				 tir.update();
+				 //4.删除子表
+				 bry.delete();
+			}
+		}
+		//5.重新绑定子表
+		if (StringUtil.isNotEmpty(choose_checkBox)) {
+			String[] strs1=choose_checkBox.split(",");
+			//设置子表的关联数
+			baoyan.set("byFNum", strs1.length);
+			if (strs1.length>0) {
+				//添加子项表
+				 for (int i = 0; i < strs1.length; i++) {
+					 BaoYanRelate baoYanRelate = new BaoYanRelate();
+					 baoYanRelate.set("byIds", baoyan.get("ids"));
+					 baoYanRelate.set("taskId", strs1[i]);
+					 baoYanRelate.set("state", 0);
+					 baoYanRelate.save();
+					 //修改任务关联表
+					 TaskInfoRelate tir = TaskInfoRelateService.service.findById(strs1[i]);
+					 tir.set("state", 2);
+					 tir.update();
+				}
+			}
+		}
+		flag = baoyan.update();
+		return flag;
+	}
+	//删除关联的子表
+	public int delete_DMS_BY_weiXiuBaoYanF(String byIds) {
+		int result =Db.update("DELETE FROM  DMS_BY_weiXiuBaoYanF where byIds =  '"+byIds+"'");
+		return result;
+	}
+	
+	
+	
+	//获取任务
+	public List<Record> select_DMS_BY_weiXiuBaoYanF_ByIds(String byIds){
+		List<BaoYanRelate> byrList=BaoYanRelate.dao.selectDMS_BY_weiXiuBaoYanFByByIds(byIds);
+		String sql_ids="";
+		if (byrList.size()>0) {
+			for (int i = 0; i < byrList.size(); i++) {
+				sql_ids+=byrList.get(i).getStr("taskId")+"\',\'";
+			}
+			//删除最后一个的逗号
+			sql_ids = sql_ids.substring(0, sql_ids.length()-3);
+		}
+		if (!StringUtil.isNotEmpty(sql_ids)) {
+			return null;
+		}
+		
+		List<Record> list=getTaskByIds(sql_ids);
+		return list;
+	}
+	
+	//根据子表的中的byids集合获取指定的数据
+	public List<Record> getTaskByIds(String ids){
+		List<Record> list = Db.find("select "+
+									"	t.DiseaseNumber DiseaseNumber, " + 
+									"	t.fuZeRen fuZeRen, " + 
+									"	t.taskNo taskNo, " + 
+									"	tir.taskWeiXiuNum taskWeiXiuNum, "+
+									"	tir.state tirState, "+
+									"	tir.ids tirIds, "+
+									"	x.xunChaStartZHK xunChaStartZHK, " + 
+									"	x.xunChaStartZHM xunChaStartZHM, " + 
+									"	x.xunChaEndZHK xunChaEndZHK, " + 
+									"	x.xunChaEndZHM xunChaEndZHM, " + 
+									"	x.xunChaTime xunChaTime, "+
+									"	x.binghaiOrQueXianType binghaiOrQueXianType, " + 
+									"	x.yuGuGongChengLiang yuGuGongChengLiang, " + 
+									"	x.yuGuGongChengLiangDw yuGuGongChengLiangDw, " + 
+									"	tir.state tirState, "+
+									"	tir.overTime overTime, "+
+									"	x.wzName wzName " + 
+									"from DMS_RW_task_info_relate tir" + 
+									"	left join DMS_XC_xunChaInfo x on x.ids=tir.xunChaInfoId" + 
+									"	left join DMS_RW_task t  on t.ids=tir.taskId" + 
+									"	LEFT JOIN DMS_PZ_chooseInfo ci on ci.ids=x.wxmkId" + 
+									"			where 	tir.ids in ('"+ids+"')");
+		return list;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * 获取本月的任务数
+	 * @return
+	 */
+	public int getTaskNo(){
+		int res=1;
+		List<BaoYan> list = BaoYan.dao.getTaskNo();
+		if (list.size()>0) {
+			BaoYan rt=list.get(0);
+			res=rt.getInt("byNum")+1;
+		}
+		return res;
+	}
+	/**
+	 * 转换任务数
+	 * @param num
+	 * @return
+	 */
+	public String intToStrong(int num){
+		String str="";
+		int length=String.valueOf(num).length();
+		if (length==1) {
+			str="00"+num;
+		}else if (length==2) {
+			str="0"+num;
+		}else if (length==3) {
+			str=""+num;
+		}
+		return str;
+	}
+	
+	/**
+	 * 
+	 * @author wlw
+	 * @date 2016年8月8日 下午5:28:15
+	 * @description 通过ids查询维修报验数据库中的数据
+	 *		TODO
+	 * @param ids
+	 * @return
+	 *
+	 */
+	
+	public BaoYan finddata(String ids){
+		return BaoYan.dao.findById(ids);
+	}
+	public List<Record> findrenwu(String ids){
+		String sql = getSql("manage.baoyan.findrenwu");
+		List<Record> list = Db.find(sql,ids);
+		return list;
+	}
+}

@@ -1,0 +1,262 @@
+<script>
+	
+	
+	$(function(){
+		
+		$("#pictureDiv").hide();
+		
+		//循环遍历图片
+		var imgs = '${youwu.imgs!}';
+
+		if( imgs != ""){
+			var arr = imgs.split(',');
+			$.each(arr,function(i,n){
+				$("#pictureDiv").show();
+				$("#imgsDiv").append('<img style="width:200px;height:200px;" src="'+arr[i]+'"><br><br><br>');
+			})		
+		}
+	})
+	
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">${i18nMap["admin.common.mainPage"]}</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/youwu');">油污处理</a></li>
+			<li class="active">查看</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">查看油污处理</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+			
+			
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+							
+						</tr>
+					</thead>
+					<tbody>
+						
+							<tr id="tbodyTr">
+								<td class="hidden-xs">${youwuTask.taskNo!}</td>
+								<td class="hidden-xs">${youwuTask.fuZeRen!}</td>
+								<td class="hidden-xs">${youwuTask.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${youwuTask.wzName!}</td>
+								<td class="hidden-xs">K${youwuTask.xunChaStartZHK!}  +  ${youwuTask.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${youwuTask.xunChaEndZHK!}  +  ${youwuTask.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${youwuTask.binghaiOrQueXianType }  :  ${youwuTask.yuGuGongChengLiang }    (${youwuTask.yuGuGongChengLiangDw })</td>
+								
+							</tr>
+						
+					</tbody>
+				</table>	
+			
+				<form role="form" class="form-horizontal">
+				
+				<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="hidden" id="taskInfoRelateId"  name="youwu.taskInfoRelate" />
+							<input type="text" id="taskInfoRelate"   
+								class="form-control focused" readonly="readonly" value="${youwuTask.taskNo!}"  maxlength="100">
+						</div>
+					</div>	
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.qiWen" value="${youwu.luXian}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${youwu.wzType}" readonly class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.qiWen" value="${youwu.wzName}" readonly  class="form-control">
+						</div>
+
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="youwu.wzMiaoShu" value="${youwu.wzMiaoShu}" readonly="readonly" class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="lblx" name="youwu.luBingType" class="form-control" value="${youwu.luBingType}" readonly="readonly">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${youwu.startZHK!}" readonly  class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${youwu.startZHM!}" readonly class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.endZHK" value="${youwu.endZHK!}" readonly class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.endZHM" value="${youwu.endZHM!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="youwu.weatherState" value="${youwu.weatherState}" readonly="readonly"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.qiWen" value="${youwu.qiWen}" readonly  class="form-control">
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">面积</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId"  value="${youwu.mianji!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-1">㎡</span>
+						<label class="col-sm-2 control-label" style="margin-left:-133px">处理时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId"  value="${youwu.disposeTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" readonly  class="form-control">
+						</div>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							施工机械
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${youwu.shiGongJiXie}" readonly class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							施工人员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.qiWen" value="${youwu.shiGongRenYuan}" readonly  class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							现场专职安全员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${youwu.anQuanYuan}" readonly class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							现场施工负责人
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="youwu.qiWen" value="${youwu.fuZeRen}" readonly  class="form-control">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							质量评价
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="pingjia" value="${youwu.pingJia}"  readonly class="form-control">
+						</div>
+						
+						<label class="col-sm-2 control-label" for="form-field-1" >
+							发现时间
+						</label>
+						<div class="col-sm-2" >
+							<input id="foundtime" type="text" name="youwu.foundTime" disabled="disabled" value="${youwu.foundTime,dateFormat="yyyy-MM-dd HH:mm:ss"}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" >
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="sunHuaiCauseType" name="youwu.sunHuaiCauseType" class="form-control" disabled="disabled" value="${youwu.sunHuaiCauseType}">
+								
+							</input>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="youwu.remark" readonly="readonly" class="form-control" rows="4" cols="20">${remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+				
+					<div class="form-group" id="pictureDiv">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-3" id="imgsDiv">
+							
+						</div>
+					</div>
+										<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div> 
+				</form>
+			</div>
+		
+		</div>
+	</div>
+</div>	
+
+					
+				

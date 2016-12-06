@@ -1,0 +1,28 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">手机客户端下载</li>
+		</ol>
+	</div>
+</div>
+<div>
+	<div class="sidemain-mhead" align="center" style="padding-top: 100px;">
+         <img alt="扫一扫，下载手机客户端" src="${cxt!}/img/systemHelpImg/2weima.jpg">
+    </div>
+    <div class="sidedetail">
+		     <p style="text-align:center; padding-top: 20px;" >
+		     		<span style="font-size:16px;">
+			         	<span style="font-size:16px;color:#000000;font-family:'times new roman';">
+				         	扫一扫，下载手机客户端
+	        	 		</span>
+		         	</span>
+	          </p>
+	         	
+		</div>
+</div>
+
+
+<script type="text/javascript">
+	
+</script>

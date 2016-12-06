@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.binghaiindex">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_bingHaiIndex order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_bingHaiIndex) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_bingHaiIndex where ids not in ( select top {1, number, #.#} ids from DMS_PZ_bingHaiIndex )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_bingHaiIndex ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				bhi.*, ci.name AS wxmkName
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[
+			FROM
+				DMS_PZ_bingHaiIndex bhi
+			LEFT JOIN DMS_PZ_chooseInfo ci ON ci.ids = bhi.wxmkId
+			where 1=1
+			<% if(!isEmpty(wxmkName)){ %>
+					and ci.name like #'%$wxmkName$%'#
+			<% } %>
+			<% if(!isEmpty(name)){ %>
+					and bhi.name like #'%$name$%'#
+			<% } %>
+			<% if(!isEmpty(level)){ %>
+					and bhi.level like #'%$level$%'#
+			<% } %>
+			<% if(!isEmpty(gclDw)){ %>
+					and bhi.gclDw like #'%$gclDw$%'#
+			<% } %>
+    	]]>
+	</sql>
+	
+	<!-- 根据模块id查询对应的指标 -->
+	<sql id="findByWxmkId">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				DMS_PZ_bingHaiIndex
+			WHERE
+				wxmkId = ?
+    	]]>
+	</sql>
+	
+	
+</sql-statement>

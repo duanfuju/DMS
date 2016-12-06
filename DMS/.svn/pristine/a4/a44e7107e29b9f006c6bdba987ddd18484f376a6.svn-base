@@ -1,0 +1,175 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+}
+var start;
+var end;
+function mySelect(){
+	//设置查询条件
+	 start = $("#sdate").val();
+	 end = $("#edate").val();
+	common_ajax.ajaxFormMainPanel("splitPage");
+	set();
+}
+
+function set(){
+	 $("#sdate").val(start);
+	 $("#edate").val(end);
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">绿化养护日志</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/yanghulog" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">绿化养护日志查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							养护日期
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="sdate" name="_query.sdate" value='${escapeXml(paramMap["_query.sdate"])}'  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})"class="form-control" >
+						</div>
+						<label class="col-sm-1 control-label" style="text-align: left;width: 1%" for="form-field-1">
+							~
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="edate" name="_query.edate"  value='${escapeXml(paramMap["_query.edate"])}'   class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})" >
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='mySelect()' >查询</button>
+							<button type="reset" class="btn"  onclick='resetCondition()' >重置</button>
+						</div>
+				  	</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">绿化养护日志列表</span>
+					</h4>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-12 space20">
+							<% if(authUrl("/jf/manage/yanghulog/add")){ %>
+							<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghulog/add',undefined,undefined,'back');">
+								新增 <i class="fa fa-plus"></i>
+							</button>
+							<% } %>	
+						</div>
+					</div>
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'yangHuDanWei')">
+									养护单位  	${orderBy("yangHuDanWei")}
+		      					</th>
+		      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'yangHuTime')">
+									养护日期  ${orderBy("yangHuTime")}
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'zuoYeTimeShangWu')">
+									作业时间(上午)  ${orderBy("zuoYeTimeShangWu")}
+		      					</th>
+		      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'zuoYeTimeXiaWu')">
+									作业时间(下午)  ${orderBy("zuoYeTimeXiaWu")}
+		      					</th>
+								<th class="hidden-xs" width="20%" >
+									路线
+								</th>
+								<th class="hidden-xs" width="20%">
+									桩号范围 
+								</th>
+								<th class="hidden-xs" width="10%">
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(yangHuLog in splitPage.list){ %>
+								<tr id="trDom${yangHuLog.ids}">
+									<td class="hidden-xs">${yangHuLog.yangHuDanWei!}</td>
+									<td class="hidden-xs">${yangHuLog.yangHuTime!,dateFormat="yyyy-MM-dd"}</td>
+									<td class="hidden-xs">${yangHuLog.zuoYeTimeShangWu!,dateFormat="yyyy-MM-dd hh:mm:ss"}</td>
+									<td class="hidden-xs">${yangHuLog.zuoYeTimeXiaWu!,dateFormat="yyyy-MM-dd hh:mm:ss"}</td>
+									<td class="hidden-xs">${yangHuLog.luXian!}/${yangHuLog.wzType!}/${yangHuLog.wzName!}/${yangHuLog.wzMiaoShu!}</td>
+									<td class="hidden-xs">K${yangHuLog.startZHK!}  +  ${yangHuLog.startZHM!}  ~  K${yangHuLog.endZHK!} +${yangHuLog.endZHM!}</td>
+									<td class="hidden-xs">
+										<% if(authUrl("/jf/manage/yanghulog/view")){ %>
+											<button type="button" title='查看' class="btn btn-dark-yellow add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghulog/view',{ids:'${yangHuLog.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');">
+												 <i class="fa fa-eye"></i>
+											</button>
+										<% } %>	
+										<% if(authUrl("/jf/manage/yanghulog/delete")){ %>
+										<button type="button" title='删除' class="btn btn-red delete-row" onClick="yangHuLogDelete('${yangHuLog.ids}')" > 
+											<i class="fa fa-trash-o"></i>
+										</button>
+										<% } %>	
+										<% if(authUrl("/jf/manage/yanghulog/edit")){ %>
+										<button type="button" title='修改' class="btn btn-green edit-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghulog/edit',{ids:'${yangHuLog.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');"> 
+											<i class="fa fa-edit"></i>
+										</button>
+										<% } %>	
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			
+
+<script type="text/javascript">
+	function yangHuLogDelete(ids){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var resultData=common_ajax.ajaxFunc("/jf/manage/yanghulog/delete",{"ids":ids},"JSON");
+			if(resultData==""){
+				layer.msg("请求失败！")
+			}else{
+				layer.msg(resultData.result_desc);
+				if(resultData.result){
+					$("#trDom"+ids).fadeOut('fast',function(){
+						$("#trDom"+ids).remove()();
+					});
+				}
+				
+			}
+		});
+	}
+</script>

@@ -1,0 +1,87 @@
+package com.junl.dms.mvc.roadassessment.roadtechnicstate;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.jfinal.plugin.activerecord.ICallback;
+
+public class RoadTechnicStatePro implements ICallback {
+	
+	private String startTime;
+	
+	private String endTime;
+	
+	private String roadName;
+	
+	private String direction1;
+	
+	private String direction2;
+	
+	private String proName;
+	
+	private ResultSet result;
+	
+	private List<Map<String,Object>> resultHZData = new ArrayList<Map<String,Object>>();
+	
+	public List<Map<String,Object>> getResult() {
+		return resultHZData;
+	}
+	
+	//保留小数
+	private DecimalFormat dfToThree = new DecimalFormat("#.000");
+	private DecimalFormat dfToOne = new DecimalFormat("#.0");
+	
+	public RoadTechnicStatePro(String startTime, String endTime,
+			String roadName, String direction1, String direction2,
+			String proName) {
+		super();
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.roadName = roadName;
+		this.direction1 = direction1;
+		this.direction2 = direction2;
+		this.proName = proName;
+	}
+
+
+	@Override
+	public Object call(Connection conn) throws SQLException {
+		CallableStatement proc = null; 
+		try {
+			String call = "{ call "+proName+"(?,?,?,?,?) }";
+			proc = (CallableStatement) conn.prepareCall(call);
+			proc.setString(1, startTime);
+			proc.setString(2, endTime);
+			proc.setString(3, roadName);
+			proc.setString(4, direction1);
+			proc.setString(5, direction2);
+			proc.execute(); 
+			result = proc.getResultSet();
+			if(result != null)
+			{
+				while(result.next()){
+					Map<String,Object> map = new HashMap<String,Object>();
+					map.put("V", result.getString("V"));
+					map.put("CD", dfToThree.format(result.getString("CD")));
+					map.put("BL", dfToThree.format(result.getString("BL")));
+					map.put("FX1", dfToThree.format(result.getString("FX1")));
+					map.put("FX1BL", dfToThree.format(result.getString("FX1BL")));
+					map.put("FX2", dfToThree.format(result.getString("FX2")));
+					map.put("FX2BL", dfToThree.format(result.getString("FX2BL")));
+					resultHZData.add(map);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+}

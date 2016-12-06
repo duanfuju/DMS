@@ -1,0 +1,138 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a>
+			</li>
+			<li class="active">
+				验收信息配置
+			</li>
+		</ol>
+	</div>
+</div>
+<div class="row" style="margin-right:1px;">
+		<div class="col-md-3" style="padding-right:1px;height:715px;">
+			<div class="panel panel-white" style="height: 100%">
+
+				<div class="panel-heading"> 
+					<h4 class="panel-title"><span class="text-bold">验收菜单</span></h4>
+				</div>
+				<div id="checkInfoMenu">
+					<div class="ztree-wrap">
+  						 <ul id="checkInfoTree" class="ztree"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9" style="padding-right:1px;padding-left:12px;">
+			<div class="panel panel-white" style="height: 100%">
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">验收信息</span></h4>
+				</div>
+				<div id="checkInfoTable" class="panel-body">
+					<!-- 地图信息 -->
+				</div>
+			</div>
+		</div>
+</div>
+
+<style>
+	.ztree-wrap {width:100%;height:100%; overflow:auto;}
+	
+</style>
+<script type="text/javascript">
+
+	$(function(){
+		//初始化菜单
+		initMenu(true);
+	});
+
+	
+	function initMenu(isLoadList)
+	{
+		var setting1 = {
+  				data:{
+  					simpleData:{
+  						enable: true,
+  						idKey: "id",
+  						pIdKey: "pId",
+  						rootPId: 0
+  					}
+  				},
+  				view: {
+  	                dblClickExpand: true,
+  	                showLine: false
+  	            },
+  	          callback: {
+  	        	onClick: nodeClick
+  	    	  }
+  		};
+		$.ajax({
+			url:cxt+"/jf/manage/checkInfo/getParentMenu",
+			type:"psot",
+			async:"true",
+			data:{},
+			success:function(data)
+			{
+				var treeObj = $.fn.zTree.init($("#checkInfoTree"), setting1,data.menu);
+				treeObj.expandAll(true);
+				if(isLoadList)
+				{
+					chooseMain();
+				}
+			}
+		});
+	}
+
+	
+	function chooseMain()
+	{
+		var treeObj = $.fn.zTree.getZTreeObj("checkInfoTree");
+		var nodes = treeObj.getNodes();
+		if (nodes.length>0) {
+			treeObj.selectNode(nodes[0]);
+			showList(nodes[0].id);
+		}
+	}
+	
+	function addTreeDom(treeNode,addName,reData) {
+		debugger;
+		var sObj = $("#" + treeNode.tId + "_span");
+		if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) {
+			return;
+		}
+		
+		//1.处理添加按钮
+		var addStr = "<span class='button add' id='addBtn_" + treeNode.tId + "' title='添加菜单' onfocus='this.blur();'></span>";
+		sObj.after(addStr);
+		var btn = $("#addBtn_"+treeNode.tId);
+		if (btn) btn.bind("click", function(){
+			//var addName = "新增菜单" + (newCount++);//菜单初始化名称
+			var orderIds = (treeNode.children == undefined ? 1 : (treeNode.children.length + 1));
+			
+			//var url = "/jf/platform/menu/save";
+			//var data = { "pIds" : treeNode.id, "names" : addName, "orderIds" : orderIds };
+			//var reData = common_ajax.ajaxFunc(url, data);
+			//if(reData != ""){
+				var zTree = $.fn.zTree.getZTreeObj("zTreeMenuContent");
+	     		zTree.addNodes(treeNode, {id : reData, pId : treeNode.id, name : addName});
+	     	//}else{
+	     	//	toastr.warning("新增菜单失败！");
+	     	//}
+			
+			return false;
+		});
+	}
+	
+	//巡查菜单被选中触发的事件
+  	function nodeClick(event, treeId, treeNode){
+  		showList(treeNode.id);//950fc083899d4c6cbdc7ad8f554930cf
+  	}
+	
+	function showList(ids){
+		var resultData=common_ajax.ajaxFunc("/jf/manage/checkInfo/menuList",{"_query.ids":ids},"html");
+  		$("#checkInfoTable").html(resultData);
+  		$("#id").val(ids);
+	}
+</script>
+	

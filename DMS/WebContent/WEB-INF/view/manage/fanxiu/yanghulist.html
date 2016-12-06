@@ -1,0 +1,135 @@
+<script type="text/javascript">
+function resetCondition(){
+	$("input").attr("value","");
+}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li class="active">养护通用维修</li>
+		</ol>
+	</div>
+</div>
+						
+<form id="splitPage" action="${cxt}/jf/manage/fanxiu/yanghuIndex" method="POST" role="form" class="form-horizontal">
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">养护通用维修查询</span></h4>
+					
+				</div>
+				
+				<div class="panel-body">			
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向</label>
+<!-- 						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label> -->
+						<div class="col-sm-2">
+					  		<input class="form-control focused" type="text" name="_query.wzName" value='${escapeXml(paramMap["_query.wzName"])}' maxlength="20" >				  		
+						</div>												
+				  	</div>													  	
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='common_ajax.ajaxFormMainPanel("splitPage");'>查询</button>
+							<button type="reset" class="btn" onclick="resetCondition()" >重置</button>
+						</div>
+				  	</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				
+				<div class="panel-heading">
+					<h4 class="panel-title">
+						<span class="text-bold">养护通用维修列表</span>
+					</h4>
+					
+				</div>
+				
+				
+				<div class="panel-body">
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzName')">
+									方向${orderBy("wzName")}
+		      					</th>
+<!-- 								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'wzName')">
+									方向/互通/收费站/服务区${orderBy("wzName")}
+		      					</t -->
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'startZHK')">
+									开始桩号${orderBy("startZHK")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'endZHK')">
+									结束桩号${orderBy("endZHK")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'createTime')">
+									发现时间${orderBy("createTime")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuTime')">
+									处理时间${orderBy("weiXiuTime")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuTime')">
+									负责人${orderBy("fuZeRen")}
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'weiXiuTime')">
+									工程评价${orderBy("pingJia")}
+								</th>
+								<th class="hidden-xs">
+									操作
+								</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							<% for(yangHu in splitPage.list){ %>
+								<tr id="trDom${yangHu.ids}">
+									
+									<td class="hidden-xs">${yangHu.wzName!}</td>
+									<td class="hidden-xs">K${yangHu.startZHK!}+${yangHu.startZHM!}</td>
+									<td class="hidden-xs">K${yangHu.endZHK!}+${yangHu.endZHM!}</td>
+									<td class="hidden-xs">${yangHu.createTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+									<td class="hidden-xs">${yangHu.weiXiuTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+									<td class="hidden-xs">${yangHu.fuZeRen!}</td>
+									<td class="hidden-xs">${yangHu.pingJia!}</td>
+									<td class="hidden-xs">
+										<% if(authUrl("/jf/manage/yanghu/view")){ %>
+										<button type="button" title='查看' class="btn btn-dark-yellow add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghu/view',{ids:'${yangHu.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');">
+												 <i class="fa fa-eye"></i>
+											</button>
+										<% } %>	
+										<% if(authUrl("/jf/manage/yanghu/showUpdate")){ %>
+										<button type="button" title='修改' class="btn btn-green edit-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghu/showUpdate',{ids:'${yangHu.ids}',pageNumber:'${splitPage.pageNumber!}'},undefined,'back');" > 
+											<i class="fa fa-edit"></i>
+										</button>
+										<% } %>	
+									</td>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+					
+				</div>
+			
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+	
+</form>			

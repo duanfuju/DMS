@@ -1,0 +1,86 @@
+package com.junl.dms.mvc.yanghuyhuizong;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.platform.mvc.base.BaseService;
+
+public class YangHuLogService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(YangHuLogService.class);
+
+	public static final YangHuLogService service = new YangHuLogService();
+
+	public boolean save(YangHuHuiZong yangHuLog) {
+		return yangHuLog.save();
+	}
+
+	public boolean delete(String ids) {
+		return YangHuHuiZong.dao.deleteById(ids);
+	}
+
+	public YangHuHuiZong findById(String ids) {
+		YangHuHuiZong yangHuLog = YangHuHuiZong.dao.findById(ids);
+		return yangHuLog;
+	}
+	
+	public boolean update(YangHuHuiZong yangHuLog){
+		return yangHuLog.update();
+	}
+	
+	public void getHuiZong(){
+		String sql = "SELECT firstLevelNumberDetail FROM DMS_PZ_yanShouXinXi GROUP BY firstLevelNumberDetail";
+	}
+	
+	
+	public List<Map<String,Object>> getTabInfo(String year,String month,String serarchTime){
+		String sql = "SELECT firstLevelNumberDetail FROM DMS_PZ_yanShouXinXi GROUP BY firstLevelNumberDetail";
+		List<Record> retList = Db.find(sql);
+		List<Map<String,Object>> tabList = new ArrayList<Map<String, Object>>();
+		for (int i = 0; i < retList.size(); i++) {
+			Record record = retList.get(i);
+			Map<String,Object> mapL = new HashMap<String, Object>();
+			mapL.put("firstLevelNumberDetail", record.get("firstLevelNumberDetail"));
+			mapL.put("index", i+1);
+			mapL.put("titleName", year+"年日常养护"+month+"月清单明细表");
+			mapL.put("secondName", "二单价承包项目");
+			mapL.put("gcInfo", getchengbaoInfo(record.getStr("firstLevelNumberDetail"), year,serarchTime));
+			tabList.add(mapL);
+		}
+		return tabList;
+	}
+	public List<Map<String,Object>> getchengbaoInfo(String tabName,String year,String serarchTime){
+		String sql = "";
+		List<Map<String,Object>> tabList = new ArrayList<Map<String, Object>>();
+		if(!tabName.equals("安全设施")){
+			sql = "SELECT * FROM DMS_PZ_yanShouXinXi ysxx LEFT JOIN( "
+					+ "SELECT yanShouXiMuLevel ysxml, SUM(price) price FROM DMS_JL_jiLingXiMu where convert(varchar(7),yanShouTime,120) ='"+serarchTime +"' GROUP BY yanShouXiMuLevel ) "
+					+ "jlxm ON jlxm.ysxml = ysxx.secondLevelNumber WHERE "
+					+ "ysxx.firstLevelNumberDetail = '"+tabName+"' AND YEAR = '"+year+"'";
+			List<Record> retList = Db.find(sql);
+			for (int i = 0; i < retList.size(); i++) {
+				Record record = retList.get(i);
+				Map<String,Object> mapL = new HashMap<String, Object>();
+				mapL.put("secondLevelNumber",record.get("secondLevelNumber"));
+				mapL.put("secondLevelNumberDetail",record.get("secondLevelNumberDetail"));
+				mapL.put("dw",record.get("dw"));
+				mapL.put("dj",record.get("dj"));
+				mapL.put("price",record.get("price"));
+				tabList.add(mapL);
+			}
+		}else{
+			
+		}
+		return tabList;
+	}
+	
+	
+}

@@ -1,0 +1,115 @@
+<script type="text/javascript">
+	function showImg(path) {
+		layer.photos({
+			photos : {
+				"data" : [{
+					"src" : path//原图地址
+				}]
+			},
+			tab : function(pic, layero) {
+				var css = {
+					width : window.width,
+					height : window.height
+				};
+				$(layero.selector).find('img').css(css);
+
+			}
+		});
+
+	}
+</script>
+
+<div id="divModel" style="font-size: 13px">
+	<form id="splitPageModel" action="${cxt}/jf/manage/wx/choose_checkBox" method="POST" role="form" class="form-horizontal">
+
+		<input  type="hidden" name="_query.taskRelateState" value='${escapeXml(paramMap["_query.taskRelateState"])}' >
+		<div class="panel panel-white">
+			<div class="panel-body">
+				<table class="table table-bordered table-hover" id="chooseDataTable" style="font-size: 13px" >
+					<thead>
+						<tr>
+							<th  width="5%"></th>
+							<td class="hidden-xs" width="10%" >
+									桩号范围
+								</td>
+								<td class="hidden-xs" width="10%" >
+									位置
+								</td>
+								<td class="hidden-xs" width="5%" >
+									天气状况
+								</td>
+								<td class="hidden-xs" width="5%" >
+									气温 
+								</td>
+								<td class="hidden-xs" width="10%" >
+									施工机械
+								</td>
+								<td class="hidden-xs" width="10%" >
+									维修人员
+								</td>
+								<td class="hidden-xs" width="10%" >
+									现场专职安全员
+								</td>
+								<td class="hidden-xs" width="10%" >
+									现场施工负责人
+								</td>
+								<td class="hidden-xs" width="10%" >
+									质量评价
+								</td>
+								<td class="hidden-xs" width="10%" >
+									损害类型
+								</td>
+								<td class="hidden-xs" width="10%" >
+									图片
+								</td>
+
+						</tr>
+					</thead>
+					<tbody>
+						<% for(wx in list){ %>
+						<tr class="trDom${wx.ids}">
+							<td class="center hidden-xs">
+								<input type="checkbox" name="wx_checkBox" value="${wx.ids!}" class="flat-grey foocheck">
+							</td>
+							<td class="hidden-xs">K${wx.startZHK!}  +  ${wx.startZHM!}		~		K${wx.endZHK!}  +  ${wx.endZHM!}</td>
+							<td class="hidden-xs">${wx.luXian!}/${wx.wzType!}/${wx.wzName!}/${wx.wzMiaoShu!}</td>
+							<td class="hidden-xs">${wx.weatherState!}</td>
+							<td class="hidden-xs">${wx.qiWen!}℃</td>
+							<td class="hidden-xs">${wx.shiGongJiXie!}</td>
+							<td class="hidden-xs">${wx.weiXiuRenYuan!}</td>
+							<td class="hidden-xs">${wx.anQuanYuan!}</td>
+							<td class="hidden-xs">${wx.fuZeRen!}</td>
+							<td class="hidden-xs">${wx.pingJia!}</td>
+							<td class="hidden-xs">${wx.sunHuaiCauseType!}</td>
+							<td class="hidden-xs" id="td${wx.ids!}"></td>
+							<script type="text/javascript">
+								//图片存在多个
+								var a = "";
+								var img = "${wx.imgs!}".split(",");
+								$.each(img, function(i, imgs) {
+									a += '<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\'' + imgs + '\')">图片' + (i + 1) + '</a>';
+								});
+								$("#td${wx.ids!}").append(a);
+							</script>
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+
+				<div class="row" id="splitPageDivModel">
+					<% include("/common/splitPage.html", {"divId" : "divModel", "formId" : "splitPageModel", "splitPageDiv" : "splitPageDivModel"}){} %>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+
+$('[name="wx_checkBox"]').click(function(){
+	window.getTaskIds = $("input[name=wx_checkBox]:checked") .map(function() { 
+	    return this.value; 
+	}).get().join();
+});
+
+</script>

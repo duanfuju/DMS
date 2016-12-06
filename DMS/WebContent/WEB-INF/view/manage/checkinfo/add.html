@@ -1,0 +1,250 @@
+<div class="row" style="font-size: 13px;margin-bottom:-20px;">
+	<div class="col-md-12" style="">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+
+<div class="panel-body">
+			<form id="editForm" action="${cxt!}/jf/manage/checkInfo/add"
+				method="POST" role="form" class="form-horizontal">
+				<!-- 父级id -->
+				<div class="form-group" style="display:none;">
+						<input id="parentId" type="hidden" name="checkInfo.parentId" value="${checkInfo.parentId!}">
+				</div>
+
+				<div class="form-group" style="display:none;">
+						<input id="ids" type="hidden" name="checkInfo.ids" value="${checkInfo.ids!} ">
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>项目名称</label>
+					<div class="col-sm-6" >
+						<input id="name"  type="text" name="checkInfo.name" value="${checkInfo.name!}"
+							class="form-control" maxlength="50" vMin="1" vType="length"
+							onblur="platform_verify.onblurVali(this);"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 长度不能超过50
+					</span>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>等级 </label>
+					<div class="col-sm-6">
+						<input id="levelNum" type="text" name="checkInfo.levelNum" value="${checkInfo.levelNum! == 0?'':checkInfo.levelNum!}"
+							class="form-control" maxlength="xxx" vMin="xxx" vType="length"
+							onblur="platform_verify.onblurVali(this);"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 数字
+					</span>
+				</div>
+
+				
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label">年份</label>
+					<div class="col-sm-6">
+							<input type="text" id="year" name="checkInfo.year" value="${checkInfo.year! == 0?'':checkInfo.year!}"
+							 onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy'})"class="form-control" >
+							 <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 日期年份
+					</span>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>单位</label>
+					<div class="col-sm-6">
+						<input id="dw" type="text" name="checkInfo.dw" value="${checkInfo.dw!}"
+							class="form-control" maxlength="xxx" vMin="xxx" vType="length"
+							onblur="platform_verify.onblurVali(this);"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 格式：元/单位
+					</span>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><span class="symbol required"></span>单价</label>
+					<div class=" col-sm-6 ">
+						<input id="dj" type="text" name="checkInfo.dj" value="${checkInfo.dj! == 0?'':checkInfo.dj!}"
+							class="form-control" maxlength="xxx" vMin="xxx" vType="length"
+							onblur="platform_verify.onblurVali(this);">
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 数字，保留两位小数
+					</span>
+				</div>
+
+				
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label">版本</label>
+					<div class="col-sm-6">
+						<input id="versions"  type="text" name="checkInfo.versions" value="${checkInfo.versions! == 0?'':checkInfo.versions!}"
+							class="form-control" maxlength="xxx" vMin="xxx" vType="length"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 数字
+					</span>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label">是否是父级</label>
+					<div class="col-sm-6">
+						<label class="radio-inline">
+							<input type="radio" id="parentTrue" value="1" name="checkInfo.isparent" class="grey">
+							是
+						</label>
+						<label class="radio-inline">
+							<input type="radio" value="0" checked="checked" name="checkInfo.isparent" class="grey">
+							否
+						</label>
+					</div>
+				</div>
+
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label">是否展示</label>
+					<div class="col-sm-6">
+						<label class="radio-inline">
+							<input type="radio" value="1" checked="checked" name="checkInfo.isshow" class="grey">
+							是
+						</label>
+						<label class="radio-inline">
+							<input type="radio" value="0" id="showFalse" name="checkInfo.isshow" class="grey">
+							否
+						</label>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label">备注</label>
+					<div class="col-sm-6">
+						<input id="remark" type="text" name="checkInfo.remark" value="${checkInfo.remark!}"
+							class="form-control" maxlength="100" vMin="0" vType="length"> <span
+							class="help-inline col-sm-4"></span>
+					</div>
+					<span class="help-inline col-sm-4"> <i
+						class="fa fa-info-circle"></i> 长度不能超过100
+					</span>
+				</div>
+				
+										
+				<div class="col-sm-5 col-sm-offset-5">
+						<button type="button" class="btn btn-red" onclick="formSubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+						</button>
+				</div>
+			</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	$(function(){
+		var parentId = $("#id").val();
+		$("#parentId").val(parentId);
+		if("${checkInfo!}")
+		{
+// 			$("#versions").attr("disabled","disabled");
+			if("${checkInfo.isparent!}" == 1)
+			{
+				$("#parentTrue").attr("checked","checked");
+			}
+			if("${checkInfo.isshow!}" == 0)
+			{
+				$("#parentTrue").attr("checked","checked");
+			}
+		}
+	});
+	
+	function myValidate()
+	{
+		var numberReg = new RegExp("^[0-9]*$");
+		var moneyReg = new RegExp("^[0-9]+\.?[0-9]*$");
+		var yearReg = /^[1-2]\d{3}$/;
+		//表单验证
+		var name = $("#name").val();
+		var levelNum = $("#levelNum").val();
+		var dw = $("#dw").val();
+		var dj = $("#dj").val();
+		var year = $("#year").val();
+		var versions = $("#versions").val();
+		if(name=="")
+		{
+			alert("项目名称不能为空");
+			return false;
+		}
+		if(levelNum=="")
+		{
+			alert("等级不能为空");
+			return false;
+		}
+		if(dw=="")
+		{
+			alert("单位不能为空");
+			return false;
+		}
+		if(dj=="")
+		{
+			alert("单价不能为空");
+			return false;
+		}
+		else if(!moneyReg.test(dj))
+		{
+			alert("输入的单价格式不正确");
+			return false;
+		}
+		if(year != "")
+		{
+			if(!yearReg.test(year))
+			{
+				alert("输入的年份格式不正确");
+				return false;
+			}
+		}
+		if(versions != "")
+		{
+			if(!moneyReg.test(versions))
+			{
+				alert("输入的版本格式不正确");
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	function formSubmit()
+	{
+
+		if(!myValidate())
+		{
+			return;
+		}
+		var resultData = common_ajax.ajaxForm("editForm","JSON");
+		layer.closeAll();
+		if(resultData.isSuccess == false){
+			layer.msg("请求失败！")
+		}else{
+			if(resultData.isAdd)
+			{
+				layer.msg("添加成功！")
+			}
+			else
+			{
+				layer.msg("修改成功！")
+			}
+			//选中 父节点
+			initMenu(false);
+			showList(resultData.parentId);
+		}
+	}
+
+</script>

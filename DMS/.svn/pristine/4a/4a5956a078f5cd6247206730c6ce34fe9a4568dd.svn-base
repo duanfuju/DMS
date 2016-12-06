@@ -1,0 +1,154 @@
+<img src="" class='fix' alt="图片损坏,点击返回" style="display: none;">
+<div class="row" style="font-size: 13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+
+			<form id="editForm" action="${cxt!}/jf/manage/liefeng/add"
+				method="POST" role="form" class="form-horizontal">
+				
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">主键</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.ids" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">等级</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.levelNum" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">名称</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.name" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">年</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.year" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">单位</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.dw" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">单价</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.dj" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">备注</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.remark" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">版本</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.version" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">父级Id</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.parentId" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">是否是父级  0：true1：false  默认false</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.isparent" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">是否展示  0：false  1：true   默认 true</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.isshow" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">是否删除  0:未删除  1：已删除  默认：0</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.isdel" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">修改时间</label>
+	<div class="col-sm-7">
+		<input type="text" name="checkInfo.updateTime" value="" 
+			class="form-control" maxlength="xxx" vMin="xxx" vType="length" onblur="platform_verify.onblurVali(this);">
+		<span class="help-inline col-sm-2"></span>
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> xxx-xxx位任意字符 </span>
+</div>
+
+
+
+				
+				<div class="form-group">
+					<div class="col-sm-5 col-sm-offset-5">
+						<button type="button" class="btn btn-red" onclick="mySubmit()">
+							提交<i class="fa fa-arrow-circle-right"></i>
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

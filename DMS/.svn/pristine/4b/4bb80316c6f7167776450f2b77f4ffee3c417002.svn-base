@@ -1,0 +1,88 @@
+package com.junl.dms.mvc.base;
+
+import java.io.File;
+import java.net.URISyntaxException;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.upload.UploadFile;
+import com.junl.dms.mvc.rwtask.RwTask;
+import com.junl.dms.mvc.rwtask.RwTaskService;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantWebContext;
+import com.platform.mvc.base.BaseController;
+import com.platform.tools.ToolPoi;
+
+/**
+ * 
+ * @author hank
+ *
+ */
+@Controller(controllerKey = "/jf/manage/basemethod")
+public class BaseMethodController extends BaseController{
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(BaseMethodController.class);
+	
+	/**
+	 * 下载导入模板文件
+	 * @throws URISyntaxException
+	 */
+	public void downExcelTemp(){
+		JSONObject jsonObject=new JSONObject();
+		try {
+			String tempName = getPara("tempName");
+			String path = "";
+			if(tempName.endsWith("xls") || tempName.endsWith("xlsx"))
+			{
+				path = getCxt()+File.separator+"temp"+File.separator+tempName;
+			}
+			else
+			{
+				path = getCxt()+File.separator+"temp"+File.separator+tempName+".xls";
+			}
+			jsonObject.put("result", true);
+			jsonObject.put("resultUrl", path);
+			jsonObject.put("isSuccess", true);
+		} catch (Exception e) {
+			jsonObject.put("isSuccess", false);
+		}
+		renderJson(jsonObject.toJSONString());
+	}
+	
+	/**
+	 * 跳转到导入页面
+	 */
+	public void toImport(){
+		String fileName = getPara("fileName");
+		String className = getPara("className");
+		setAttr("fileName", fileName);
+		setAttr("className", className);
+		render("/manage/base/importinfo.html");
+	}
+	
+	
+	public void importInfo() throws Exception{
+		JSONObject jsonObject = new JSONObject();
+		UploadFile upFile = getFile();
+		File file = upFile.getFile();
+		String taskInfoRelateId = getPara("taskInfoRelateId"); //维修任务编号
+		String fileName = getPara("fileName").replace("_", ".").toUpperCase(); //配置文件名称
+		
+		String  userIds = getAttr(ConstantWebContext.request_cUserIds);
+		
+		//根据任务编号获取任务信息
+		RwTask rwTask = RwTaskService.service.getTaskInfoById(taskInfoRelateId);
+		//循环读取Excel
+	    JSONArray jsonArr = ToolPoi.ReadExcel(file.getPath(),fileName);
+	    //保存
+	    BaseMethodService.service.batchSave(jsonArr,rwTask, taskInfoRelateId, fileName,userIds);
+	    
+	    //返回
+		String result_desc="修改成功！";
+		jsonObject.put("result", true);
+		jsonObject.put("result_desc", result_desc);
+		renderJson(jsonObject.toJSONString());
+	}
+}

@@ -1,0 +1,784 @@
+<style>
+<!--
+#fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+-->
+</style>
+<script src="${cxt!}/jsFile/webuploader/js/upload.js">
+</script>
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+
+<script>
+
+	$(function(){
+		var imgs = '${way.imgs!}';
+		
+		if(imgs == '' || imgs == null) return;
+		var arr = imgs.split(',');
+		$.each(arr,function(i,n){
+			
+			var imgobj = $('<img style="width:200px;height:200px;" src="'+arr[i]+'"><br>'
+					+'<div id="delbtn'+i+'"><button type="button" style="margin-left:60px;margin-top:10px;" class="fa fa-trash-o btn btn-red delete-row delimg-btn">删除</button></div><br>'
+					+'<input type="hidden" value="' + arr[i] + '" name="youwuImgs"/>');
+			$("#imgsDiv").append(imgobj);
+			imgobj.find('.delimg-btn').on('click', function () {
+				layer.confirm('确定删除此条数据？', {
+					  btn: ['确定','取消'] ,//按钮
+					  scrollbar:false
+				}, function(){
+					imgobj.remove();
+					layer.closeAll();
+				});
+			});
+		});
+	});
+	
+</script>
+
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/waydisease');">路面病害配置</a></li>
+			<li class="active">修改</li>
+		</ol>
+	</div>
+</div>
+	<img src="" id='fix' alt="图片损坏,点击返回" style="display: none;">	
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">修改路面病害</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+			
+			<div class="panel-body">	
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="5%" >
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+							
+						</tr>
+					</thead>
+					<tbody>
+						
+						<tr id="trDom${wayTask.taskInfoRelate!}">
+								<td class="hidden-xs">
+									<i class="fa fa-arrow-circle-down td_i" id="${wayTask.taskInfoRelate!}"></i>
+								</td>
+								<td class="hidden-xs">${wayTask.taskNo!}</td>
+								<td class="hidden-xs">${wayTask.fuZeRen!}</td>
+								<td class="hidden-xs">${wayTask.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${wayTask.wzName!}</td>
+								<td class="hidden-xs">K${wayTask.xunChaStartZHK!}  +  ${wayTask.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${wayTask.xunChaEndZHK!}  +  ${wayTask.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${wayTask.binghaiOrQueXianType }  :  ${wayTask.yuGuGongChengLiang }    (${wayTask.yuGuGongChengLiangDw })</td>
+								
+							</tr>
+						
+					</tbody>
+				</table>
+			
+				<form id="editForm" action="${cxt!}/jf/manage/waydisease/update" method="POST" role="form" class="form-horizontal">
+					<input type="hidden" name="way.ids" value="${way.ids!}" />	
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="hidden" id="taskInfoRelateId"  name="youwu.taskInfoRelate"  />
+							<input type="text" id="taskInfoRelate"   
+								class="form-control focused" readonly="readonly"   maxlength="100" value="${wayTask.taskNo!}">
+						</div>
+					</div>	
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.luXian" readonly="readonly"  value="${way.luXian!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" readonly="readonly" value="${way.wzType!}"   class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM" readonly="readonly" value="${way.wzName!}"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="way.wzMiaoShu"  value="${way.wzMiaoShu!}"  class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<select type="text" id="tianqi" name="way.weatherState"   class="form-control">
+								<option value="晴">晴</option>
+										<option value="阴">阴</option>
+										<option value="多云">多云</option>
+										<option value="小雨">小雨</option>
+										<option value="中雨">中雨</option>
+										<option value="大雨">大雨</option>
+										<option value="雷阵雨">雷阵雨</option>
+										<option value="小雪">小雪</option>
+										<option value="中雪">中雪</option>
+										<option value="大雪">大雪</option>
+										<option value="冰冻">冰冻</option>
+										<option value="下雪/积雪">下雪/积雪</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.qiWen"  value="${way.qiWen!}"  class="form-control"onkeyup="return ValidateFloat($(this),value)">
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="way.startZHK" value="${way.startZHK!}"   class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="way.startZHM"  value="${way.startZHM!}"  class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="way.endZHK" value="${way.endZHK!}"  class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px" >+</label>
+						
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="way.endZHM"  value="${way.endZHM!}" class="form-control" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修开始时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.weiXiuStartTime" value="${way.weiXiuStartTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}"  class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<label class="col-sm-2 control-label">维修结束时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.weiXiuEndTime"  value="${way.weiXiuEndTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">施工机械</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.shiGongJiXie" value="${way.shiGongJiXie!}"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">维修人员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.weiXiuRenYuan"  value="${way.weiXiuRenYuan!}"  class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">现场专职安全员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.anQuanYuan" value="${way.anQuanYuan!}"   class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">现场施工负责人</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.fuZeRen"  value="${way.fuZeRen!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">质量评价</label>
+						<div class="col-sm-2">
+							<!-- <input type="text" id="idcardId" name="way.pingJia" value="${way.pingJia!}"  class="form-control"> -->
+							<select  id="pingJia" name="way.pingJia" class="form-control">
+								<option value="优">优</option>
+								<option value="良">良</option>
+								<option value="合格">合格</option>
+								<option value="差">差</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label">路面状况</label>
+						<div class="col-sm-2">
+							<input type="text"  name="way.lumianState" value="${way.lumianState!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">病害位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.bingHaiWeiZhi" value="${way.bingHaiWeiZhi!}"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">病害类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.bingHaiType"  value="${way.bingHaiType!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">病害名称</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.bingHaiName" value="${way.bingHaiName!}"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">病害级别</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.binghaiLevel"  value="${way.binghaiLevel!}"  class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">未及时修补原因</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.wjsxbCause" value="${way.wjsxbCause!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">维修工艺</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.wxGongYi"  value="${way.wxGongYi!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">修补类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.xiuBuType" value="${way.xiuBuType!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">修补位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.xiuBuWeiZhi"  value="${way.xiuBuWeiZhi!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">表面修补尺寸-长</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.xiuBuchang" value="${way.xiuBuchang!}"  class="form-control"onkeyup="return ValidateFloat($(this),value)">
+						</div>
+						<label class="col-sm-2 control-label">表面修补尺寸-宽</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.xiuBukuan"  value="${way.xiuBukuan!}" class="form-control"onkeyup="return ValidateFloat($(this),value)">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">平整度</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.pingZhengDu" value="${way.pingZhengDu!}"  class="form-control"onkeyup="return ValidateFloat($(this),value)">
+						</div>
+						<label class="col-sm-2 control-label">病害原因分析类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.bhFenXiType"  value="${way.bhFenXiType!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">病害原因分析</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="way.bhFenXi" value="${way.bhFenXi!}"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="lblx" name="way.luBingType" class="form-control" value="${way.luBingType}">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<select type="text" id="sunHuaiCauseType" name="way.sunHuaiCauseType" class="form-control">
+								<option value="日常损坏">日常损坏</option>
+								<option value="事故损坏">事故损坏</option>
+							</select>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea  name="way.remark" class="form-control" rows="4" cols="20">${remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					
+					<!-- ************************************************************ -->
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-3" id="imgsDiv">
+						</div>	
+					</div>
+					
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'd.names')">
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'd.names')">
+									尺寸-长(cm)
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'd.names')">
+									尺寸-宽(cm)
+		      					</th>
+								<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'userName')">
+									深度(cm)
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'names')">
+									修补材料
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'names')">
+									施工材料温度(℃)
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">上面层</td>
+									<td class="hidden-xs"><input type="text" name="ceng0.chiCunChang" value="${ceng0.chiCunChang}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng0.chiCunKuan" value="${ceng0.chiCunKuan}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng0.shenDu" value="${ceng0.shenDu}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng0.xiuBuCaiLiao" value="${ceng0.xiuBuCaiLiao}"></td>
+									<td class="hidden-xs"><input type="text" name="ceng0.caiLiaoWenDu" value="${ceng0.caiLiaoWenDu}"></td>
+								</tr>
+						</tbody>
+						
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">中面层</td>
+									<td class="hidden-xs"><input type="text" name="ceng1.chiCunChang" value="${ceng1.chiCunChang}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng1.chiCunKuan" value="${ceng1.chiCunKuan}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng1.shenDu" value="${ceng1.shenDu}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng1.xiuBuCaiLiao" value="${ceng1.xiuBuCaiLiao}"></td>
+									<td class="hidden-xs"><input type="text" name="ceng1.caiLiaoWenDu" value="${ceng1.caiLiaoWenDu}"></td>
+								</tr>
+						</tbody>
+						
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">下面层</td>
+									<td class="hidden-xs"><input type="text" name="ceng2.chiCunChang" value="${ceng2.chiCunChang}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng2.chiCunKuan" value="${ceng2.chiCunKuan}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng2.shenDu" value="${ceng2.shenDu}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng2.xiuBuCaiLiao" value="${ceng2.xiuBuCaiLiao}"></td>
+									<td class="hidden-xs"><input type="text" name="ceng2.caiLiaoWenDu" value="${ceng2.caiLiaoWenDu}"></td>
+								</tr>
+						</tbody>
+						
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">基层</td>
+									<td class="hidden-xs"><input type="text" name="ceng3.chiCunChang" value="${ceng3.chiCunChang}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng3.chiCunKuan" value="${ceng3.chiCunKuan}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng3.shenDu" value="${ceng3.shenDu}"onkeyup="return ValidateFloat($(this),value)"></td>
+									<td class="hidden-xs"><input type="text" name="ceng3.xiuBuCaiLiao" value="${ceng3.xiuBuCaiLiao}"></td>
+									<td class="hidden-xs"><input type="text" name="ceng3.caiLiaoWenDu" value="${ceng3.caiLiaoWenDu}"></td>
+								</tr>
+						</tbody>
+					</table>
+					<input type="hidden" name="ceng0.cengType" value="1">
+					<input type="hidden" name="ceng1.cengType" value="2">
+					<input type="hidden" name="ceng2.cengType" value="3">
+					<input type="hidden" name="ceng3.cengType" value="4">
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+						        <div id="container">
+						            <!--头部，相册选择和格式选择-->
+						
+						            <div id="uploader">
+						                <div class="queueList">
+						                    <div id="dndArea" class="placeholder">
+						                        <div id="filePicker"></div>
+						                        <p>或将照片拖到这里，单次最多可选3张</p>
+						                    </div>
+						                </div>
+						                <div class="statusBar" style="display:none;">
+						                    <div class="progress">
+						                        <span class="text">0%</span>
+						                        <span class="percentage"></span>
+						                    </div><div class="info"></div>
+						                    <div class="btns">
+						                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+					
+					
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+//设置维修的类型(为弹出框插入行选择合适的表)
+var weixiu_type_table="DMS_WX_luMianBingHaiWeiXiu";
+$('.td_i').on('click', function () {
+	var expandId=$(this).attr("id");
+	var tr=$("#trDom"+expandId);
+	if($(this).hasClass("fa-arrow-circle-down")){
+		$(this).removeClass("fa-arrow-circle-down");
+		$(this).addClass("fa-arrow-circle-up");
+		
+		if(!tr.next().hasClass('pad')){
+			  $.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/rwtask/getWeiXiuJiLuByTaskId',
+			    cache:false,  
+			    data:{table:weixiu_type_table,tirIds:expandId},
+			    dataType:'json',  
+			    success:function(entity){
+			    	if(!entity.flag){
+			    		layer.msg("维修记录不存在或被删除");
+			    		return;
+			    	}
+			       html=' <table style="width:100%;border:1px">';
+			       var _tr="";
+			       $.each(entity.result,function(i,data){
+			    	  _tr+=' <tr>'+
+			    		   		'<td rowspan=3>'+(i+1)+'</td>'+
+					            ' <td style="text-align:right">桩号范围  ：  </td>'+
+					            ' <td> K'+data.startZHK+' + ' +data.startZHM+'  ~  K  '+ data. endZHK+' + ' +data.endZHM+'</td>'+
+					            ' <td style="text-align:right">位置  ：  </td>'+
+					            ' <td> '+data. luXian +'/'+data.wzType +'/'+ data. wzName +'/'+ data. wzMiaoShu+'</td>'+
+					            ' <td style="text-align:right">天气  ：  </td>'+
+					            ' <td>'+data.weatherState+'</td>'+
+					            ' <td style="text-align:right">气温  ：  </td>'+
+					            ' <td>'+data.qiWen+'℃</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">施工机械  ：  </td>'+
+					            ' <td>'+ data.shiGongJiXie+'</td>'+
+					            ' <td style="text-align:right">维修人员  ：  </td>'+
+					            ' <td>'+  data.weiXiuRenYuan+'</td>'+
+					            ' <td style="text-align:right">现场专职安全员  ：  </td>'+
+					            ' <td>'+ data.anQuanYuan+'</td>'+
+					            ' <td style="text-align:right">现场施工负责人  ：  </td>'+
+					            ' <td>'+ data.fuZeRen+'</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">质量评价  ：  </td>'+
+					            ' <td> '+ data.pingJia+'</td>'+
+					            ' <td style="text-align:right">图片  ：  </td><td><a href="javascript:void(0)" style="text-align:left" onclick="showImg(\''+data.imgs+'\')">附件</a></td>'+
+					        ' </tr>';
+		        	});
+			       
+			       html	+= _tr+' </table>';
+			       tr.after("<tr class='pad'><td colspan='10'>"+html+"</td></tr>");
+			    }
+			});  
+		}else{
+			tr.next().show();
+		}
+	}else{
+		$(this).addClass("fa-arrow-circle-down");
+		$(this).removeClass("fa-arrow-circle-up");
+		if(tr.next().hasClass("pad")){
+			tr.next().hide();
+		}
+	}
+});
+
+$("#fix").click(function(){
+	$("#fix").hide();
+});
+function showImg(path){
+	$("#fix").attr("src",path);
+	$("#fix").show();
+}
+
+
+
+	$("#sunHuaiCauseType").val("${way.sunHuaiCauseType}");
+	$("#tianqi").val("${way.weatherState!}");
+	function mySubmit(){
+		
+		if($("[name='way.weatherState']").val() == ""){
+			layer.msg("天气情况不能为空");
+			return;
+		}
+		
+		if($("[name='way.qiWen']").val() == ""){
+			layer.msg("气温不能为空");
+			return;
+		}
+		
+		var startzhk=$("[name='way.startZHK']").val();
+		if(startzhk==""){
+			layer.msg("开始桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhk)){
+				if(startzhk<=0){
+					layer.msg("开始桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var startzhm=$("[name='way.startZHM']").val();
+		if(startzhm==""){
+			layer.msg("开始桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhm)){
+				if(startzhm<=0){
+					layer.msg("开始桩号M不能小于等于零！");
+					return false;
+				}else if(startzhm>999){
+					layer.msg("开始桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var endzhk = $("[name='way.endZHK']").val();
+		if(endzhk==""){
+			layer.msg("结束桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhk)){
+				if(endzhk<=0){
+					layer.msg("结束桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var endzhm = $("[name='way.endZHM']").val();
+		if(endzhm==""){
+			layer.msg("结束桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhm)){
+				if(endzhm<=0){
+					layer.msg("结束桩号M不能小于等于零！");
+					return false;
+				}else if(endzhm>999){
+					layer.msg("结束桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+		
+		if($("[name='way.weiXiuStartTime']").val() == ""){
+			layer.msg("维修开始时间不能为空");
+			return;
+		}
+		
+		if($("[name='way.weiXiuEndTime']").val() == ""){
+			layer.msg("维修结束时间不能为空");
+			return;
+		}
+		
+		if($("[name='way.shiGongJiXie']").val() == ""){
+			layer.msg("施工机械不能为空");
+			return;
+		}
+		
+		if($("[name='way.weiXiuRenYuan']").val() == ""){
+			layer.msg("维修人员不能为空");
+			return;
+		}
+		
+		if($("[name='way.fuZeRen']").val() == ""){
+			layer.msg("现场施工负责人不能为空");
+			return;
+		}
+		
+		if($("[name='way.pingJia']").val() == ""){
+			layer.msg("质量评价不能为空");
+			return;
+		}
+		
+		if($("[name='way.lumianState']").val() == ""){
+			layer.msg("路面状况不能为空");
+			return;
+		}
+		
+		if($("[name='way.bingHaiWeiZhi']").val() == ""){
+			layer.msg("病害位置不能为空");
+			return;
+		}
+		
+		if($("[name='way.bingHaiType']").val() == ""){
+			layer.msg("病害类型不能为空");
+			return;
+		}
+		
+		if($("[name='way.bingHaiName']").val() == ""){
+			layer.msg("病害名称不能为空");
+			return;
+		}
+		
+		if($("[name='way.binghaiLevel']").val() == ""){
+			layer.msg("病害级别不能为空");
+			return;
+		}
+		
+		if($("[name='way.wxGongYi']").val() == ""){
+			layer.msg("维修工艺不能为空");
+			return;
+		}
+		
+		if($("[name='way.xiuBuType']").val() == ""){
+			layer.msg("修补类型不能为空");
+			return;
+		}
+		
+		if($("[name='way.xiuBuWeiZhi']").val() == ""){
+			layer.msg("修补位置不能为空");
+			return;
+		}
+		
+		if($("[name='way.xiuBuType']").val() == ""){
+			layer.msg("修补类型不能为空");
+			return;
+		}
+		
+		if($("[name='way.xiuBuchang']").val() == ""){
+			layer.msg("'表面修补尺寸-长'不能为空");
+			return;
+		}
+		
+		if($("[name='way.xiuBukuan']").val() == ""){
+			layer.msg("'表面修补尺寸-宽'不能为空");
+			return;
+		}
+		
+		if($("[name='way.pingZhengDu']").val() == ""){
+			layer.msg("平整度不能为空");
+			return;
+		}
+		
+		if($("[name='way.bhFenXiType']").val() == ""){
+			layer.msg("病害原因分析类型不能为空");
+			return;
+		}
+		
+		if($("[name='way.bhFenXi']").val() == ""){
+			layer.msg("病害原因分析不能为空");
+			return;
+		}
+		
+		if($("[name='way.luXian']").val() == ""){
+			layer.msg("路线不能为空");
+			return;
+		}
+		
+		if($("[name='way.wzType']").val() == ""){
+			layer.msg("位置类型不能为空");
+			return;
+		}
+		
+		if($("[name='way.wzName']").val() == ""){
+			layer.msg("位置名称不能为空");
+			return;
+		}
+		
+		
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/waydisease",{"pageNumber":2});
+			}
+		}
+		
+	}
+</script>	

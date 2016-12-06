@@ -1,0 +1,320 @@
+<style>
+<!--
+.fix{width:500px; height:200px;position: absolute;top:0;left:0;width:100%;height:100%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+-->
+</style>
+
+<div id="divModel">
+<img src="" class='fix' alt="图片损坏" style="display: none">
+	<form id="splitPageModel" action="${cxt}/jf/manage/rwtask/choose" method="POST" role="form" class="form-horizontal">
+		<input  type="hidden" name="_query.wxmkId" value='${escapeXml(paramMap["_query.wxmkId"])}' >
+		<input  type="hidden" name="_query.taskRelateState" value='${escapeXml(paramMap["_query.taskRelateState"])}' >
+		<div class="panel panel-white">
+			<div class="panel-body">	
+				<table class="table table-bordered table-hover" id="dataTable" style="font-size: 13px" >
+					<thead>
+						<tr>
+							<td class="hidden-xs" width="5%">
+							
+							</td>
+							<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'taskNo')">
+								任务单编号  	${orderBy("taskNo")}
+	      					</th>
+	      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'fuZeRen')">
+								负责人  	${orderBy("fuZeRen")}
+	      					</th>
+	      					<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'xunChaTime')">
+								巡查日期	${orderBy("xunChaTime")}
+							</td>
+							
+							<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'wzName')">
+								位置	${orderBy("wzName")}
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'binghaiOrQueXianType')">
+								病害或缺陷类型	${orderBy("binghaiOrQueXianType")}
+							</td>
+							<td class="hidden-xs" width="10%" >
+								维修次数
+							</td>
+							
+							
+							<!-- <th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'tcreateTime')">
+								任务创建时间  	${orderBy("tcreateTime")}
+	      					</th>
+	      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'yuJiTaskEndTime')">
+								预计任务结束时间  	${orderBy("yuJiTaskEndTime")}
+	      					</th>
+	      					<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'paiDanDate')">
+								派单日期  	${orderBy("paiDanDate")}
+	      					</th>
+							<td class="hidden-xs" width="8%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'xiuBuBiaoZhi')">
+								修补损坏标识	${orderBy("xiuBuBiaoZhi")}
+							</td>
+							<td class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('divModel', 'splitPageModel', 'ci.name')">
+								维修模块	${orderBy("ci.name")}
+							</td> -->
+							
+							<th class="hidden-xs">
+								操作
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(rwtask in splitPage.list){ %>
+							<tr class="trDom${rwtask.tirIds}" my-taskNo="${rwtask.taskNo}"  my-luXian="${rwtask.luXian}" my-wzType="${rwtask.wzType}" my-wzName="${rwtask.wzName}" my-wzMiaoShu="${rwtask.wzMiaoShu}"
+								my-xunChaStartZHK="${rwtask.xunChaStartZHK}"  my-xunChaStartZHM="${rwtask.xunChaStartZHM}"
+								my-xunChaEndZHK="${rwtask.xunChaEndZHK}"  my-xunChaEndZHM="${rwtask.xunChaEndZHM}" 
+								 my-binghaiOrQueXianType="${rwtask.binghaiOrQueXianType }  :  ${rwtask.yuGuGongChengLiang }    (${rwtask.yuGuGongChengLiangDw })">
+								
+								<%if(rwtask.taskWeiXiuNum!=0){%>
+										<td class="hidden-xs">
+											<i class="fa fa-arrow-circle-down td_i" id="${rwtask.tirIds!}"></i>
+										</td>
+									<%}else{%>
+										<td class="hidden-xs"></td>
+									<%}%>
+								
+								<td class="hidden-xs">${rwtask.taskNo!}</td>
+								<td class="hidden-xs">${rwtask.fuZeRen!}</td>
+								<td class="hidden-xs">${rwtask.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${rwtask.wzName!}</td>
+								<td class="hidden-xs">K${rwtask.xunChaStartZHK!}  +  ${rwtask.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${rwtask.xunChaEndZHK!}  +  ${rwtask.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${rwtask.binghaiOrQueXianType }  :  ${rwtask.yuGuGongChengLiang }    (${rwtask.yuGuGongChengLiangDw })</td>
+								<td class="hidden-xs">
+									<%if(rwtask.taskWeiXiuNum==0){%>
+										<span class="label label-danger">${rwtask.taskWeiXiuNum!}</span>
+									<%}else{%>
+										<span class="label label-success">${rwtask.taskWeiXiuNum!}</span>
+									<%}%>
+								
+								</td>
+								
+								<!-- <td class="hidden-xs">${rwtask.tcreateTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${rwtask.yuJiTaskEndTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${rwtask.paiDanDate!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${rwtask.xiuBuBiaoZhi }</td>
+								<td class="hidden-xs">${rwtask.wxmkName! }</td> -->
+								<td class="hidden-xs">
+									<button type="button" title='维修' class="btn btn-green edit-row" onclick="weiXiu('${rwtask.tirIds}')">维修</button>
+									
+									<%if(rwtask.taskWeiXiuNum>0){%>
+										<button type="button" title='完结' class="btn btn-red edit-row" onclick="wanJie('${rwtask.tirIds}')">完结</button>
+									<%}%>
+									
+								</td>
+							</tr>
+						<% } %>
+					</tbody>
+				</table>
+				
+				<div class="row"  style="font-size: 13px;" id="splitPageDivModel">
+					<% include("/common/splitPage.html", {"divId" : "divModel", "formId" : "splitPageModel", "splitPageDiv" : "splitPageDivModel"}){} %>
+				</div>
+				
+			</div>
+		
+		</div>	
+	</form>
+</div>			
+
+<script type="text/javascript">
+//关闭弹窗
+$(".layui-layer-close").click(function(){
+	$(".fix").hide();
+});
+$('.td_i').on('click', function () {
+	var expandId=$(this).attr("id");
+	var tr=$(".trDom"+expandId);
+	if($(this).hasClass("fa-arrow-circle-down")){
+		$(this).removeClass("fa-arrow-circle-down");
+		$(this).addClass("fa-arrow-circle-up");
+		
+		if(!tr.next().hasClass('pad')){
+			  $.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/rwtask/getWeiXiuJiLuByTaskId',
+			    cache:false,  
+			    data:{table:weixiu_type_table,tirIds:expandId},
+			    dataType:'json',  
+			    success:function(entity){
+			    	if(!entity.flag){
+			    		layer.msg("维修记录不存在或被删除");
+			    		return;
+			    	}
+			       html=' <table style="width:100%;border:1px">';
+			       var _tr="";
+			       $.each(entity.result,function(i,data){
+			    	   
+			    	 //图片存在多个
+				    	var a="";
+				    	var img=data.imgs.split(",");
+				    	$.each(img,function(i,imgs){
+				    		a+='<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\''+imgs+'\')">附件'+(i+1)+'</a>';
+				    	});
+			    	   
+			    	   
+			    	  _tr+=' <tr>'+
+			    		   		'<td rowspan=3>'+(i+1)+'</td>'+
+					            ' <td style="text-align:right">桩号范围  ：  </td>'+
+					            ' <td> K'+data.startZHK+' + ' +data.startZHM+'  ~  K  '+ data. endZHK+' + ' +data.endZHM+'</td>'+
+					            ' <td style="text-align:right">位置  ：  </td>'+
+					            ' <td> '+data. luXian +'/'+data.wzType +'/'+ data. wzName +'/'+ data. wzMiaoShu+'</td>'+
+					            ' <td style="text-align:right">天气  ：  </td>'+
+					            ' <td>'+data.weatherState+'</td>'+
+					            ' <td style="text-align:right">气温  ：  </td>'+
+					            ' <td>'+data.qiWen+'℃</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">施工机械  ：  </td>'+
+					            ' <td>'+ data.shiGongJiXie+'</td>'+
+					            ' <td style="text-align:right">维修人员  ：  </td>'+
+					            ' <td>'+  data.weiXiuRenYuan+'</td>'+
+					            ' <td style="text-align:right">现场专职安全员  ：  </td>'+
+					            ' <td>'+ data.anQuanYuan+'</td>'+
+					            ' <td style="text-align:right">现场施工负责人  ：  </td>'+
+					            ' <td>'+ data.fuZeRen+'</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">质量评价  ：  </td>'+
+					            ' <td> '+ data.pingJia+'</td>'+
+					            ' <td style="text-align:right">图片  ：  </td><td>'+a+'</td>'+
+					        ' </tr>';
+		        	});
+			       
+			       html	+= _tr+' </table>';
+			       tr.after("<tr class='pad'><td colspan='10'>"+html+"</td></tr>");
+			    }
+			});  
+		}else{
+			tr.next().show();
+		}
+	}else{
+		$(this).addClass("fa-arrow-circle-down");
+		$(this).removeClass("fa-arrow-circle-up");
+		if(tr.next().hasClass("pad")){
+			tr.next().hide();
+		}
+	}
+});
+
+$(".fix").click(function(){
+	$(".fix").hide();
+});
+function showImg(path){
+	layer.photos({
+	    photos: {
+    	  	"data": [{
+    	      	"src": path//原图地址
+    	    }]
+	    },
+	    tab: function (pic, layero) {
+	    	var css = {
+	    		width: window.width,
+	    		height: window.height
+	    	};
+	    	$(layero.selector).find('img').css(css);
+	    	
+	    }
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	function weiXiu(ids){
+		var trDomObj=$(".trDom"+ids);
+		var taskNo=trDomObj.attr("my-taskNo");
+		var luXian=trDomObj.attr("my-luXian");
+		var wzType=trDomObj.attr("my-wzType");
+		var wzName=trDomObj.attr("my-wzName");
+		var wzMiaoShu=trDomObj.attr("my-wzMiaoShu");
+		var startZHK=trDomObj.attr("my-xunChaStartZHK");
+		var startZHM=trDomObj.attr("my-xunChaStartZHM");
+		var endZHK=trDomObj.attr("my-xunChaEndZHK");
+		var endZHM=trDomObj.attr("my-xunChaEndZHM");
+		var binghaiOrQueXianType = trDomObj.attr("my-binghaiOrQueXianType");
+		
+		$("#viewDiv #taskInfoRelateId").val(ids);
+		$("#viewDiv #taskInfoRelate").val(taskNo);
+		$("#viewDiv #luXian").val(luXian);
+		$("#viewDiv #wzType").val(wzType);
+		$("#viewDiv #wzName").val(wzName);
+		$("#viewDiv #wzMiaoShu").val(wzMiaoShu);
+		$("#viewDiv #startZHK").val(startZHK);
+		$("#viewDiv #startZHM").val(startZHM);
+		$("#viewDiv #endZHK").val(endZHK);
+		$("#viewDiv #endZHM").val(endZHM);
+		$("#viewDiv #lblx").val(binghaiOrQueXianType);
+		$(".trDom"+ids).find("td:eq(9)").remove();
+		$(".trDom"+ids).find("td:eq(8)").remove();
+		$(".trDom"+ids).find("td:eq(0)").find("i").removeClass("fa-arrow-circle-up").addClass("fa-arrow-circle-down");
+		$("#tbodyDom").html("");
+		$("#tbodyDom").append(trDomObj);
+		$("#viewDiv #dataTable").show();
+		layer.closeAll();
+	}
+	
+	function wanJie(ids){
+		layer.confirm('确定完结此任务吗？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			var trDomObj=$("#trDom"+ids);
+			$.ajax({
+				url:cxt+"/jf/manage/rwtask/overSmallTask",
+				type:"post",
+				dateType:"JSON",
+				data:{"ids":ids},
+				async: false,
+				success:function(data){
+					if(result){
+						layer.msg(data.result_desc);
+						trDomObj.remove();
+					}else{
+						layer.msg(data.result_desc);
+					}
+				}
+			});
+			
+		});
+		
+	}
+</script>

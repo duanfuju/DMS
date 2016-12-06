@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.way">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_WX_youWuDispose order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_WX_luMianBingHaiWeiXiu) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_WX_luMianBingHaiWeiXiu where ids not in ( select top {1, number, #.#} ids from DMS_WX_luMianBingHaiWeiXiu )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_WX_luMianBingHaiWeiXiu ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				*
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_WX_luMianBingHaiWeiXiu way
+			WHERE 
+				1 = 1
+			<% if(!isEmpty(weiXiuRenYuan)){ %>
+					and way.weiXiuRenYuan like #'%$weiXiuRenYuan$%'#
+			<% } %>	
+			<% if(!isEmpty(luXian)){ %>
+					and way.luXian like #'%$luXian$%'#
+			<% } %>	
+    	]]>
+	</sql>
+	
+	<sql id="queryWayTable">
+		<![CDATA[ 
+			SELECT * FROM ( SELECT
+		        * 
+		    FROM
+		        DMS_WX_luMianBingHaiWeiXiu_ceng_relate c 
+		    WHERE
+		        c.weiXiuId = ?) o ORDER BY o.cengType
+    	]]>
+	</sql>
+	
+	
+	<sql id="updateWayTable">
+			UPDATE DMS_WX_luMianBingHaiWeiXiu_ceng_relate 
+			SET chiCunChang = ?,chiCunKuan = ?,shenDu = ?,xiuBuCaiLiao = ?,caiLiaoWenDu = ?
+			WHERE
+				weiXiuId = ?
+			AND cengType = ?
+	</sql>
+	
+	
+	<sql id="deleteWayTable">
+			DELETE
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu_ceng_relate
+			WHERE
+				weiXiuId = ?
+	</sql>
+	
+	<sql id="findTask">
+		<![CDATA[ 
+			SELECT
+				way.*,t.taskNo,t.createTime,t.yuJiTaskEndTime,t.remark,t.fuZeRen,t.fuZeRen,x.xunChaTime,x.xiuBuBiaoZhi,x.binghaiOrQueXianType,t.paiDanDate,z.name wxmkName
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu way
+			LEFT JOIN DMS_RW_task_info_relate tir ON tir.ids = way.taskInfoRelate
+			LEFT JOIN DMS_RW_task t ON tir.taskId = t.ids
+			LEFT JOIN DMS_XC_xunChaInfo x ON x.ids = tir.xunChaInfoId
+			LEFT JOIN DMS_PZ_chooseInfo z ON z.ids = x.wxmkId
+			WHERE
+				way.ids =?
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+	<sql id="findTaskForUpdate">
+		<![CDATA[ 
+			SELECT
+				way.*,t.taskNo,t.createTime,t.yuJiTaskEndTime,t.remark,t.fuZeRen,t.fuZeRen,x.xunChaTime,x.xiuBuBiaoZhi,x.binghaiOrQueXianType,t.paiDanDate,z.name wxmkName,
+				x.xunChaStartZHK,x.xunChaStartZHM,x.xunChaEndZHK,x.xunChaEndZHM,x.yuGuGongChengLiang,x.yuGuGongChengLiangDw
+			FROM
+				DMS_WX_luMianBingHaiWeiXiu way
+			LEFT JOIN DMS_RW_task_info_relate tir ON tir.ids = way.taskInfoRelate
+			LEFT JOIN DMS_RW_task t ON tir.taskId = t.ids
+			LEFT JOIN DMS_XC_xunChaInfo x ON x.ids = tir.xunChaInfoId
+			LEFT JOIN DMS_PZ_chooseInfo z ON z.ids = x.wxmkId
+			WHERE
+				way.ids =?
+    	]]>
+	</sql>
+</sql-statement>

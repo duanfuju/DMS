@@ -1,0 +1,80 @@
+<div id="childrenPanel">
+<form id="childrenSplitPage" action="${cxt!}/jf/manage/xunchatoulist/searchbinhaiinfo" method="POST" role="form" class="form-horizontal">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body">
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+							<!-- 	<td class="hidden-xs">
+									巡查日期
+								</td> -->
+								<td class="hidden-xs">
+									位置信息
+								</td>
+								<td class="hidden-xs">
+									桩号
+								</td>
+								<td class="hidden-xs">
+									修补损坏标识
+								</td>
+								<td class="hidden-xs">
+									维修模块
+								</td>
+								<td class="hidden-xs">
+									病害或缺陷类型(病害指标)
+								</td>
+								<td class="hidden-xs">
+									工程量
+								</td>
+								<!-- <td class="hidden-xs">
+									病害或缺陷描述	
+								</td> -->
+								<td class="hidden-xs">
+									严重程度
+								</td>
+								<td class="hidden-xs">
+									完成情况
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(xunChaInfo in list){ %>
+								<tr>
+									<!-- <td id="td${xunChaInfo.ids!}" class="hidden-xs">${xunChaInfo.xunChaTime!,dateFormat="yyyy-MM-dd" }</td> -->
+									<td class="hidden-xs">${xunChaInfo.luXian! }/${xunChaInfo.wzType! }/${xunChaInfo.wzName! }/${xunChaInfo.wzMiaoShu! }</td>
+									<td class="hidden-xs">K${xunChaInfo.xunChaStartZHK! }+${xunChaInfo.xunChaStartZHM! }
+										<% if((xunChaInfo.xunChaEndZHK != null && xunChaInfo.xunChaEndZHK != "") 
+												&& (xunChaInfo.xunChaEndZHM == null && xunChaInfo.xunChaEndZHM == "")){%>
+											~K${xunChaInfo.xunChaEndZHK!} +${xunChaInfo.xunChaEndZHM!}
+										<%}%>	
+									</td>
+									<td class="hidden-xs">${xunChaInfo.xiuBuBiaoZhi! }</td>
+									<td class="hidden-xs">${xunChaInfo.wxmkName! }</td>
+									<td class="hidden-xs">${xunChaInfo.binghaiOrQueXianType! }</td>
+									<td class="hidden-xs">${xunChaInfo.yuGuGongChengLiang! }(${xunChaInfo.yuGuGongChengLiangDw! })</td>
+									<!-- <td class="hidden-xs">${xunChaInfo.binghaiOrQueXianMiaoShu }</td> -->
+									<td class="hidden-xs">${xunChaInfo.level! }</td>
+									<td class="hidden-xs">${xunChaInfo.state==0?"未下派":"已下派" }
+									
+									</td>
+								</tr>
+								
+								<script>
+									var tdname = $("#td${xunChaInfo.ids!}").text();
+									if(tdname==""){
+										$("#tr${xunChaInfo.ids!}").hide();
+										
+									}
+								</script>
+							<% } %>
+						</tbody>
+					</table>
+					
+					
+						
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+</form>			
+</div>

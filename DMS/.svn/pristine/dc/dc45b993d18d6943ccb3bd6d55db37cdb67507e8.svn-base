@@ -1,0 +1,596 @@
+<script type="text/javascript">
+$("input").attr("readonly","readonly");
+$("select").attr("disabled","disabled");
+$("textarea").attr("readonly","readonly");
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/yanghulog');">绿化养护日志</a></li>
+			<li class="active">新增</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增绿化养护日志</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+				
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs"  width='10%'>日期 </th>
+							<th class="hidden-xs"  width='10%'>路线</th>
+							<th class="hidden-xs"  width='10%'>桩号范围</th>
+			       			<th class="hidden-xs"  width='10%'>负责人</th>
+			       			<th class="hidden-xs"  width='20%'>工作内容</th>
+			       			<th class="hidden-xs"  width='20%'>机械设备</th>
+			       			<th class="hidden-xs" >备注</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyDom"> 
+							<tr> 
+								<td class="hidden-xs">${dayplan.planTime!,dateFormat="yyyy-MM-dd"}</td>
+								<td class="hidden-xs">${dayplan.luXian!}/${dayplan.wzType!}/${dayplan.wzName!}/${dayplan.wzMiaoShu!}</td>
+								<td class="hidden-xs">K${dayplan.startZHK!}  +  ${dayplan.startZHM!}  ~  K${dayplan.endZHK!} +${dayplan.endZHM!}</td>
+								<td class="hidden-xs">${dayplan.fuZePeople!}</td>
+								<td class="hidden-xs">${dayplan.content!}</td>
+								<td class="hidden-xs">${dayplan.jiXieSheBei!}</td>
+								<td class="hidden-xs">${dayplan.remarks!}</td>
+							</tr> 
+						
+					</tbody>
+				</table>
+				
+				
+							
+				<form id="editForm" action="${cxt!}/jf/manage/yanghulog/update" method="POST" role="form" class="form-horizontal">	
+					<input type="hidden"name="yangHuLog.ids" value="${yangHuLog.ids!}" >
+					<!-- <div class="form-group">
+						<label class="col-sm-2 control-label">
+							选择计划
+						</label>
+						<div class="col-sm-2"   >
+						
+							<input type="hidden" id="dayIds" name="yangHuLog.dayIds" >
+							<a href="#"  class="btn btn-blue" onclick="showEditChildrenMenu()" >选择</a>
+						</div>
+					</div> -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">养护日期</label>
+						<div class="col-sm-2">
+							<input type="text" id="yangHuTime" name="yangHuLog.yangHuTime" value="${yangHuLog.yangHuTime!}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd'})">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							养护单位
+						</label>
+						<div class="col-sm-2"   >
+							<select id="byu" name="yangHuLog.yangHuDanWei" style="width: 100%" class="form-control">
+									<%for(bc in bcList){%>
+										<option value="${bc.name}"  ${bc.name==yangHuLog.yangHuDanWei?'selected="selected"'}  >${bc.name}</option>
+									<%}%>
+							</select>
+						</div> 
+						<label class="col-sm-2 control-label" for="form-field-1">天气状况</label>
+						<div class="col-sm-2">
+							<select name="yangHuLog.weather" id="weather" style="width: 100%" class="form-control">
+								<option value="晴">晴</option>
+								<option value="阴">阴</option>
+								<option value="多云">多云</option>
+								<option value="小雨">小雨</option>
+								<option value="中雨">中雨</option>
+								<option value="大雨">大雨</option>
+								<option value="雷阵雨">雷阵雨</option>
+								<option value="小雪">小雪</option>
+								<option value="中雪">中雪</option>
+								<option value="大雪">大雪</option>
+								<option value="冰冻">冰冻</option>
+								<option value="下雪/积雪">下雪/积雪</option>
+							</select>
+						</div>
+					</div>		
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">作业时间(上午)</label>
+						<div class="col-sm-2">
+							<input type="text" id="zuoYeTimeShangWu" name="yangHuLog.zuoYeTimeShangWu" value="${yangHuLog.zuoYeTimeShangWu!}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+						<label class="col-sm-2 control-label">作业时间(下午)</label>
+						<div class="col-sm-2">
+							<input type="text" id="zuoYeTimeXiaWu" name="yangHuLog.zuoYeTimeXiaWu" value="${yangHuLog.zuoYeTimeXiaWu!}" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						</div>
+					</div>
+					
+	
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							最高气温
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="zuiGaoQiWen"  name="yangHuLog.zuiGaoQiWen" value="${yangHuLog.zuiGaoQiWen!}"  class="form-control">
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+						<label class="col-sm-1 control-label" for="form-field-1">
+							最低气温
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="zuiDiQiWen"  name="yangHuLog.zuiDiQiWen" value="${yangHuLog.zuiDiQiWen!}"  class="form-control">
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							路线
+						</label>
+						<div class="col-sm-2">
+							<select	id="luXian" name="yangHuLog.luXian" value="${yangHuLog.luXian!}" class="form-control">
+								<% for(luxian in luXianList){ %>
+									<option p="${luxian.ids }"  value="${luxian.luXianName }"   >${luxian.luXianName }</option>
+								<% } %>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							位置
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzType" name="yangHuLog.wzType" value="${yangHuLog.wzType!}" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							方向/互通/收费站/服务区
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzName" name="yangHuLog.wzName"  value="${yangHuLog.wzName!}" class="form-control">
+							</select>
+						</div>
+					
+						<label class="col-sm-2 control-label" for="form-field-1">
+							车道/匝道/广场
+						</label>
+						<div class="col-sm-2">
+							<select	id="wzMiaoShu" name="yangHuLog.wzMiaoShu"  value="${yangHuLog.wzMiaoShu!}" class="form-control">
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="startZHK" name="yangHuLog.startZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${yangHuLog.startZHK!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="startZHM" name="yangHuLog.startZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${yangHuLog.startZHM!}" class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="endZHK" name="yangHuLog.endZHK" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${yangHuLog.endZHK!}" class="form-control">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="endZHM" name="yangHuLog.endZHM" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" value="${yangHuLog.endZHM!}" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">投入劳动力情况</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="laoDongLiQingKuang" name="yangHuLog.laoDongLiQingKuang"  class="form-control">${yangHuLog.laoDongLiQingKuang!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">投入机械设备情况</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="jiXieQingKuang" name="yangHuLog.jiXieQingKuang"  class="form-control">${yangHuLog.jiXieQingKuang!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>.
+					<div class="form-group">
+						<label class="col-sm-2 control-label">当日作业完成情况</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="dangRiZuoYeWanChengQingKuang" name="yangHuLog.dangRiZuoYeWanChengQingKuang"  class="form-control">${yangHuLog.dangRiZuoYeWanChengQingKuang!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">其他情况</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="qiTaQingKuang" name="yangHuLog.qiTaQingKuang"  class="form-control">${yangHuLog.qiTaQingKuang!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							记录人
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="jiLuPeople"  name="yangHuLog.jiLuPeople" value="${yangHuLog.jiLuPeople!}"  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							安全员
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="anQuanPeople"  name="yangHuLog.anQuanPeople" value="${yangHuLog.anQuanPeople!}"  class="form-control">
+						</div>
+						
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					<!-- <div class="form-group">
+						<div class="col-sm-2 col-sm-offset-3">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+						</div>
+					</div> -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	
+	function mySubmit(){
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/yanghulog");
+			}
+		}
+		
+	}
+	//显示子级菜单编辑弹出层
+	function showEditChildrenMenu(){	
+		var url="/jf/manage/yanghulog/choose";
+		var width=1100;
+		var height=650;
+		var title="选择月计划";
+		$.ajax({
+		type : "post",
+		url : encodeURI(encodeURI(cxt + url)),
+		data : {},
+		dataType : "HTML",
+		contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+		async: false,
+		cache: false,
+		success:function(response){
+			result = response;
+			layer.open({
+			  type: 1, //page层
+			  area: [width+'px', height+'px'],
+			  title: title,
+			  shade: 0.6, //遮罩透明度
+			  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+			  shift: 0, //0-6的动画形式，-1不开启
+			  content: result ,
+			  btn:['确定'],
+			  btn1:function(){
+					var dayPlanIds=window.getDayPlanIds;
+					//设置日志的隐藏值
+					$("#dayIds").val(dayPlanIds);
+					var trObj=$("#"+dayPlanIds);
+					trObj.find("td:eq(0)").css("display","none");
+					$("#tbodyDom").html("");
+					$("#tbodyDom").append(trObj);
+				 	$("#dataTable").show();  
+				  	layer.closeAll();
+			  }
+			});
+		}
+	});
+	}
+	function getNowFormatDate() {
+	    var date = new Date();
+	    var seperator1 = "-";
+	    var seperator2 = ":";
+	    var month = date.getMonth() + 1;
+	    var strDate = date.getDate();
+	    if (month >= 1 && month <= 9) {
+	        month = "0" + month;
+	    }
+	    if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+	    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate;
+	    
+	    $("#yangHuTime").val(currentdate)
+	}
+
+	
+</script>
+<script type="text/javascript">
+$(function(){//第一次加载时所要做的加载默认值的操作
+	//设置选中项	
+	var _luXian="${yangHuLog.luXian!}";
+	var _wzType="${yangHuLog.wzType!}";
+	var _wzName="${yangHuLog.wzName!}";
+	var _wzMiaoShu="${yangHuLog.wzMiaoShu!}";
+	
+	
+	//根据路线 选择位置 
+	 $("#luXian").val(_luXian);
+	var luXianId = $("#luXian").find("option:selected").attr("p");
+	var wzTypeId = "";
+	var wzName="";
+	$.ajax({  
+	    type:'post',      
+	    url:'${cxt}/jf/manage/weizhi/getWzType',  
+	    data:{"luXianId":luXianId},  
+	    cache:false,  
+	    dataType:'json',  
+        success:function(data){  
+        	//定义位置的options
+        	var option_wzType="";
+        	$.each(data.result,function(i,dataObj){
+        		if(_wzType==dataObj.name){
+        			option_wzType+="<option p="+dataObj.value+" selected = 'selected'  value="+dataObj.name+" >"+dataObj.name+"</option>"
+        			wzTypeId=dataObj.value;
+        		}else{
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+        			
+        		}
+        	});
+        	$("#wzType").append(option_wzType);
+        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+        	$.ajax({  
+        	    type:'post',      
+        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+        	    cache:false,  
+        	    dataType:'json',  
+                success:function(data){  
+                	//定义位置的options
+                	var option_wzName="";
+                	$.each(data.result,function(i,dataObj){
+                		if(_wzName==dataObj.name){
+                			option_wzName+="<option selected = 'selected'  p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                			wzName=dataObj.value;
+                		}else{
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                		}
+                	});
+                	$("#wzName").append(option_wzName);
+                	
+                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+                	$.ajax({  
+                	    type:'post',      
+                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+                	    cache:false,  
+                	    dataType:'json',  
+                        success:function(data){  
+                        	//定义位置的options
+                        	var option_wzMiaoShu="";
+                        	$.each(data.result,function(i,dataObj){
+                        		if(_wzMiaoShu==dataObj.name){
+                        			option_wzMiaoShu+="<option selected = 'selected'  p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                        		}else{
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                        		}
+                        	});
+                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+                        	
+                        }
+                	});
+                }
+        	});
+        }
+	});
+	
+	
+});
+</script>
+<script type="text/javascript">
+$(function(){
+	
+	
+		
+	//路线改变时
+	$("#luXian").change(function(){
+		
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId = "";
+		var wzName="";
+		$("#wzType").children().remove(); 
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzType',  
+		    data:{"luXianId":luXianId},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzType="";
+	        	$.each(data.result,function(i,dataObj){
+	        		if(i==0){
+	        			wzTypeId=dataObj.value;
+	        		}
+	        		option_wzType+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzType").append(option_wzType);
+	        	
+	        	//根据路线和位置获取			方向/互通/收费站/服务区（位置名称）
+	        	$.ajax({  
+	        	    type:'post',      
+	        	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+	        	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+	        	    cache:false,  
+	        	    dataType:'json',  
+	                success:function(data){  
+	                	//定义位置的options
+	                	var option_wzName="";
+	                	$.each(data.result,function(i,dataObj){
+	                		if(i==0){
+	                			wzName=dataObj.value;
+	                		}
+	                		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                	});
+	                	$("#wzName").append(option_wzName);
+	                	
+	                	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+	                	$.ajax({  
+	                	    type:'post',      
+	                	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+	                	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+	                	    cache:false,  
+	                	    dataType:'json',  
+	                        success:function(data){  
+	                        	//定义位置的options
+	                        	var option_wzMiaoShu="";
+	                        	$.each(data.result,function(i,dataObj){
+	                        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	                        	});
+	                        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	                        }
+	                	});
+	                }
+	        	});
+	        }
+		});
+	});
+	//位置的选择事件
+	$("#wzType").change(function(){
+		var wzTypeVal=$(this).val();
+		var zhk="";
+		var zhm="";
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		//清除子选项的option
+		$("#wzName").children().remove(); 
+		$("#wzMiaoShu").children().remove(); 
+		$.ajax({  
+    	    type:'post',      
+    	    url:'${cxt}/jf/manage/weizhi/getWzName',  
+    	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId},  
+    	    cache:false,  
+    	    dataType:'json',  
+            success:function(data){  
+            	//定义位置的options
+            	var option_wzName="";
+            	$.each(data.result,function(i,dataObj){
+            		if(i==0){
+            			wzName=dataObj.value;
+            			zhk=dataObj.zhk;
+            			zhm=dataObj.zhm;
+            		}
+            		option_wzName+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+            	});
+            	if(wzTypeVal!="主线"){
+            		$("#xunChaStartZHK").val(zhk);
+            		$("#xunChaStartZHM").val(zhm);
+            	}else{
+            		$("#xunChaStartZHK").val('');
+            		$("#xunChaStartZHM").val('');
+            	}
+            	$("#wzName").append(option_wzName);
+            	
+            	//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+            	$.ajax({  
+            	    type:'post',      
+            	    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+            	    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+            	    cache:false,  
+            	    dataType:'json',  
+                    success:function(data){  
+                    	//定义位置的options
+                    	var option_wzMiaoShu="";
+                    	$.each(data.result,function(i,dataObj){
+                    		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+                    	});
+                    	$("#wzMiaoShu").append(option_wzMiaoShu);
+                    }
+            	});
+            }
+    	});
+	});
+
+
+	//方向/互通/收费站/服务区 选择事件
+	$("#wzName").change(function(){
+		var wzTypeVal=$("#wzType").val();
+		var luXianId = $("#luXian").find("option:selected").attr("p");
+		var wzTypeId =$("#wzType").find("option:selected").attr("p");
+		var wzName =$("#wzName").find("option:selected").attr("p");
+		$("#wzMiaoShu").children().remove(); 
+		
+		if(wzTypeVal!="主线"){
+			var zhk=$("#wzName").find("option:selected").attr("zhk");
+			var zhm=$("#wzName").find("option:selected").attr("zhm");
+    		$("#xunChaStartZHK").val(zhk);
+    		$("#xunChaStartZHM").val(zhm);
+    	}else{
+    		$("#xunChaStartZHK").val('');
+    		$("#xunChaStartZHM").val('');
+    	}
+		//根据路线、位置获取	、方向/互通/收费站/服务区（位置名称）获取			位置描述
+		$.ajax({  
+		    type:'post',      
+		    url:'${cxt}/jf/manage/weizhi/getWzMiaoShu',  
+		    data:{"luXianId":luXianId,"wzTypeId":wzTypeId,"wzName":wzName},  
+		    cache:false,  
+		    dataType:'json',  
+	        success:function(data){  
+	        	//定义位置的options
+	        	var option_wzMiaoShu="";
+	        	$.each(data.result,function(i,dataObj){
+	        		option_wzMiaoShu+="<option p="+dataObj.value+" value="+dataObj.name+" >"+dataObj.name+"</option>"
+	        	});
+	        	$("#wzMiaoShu").append(option_wzMiaoShu);
+	        }
+		});
+	});
+});
+</script>

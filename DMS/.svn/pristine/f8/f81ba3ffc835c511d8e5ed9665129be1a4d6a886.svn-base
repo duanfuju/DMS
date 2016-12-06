@@ -1,0 +1,240 @@
+<script type="text/javascript">
+	window.getTaskIds= "";
+	//关闭弹窗
+	$(".layui-layer-close").click(function() {
+		$(".fix").hide();
+	});
+	function resetCondition() {
+		$("input[type='text']").attr("value", "");
+	}
+	
+	
+	$(function() {
+		// chkAll全选事件
+		$("[name=rwtask_checkBox]:checkbox").bind("click", function() {
+			var expandId = $(this).val();
+			var isChecked = $(this).prop("checked");
+			
+			var tr = $(".trDom" + expandId);
+			if (!tr.next().hasClass('pad')) {
+				afterwxInfo(expandId,tr,isChecked,false);
+			}
+			$(this).parent().parent(".trDom" + expandId).next().find("[name = wxjl_checkbox]:checkbox").each(function(){
+				$(this).prop("checked", isChecked);
+				var expandId = $(this).val();
+				if(isChecked){
+					 window.getTaskIds+=expandId+",";
+				}else{
+					window.getTaskIds = window.getTaskIds.replace(expandId+",","");
+				}
+			});
+		});
+	});
+	
+	function bindCheck(){
+		$("[name=wxjl_checkbox]:checkbox").on("click", function() {
+			var expandId = $(this).val();
+			var isChecked = $(this).prop("checked");
+			if(isChecked){
+				 window.getTaskIds+=expandId+",";
+			}else{
+				window.getTaskIds = window.getTaskIds.replace(expandId+",","");
+			}
+			//$(this).parent().parent(".trDom" + expandId).next().find("[name = wxjl_checkbox]:checkbox").prop("checked", isChecked);
+		});
+	}
+
+
+	$('.td_i').on('click', function() {
+		var expandId = $(this).attr("id");
+		var tr = $(".trDom" + expandId);
+
+		if ($(this).hasClass("fa-arrow-circle-down")) {
+			$(this).removeClass("fa-arrow-circle-down");
+			$(this).addClass("fa-arrow-circle-up");
+			if (!tr.next().hasClass('pad')) {
+				afterwxInfo(expandId,tr,false,true);
+			} else {
+				tr.next().show();
+			}
+		} else {
+			$(this).addClass("fa-arrow-circle-down");
+			$(this).removeClass("fa-arrow-circle-up");
+			if (tr.next().hasClass("pad")) {
+				tr.next().hide();
+			}
+		}
+	});
+
+	function afterwxInfo(expandId,tr,ischeck,isshow) {
+		$.ajax({
+			type : 'post',
+			url : '${cxt}/jf/manage/rwtask/getWeiXiuJiLuByTaskIdFromTables',
+			cache : false,
+			data : {
+				ids : expandId
+			},
+			dataType : 'json',
+			success : function(entity) {
+				if (!entity.flag) {
+					layer.msg("维修记录不存在或被删除");
+					return;
+				}
+				html = "";
+				var _tr = "";
+				$.each(entity.result, function(i, data) {
+					//图片存在多个
+					var a = "";
+					var img = data.imgs.split(",");
+					$.each(img, function(i, imgs) {
+						a += '<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\'' + imgs + '\')">图片' + (i + 1) + '</a>';
+					});
+					_tr += '<table style="width:100%" name="wxjl_table" tabname="'+data.ids+'"><tr style="border-top:#dfe1e5 solid 1px;border-left:#dfe1e5 solid 1px;border-right:#dfe1e5 solid 1px;">' + 
+					'<td rowspan=3 style="text-align:center;width:20px;">' + (i + 1) + '</td>' +
+					 ' <td rowspan=3 style="text-align:center;width:30px"><input type="checkbox"   name="wxjl_checkbox"  value="' + data.ids + '" class="flat-grey foocheck"> </td>' +
+					  ' <td style="text-align:center;width:12%">桩号范围  ：  </td>' + 
+					  ' <td style="text-align:center;width:12%"> K' + data.startZHK + ' + ' + data.startZHM + '  ~  K  ' + data.endZHK + ' + ' + data.endZHM + '</td>' + 
+					  ' <td style="text-align:center;width:12%">位置  ：  </td>' + 
+					  ' <td style="text-align:center;width:12%"> ' + data.luXian + '/' + data.wzType + '/' + data.wzName + '/' + data.wzMiaoShu + '</td>' +
+					   ' <td style="text-align:center;width:12%">天气  ：  </td>' + 
+					   ' <td style="text-align:center;width:12%">' + data.weatherState + '</td>' + 
+					   ' <td style="text-align:center;width:12%">气温  ：  </td>' +
+					    ' <td style="text-align:center;width:12%">' + data.qiWen + '℃</td>' + 
+					    
+					    ' </tr>' +
+					     ' <tr style="border-left:#dfe1e5 solid 1px;border-right:#dfe1e5 solid 1px;">' + 
+					     ' <td style="text-align:center">施工机械  ：  </td>' + 
+					     ' <td style="text-align:center">' + data.shiGongJiXie + '</td>' +
+					      ' <td style="text-align:center">维修人员  ：  </td>' +
+					       ' <td style="text-align:center">' + data.weiXiuRenYuan + '</td>' +
+					        ' <td style="text-align:center">现场专职安全员  ：  </td>' +
+					        ' <td style="text-align:center">' + data.anQuanYuan + '</td>' + 
+					        ' <td style="text-align:center">现场施工负责人  ：  </td>' +
+					         ' <td style="text-align:center">' + data.fuZeRen + '</td>' + ' </tr>' +
+					          ' <tr style="border-left:#dfe1e5 solid 1px;border-right:#dfe1e5 solid 1px;border-bottom:#dfe1e5 solid 1px;">' + 
+					         ' <td style="text-align:center">质量评价  ：  </td>' + 
+					         ' <td style="text-align:center"> ' + data.pingJia + '</td>' + 
+					         ' <td style="text-align:center">图片  ：  </td><td style="text-align:center">' + a + '</td>' +
+					          ' </tr></table>';
+				});
+
+				html += _tr;
+				if(isshow){
+					tr.after("<tr class='pad'><td colspan='10'>" + html + "</td></tr>");
+				}else{
+					tr.after("<tr class='pad' style='display: none;'><td colspan='10'>" + html + "</td></tr>");
+				}
+				if(ischeck){
+					$(".trDom" + expandId).next().find("[name = wxjl_checkbox]:checkbox").each(function(){
+						$(this).prop("checked", ischeck);
+						var expandId = $(this).val();
+						if(ischeck){
+							 window.getTaskIds+=expandId+",";
+						}else{
+							window.getTaskIds = window.getTaskIds.replace(expandId+",","");
+						}
+					});
+				}
+				bindCheck();
+			}
+		});
+	}
+
+
+	$(".fix").click(function() {
+		$(".fix").hide();
+	});
+	function showImg(path) {
+		layer.photos({
+			photos : {
+				"data" : [{
+					"src" : path//原图地址
+				}]
+			},
+			tab : function(pic, layero) {
+				var css = {
+					width : window.width,
+					height : window.height
+				};
+				$(layero.selector).find('img').css(css);
+
+			}
+		});
+
+	}
+</script>
+<style>
+	.fix {
+		width: 500px;
+		height: 200px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 9999;
+		border: 2px solid #eee;
+		text-align: center;
+		line-height: 200px;
+		font-size: 20px;
+		font-weight: bold;
+		color: #999;
+	}
+	.table-hover > tbody > .pad:hover > td {
+		background: #fff;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+</style>
+<div id="divModel" style="font-size: 13px">
+	<img src="" class='fix' alt="图片损坏" style="display: none">
+	<form id="splitPageModel" action="${cxt}/jf/manage/rwtask/choose_checkBox" method="POST" role="form" class="form-horizontal">
+
+		<input  type="hidden" name="_query.taskRelateState" value='${escapeXml(paramMap["_query.taskRelateState"])}' >
+		<div class="panel panel-white">
+			<div class="panel-body">
+				<table class="table table-bordered table-hover" id="chooseDataTable" style="font-size: 13px" >
+					<thead>
+						<tr>
+							<th  width="5%"></th>
+							<th  width="5%"></th>
+							<td class="hidden-xs" width="10%" > 桩号范围 </td>
+							<td class="hidden-xs" width="10%" > 设施或位置名称 </td>
+							<td class="hidden-xs" width="10%"> 病害或缺陷类型 </td>
+							<td class="hidden-xs" width="10%" > 维修次数 </td>
+							<th class="hidden-xs" width="10%" > 施工任务单序列号 </th>
+							<td class="hidden-xs" width="10%" > 完成时间 </td>
+							<td class="hidden-xs" width="10%" > 完成情况 </td>
+
+						</tr>
+					</thead>
+					<tbody>
+						<% for(rwtask in splitPage.list){ %>
+						<tr class="trDom${rwtask.tirIds}" my-taskNo="${rwtask.taskNo}"  my-luXian="${rwtask.luXian}" my-wzType="${rwtask.wzType}" my-wzName="${rwtask.wzName}" my-wzMiaoShu="${rwtask.wzMiaoShu}"
+						my-xunChaStartZHK="${rwtask.xunChaStartZHK}"  my-xunChaStartZHM="${rwtask.xunChaStartZHM}"
+						my-xunChaEndZHK="${rwtask.xunChaEndZHK}"  my-xunChaEndZHM="${rwtask.xunChaEndZHM}" >
+							<td class="hidden-xs"><i class="fa fa-arrow-circle-down td_i" id="${rwtask.tirIds!}"></i></td>
+							<td class="center hidden-xs">
+							<input type="checkbox" name="rwtask_checkBox" value="${rwtask.tirIds!}" class="flat-grey foocheck">
+							</td>
+							<td class="hidden-xs">K${rwtask.xunChaStartZHK!}  +  ${rwtask.xunChaStartZHM!}		~		K${rwtask.xunChaEndZHK!}  +  ${rwtask.xunChaEndZHM!}</td>
+							<td class="hidden-xs">${rwtask.wzName!}</td>
+							<td class="hidden-xs">${rwtask.binghaiOrQueXianType }  :  ${rwtask.yuGuGongChengLiang }    (${rwtask.yuGuGongChengLiangDw })</td>
+							<td class="hidden-xs"> <%if(rwtask.taskWeiXiuNum==0){%> <span class="label label-danger">${rwtask.taskWeiXiuNum!}</span> <%}else{%> <span class="label label-success">${rwtask.taskWeiXiuNum!}</span> <%}%> </td>
+							<td class="hidden-xs">${rwtask.taskNo!}</td>
+							<td class="hidden-xs">${rwtask.overTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+							<td class="hidden-xs">${rwtask.tirState==1?'已完成'}</td>
+
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+
+				<div class="row" id="splitPageDivModel">
+					<% include("/common/splitPage.html", {"divId" : "divModel", "formId" : "splitPageModel", "splitPageDiv" : "splitPageDivModel"}){} %>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

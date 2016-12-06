@@ -1,0 +1,290 @@
+<script type="text/javascript">
+	function resetCondition() {
+		$("input").attr("value", "");
+		$("#state_select option:first").prop("selected", 'selected');
+	}
+
+	var _state;
+	function mySelect() {
+		//设置查询条件
+		_state = $("#state_select").val();
+		$("#state_hidden").attr("value", _state);
+		common_ajax.ajaxFormMainPanel("splitPage");
+		setCondition();
+	}
+
+	function setCondition() {
+		$("#state_select").val(_state);
+	}
+
+	function showAcceptMenu(ids) {
+		var res = $("#td_tg" + ids).text();
+		if (res == 0) {
+			layer.msg("通过个数为0");
+			return;
+		}
+		show(ids, "/jf/manage/choujian/showAccept", "通过抽检的数据");
+	}
+
+	function showNoAcceptMenu(ids) {
+		var res = $("#td_wtg" + ids).text();
+		if (res == 0) {
+			layer.msg("未通过个数为0");
+			return;
+		}
+		show(ids, "/jf/manage/choujian/showNoAccept", "未通过抽检的数据");
+	}
+
+	function showWeiXiu(ids, byIds) {
+		var res = $("#td_wx" + ids).text();
+		if (res == 0) {
+			layer.msg("维修个数为0");
+			return;
+		}
+		show(byIds, "/jf/manage/baoyan/showBaoYan", "维修(未被退回的)", true);
+	}
+
+	function showWeiXiu_return(ids, byIds) {
+		var res = $("#td_wx" + ids).text();
+		if (res == 0) {
+			layer.msg("维修个数为0");
+			return;
+		}
+		show(byIds, "/jf/manage/choujian/showWeiXiu", "维修(被退回的)", false);
+	}
+
+	function show(ids, url, title, isAccept) {
+		var width = 1100;
+		var height = 600;
+		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + url)),
+			data : {
+				"ids" : ids,
+				"type" : isAccept
+			},
+			dataType : "HTML",
+			contentType : "application/x-www-form-urlencoded; charset=UTF-8",
+			async : false,
+			cache : false,
+			success : function(response) {
+				result = response;
+				layer.open({
+					type : 1, //page层
+					area : [width + 'px', height + 'px'],
+					title : title,
+					shade : 0.6, //遮罩透明度
+					moveType : 1, //拖拽风格，0是默认，1是传统拖动
+					shift : 0, //0-6的动画形式，-1不开启
+					content : result,
+					btn : ['确定'],
+					btn1 : function() {
+						layer.closeAll();
+					}
+				});
+			}
+		});
+	}
+
+	function complete(cjIds,jlIds,chouJianNum) {
+		//alert(chouJianNum);
+		var td_tg = $("#td_tg"+jlIds).html();//通过
+		var td_wtg = $("#td_wtg"+jlIds).html();//未通过
+		//var td_wx = $("#td_wx"+jlIds).html();//总维修
+		//var td_th = $("#td_th"+jlIds).html();//计量时被退回的
+		//总维修=通过+未通过+计量时被退回的
+		var hj = parseInt(td_tg)+parseInt(td_wtg);//+parseInt(td_th);
+		if(chouJianNum != hj){
+			layer.msg("请先完成抽检操作,才可完成验收");
+			return;
+		}
+		
+		layer.confirm('是否完成验收？', {
+			btn : ['确定', '取消'], //按钮
+			scrollbar : false
+		}, function() {
+			$.ajax({
+				type : 'post',
+				url : '${cxt}/jf/manage/choujian/save1',
+				cache : false,
+				data : {
+					"cjIds" : cjIds
+				},
+				dataType : 'json',
+				success : function(data) {
+					layer.msg(data.result_desc);
+					//跳转计量的首页列表
+					common_ajax.ajaxMainPanel("/jf/manage/choujian/index1");
+				}
+			});
+		});
+	}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a>
+			</li>
+			<li class="active">
+				抽检管理
+			</li>
+		</ol>
+	</div>
+</div>
+
+<form id="splitPage" action="${cxt}/jf/manage/choujian/index1" method="POST" role="form" class="form-horizontal">
+
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">抽检查询</span></h4>
+
+				</div>
+
+				<div class="panel-body">
+					<div class="form-group">
+						<label class="col-sm-2 control-label" >状态</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="hidden" id="state_hidden" name="_query.state" value='${escapeXml(paramMap["_query.state"])}' maxlength="40" >
+							<select name="xunChaTou.xunChaType" id="state_select" style="width: 100%" class="form-control">
+								<option value="" selected>请选择</option>
+								<option value="1" >已抽检</option>
+								<option value="2" >已验收</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-primary" onclick='mySelect()' >
+								查询
+							</button>
+							<button type="reset" class="btn"  onclick='resetCondition()' >
+								重置
+							</button>
+						</div>
+					</div>
+					<br/>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">抽检列表</span></h4>
+
+				</div>
+				<div class="panel-body">
+					<!-- <div class="row">
+					<div class="col-md-12 space20">
+					<button type="button" class="btn btn-success add-row" onclick="common_ajax.ajaxMainPanel('/jf/manage/company/toUrl?toUrl=/manage/company/add.html');">
+					新增 <i class="fa fa-plus"></i>
+					</button>
+					</div>
+					</div> -->
+
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'byNo')"> 报验单编号	${orderBy("byNo")} </th>
+								<th class="hidden-xs" width="15%"> 维修个数（个） </th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'returnNum')"> 维修退回数（个） 	${orderBy("returnNum")} </th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'cjstate')"> 状态 	${orderBy("cjstate")} </th>
+								<th class="hidden-xs" width="5%"> 通过个数 </th>
+								<th class="hidden-xs" width="5%"> 未通过个数 </th>
+								<th class="hidden-xs" width="15%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'samplingTime')"> 抽检时间 	${orderBy("samplingTime")} </th>
+								<th class="hidden-xs"> 操作 </th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for(choujian in splitPage.list){ %>
+							<tr id="trDom${choujian.jlIds}">
+								<td class="hidden-xs" width="15%">${choujian.byNo!}</td>
+								<td class="hidden-xs" width="15%"><span class="label label-success" id="td_wx${choujian.jlIds}" onclick="showWeiXiu('${choujian.jlIds}','${choujian.byanIds}')" >维修个数</span></td>
+								<td class="hidden-xs" width="15%"> <% if(choujian.returnNum==""||choujian.returnNum==null||choujian.returnNum==0){%> <span class="label label-danger" id="td_th${choujian.jlIds}"  onclick="javascript:layer.msg('维修(被退回的)数量为零')" >0</span> <%}else{%> <span class="label label-danger" id="td_th${choujian.jlIds}"  onclick="showWeiXiu_return('${choujian.jlIds}','${choujian.byanIds}')" >${choujian.returnNum!}</span> <%}%> </td>
+								<td class="hidden-xs" width="15%"> <% if(choujian.cjstate==1){%> <span class="label label-danger">待验收</span> <%}else if(choujian.cjstate==2){%> <span class="label label-success">已验收</span> <%}%> </td>
+								<td class="hidden-xs" width="5%"><span class="label label-success" id="td_tg${choujian.jlIds}" onclick="showAcceptMenu('${choujian.jlIds}')" >通过个数</span></td>
+								<td class="hidden-xs" width="8%"><span class="label label-danger" id="td_wtg${choujian.jlIds}"  onclick="showNoAcceptMenu('${choujian.jlIds}')" >未通过个数</span></td>
+								<td class="hidden-xs" width="15%"> <%if(choujian.samplingTime==""||choujian.samplingTime==null){%>
+								--
+								<%}else{%>
+								${choujian.samplingTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}
+								<%}%> </td>
+								<td class="hidden-xs"> <%if(choujian.cjstate==1){%>
+								<button type="button" title='验收'  onclick="common_ajax.ajaxMainPanel('/jf/manage/choujian/checkAndAccept',{ids:'${choujian.jlIds}',cjIds:'${choujian.cjIds}'},undefined,'back');" class="btn btn-red" >
+									验收
+								</button>
+								<button type="button" title='验收完成'  onclick="complete('${choujian.cjIds}','${choujian.jlIds}','${choujian.chouJianNum}')" class="btn btn-red" >
+									验收完成
+								</button> <%}else{%>
+								<button type="button" title='查看'  onclick="common_ajax.ajaxMainPanel('/jf/manage/choujian/view1',{ids:'${choujian.jlIds}',cjIds:'${choujian.cjIds}'},undefined,'back');" class="btn btn-green" >
+									查看
+								</button> <%}%> </td>
+								<script type="text/javascript">
+									//通过ajax获取指定的维修数
+									$.ajax({
+										type : "post",
+										url : cxt + "/jf/manage/jiliang/getWeiXiuNum",
+										dataType : "json",
+										data : {
+											"ids" : "${choujian.byanIds!}"
+										},
+										async : false,
+										success : function(data) {
+											$("#td_wx${choujian.jlIds}").text(data.result);
+										}
+									});
+									//通过ajax获取指定的通过个数
+									$.ajax({
+										type : "post",
+										url : cxt + "/jf/manage/choujian/getAcceptNum",
+										dataType : "json",
+										data : {
+											"ids" : "${choujian.jlIds!}"
+										},
+										async : false,
+										success : function(data) {
+											$("#td_tg${choujian.jlIds}").text(data.result);
+										}
+									});
+									//通过ajax获取指定的未通过个数
+									$.ajax({
+										type : "post",
+										url : cxt + "/jf/manage/choujian/getNoAcceptNum",
+										dataType : "json",
+										data : {
+											"ids" : "${choujian.jlIds!}"
+										},
+										async : false,
+										success : function(data) {
+											$("#td_wtg${choujian.jlIds}").text(data.result);
+										}
+									});
+								</script>
+							</tr>
+							<% } %>
+						</tbody>
+					</table>
+
+					<div class="row" id="splitPageDiv">
+						<% include("/common/splitPage.html", {"divId" : "mainPanel", "formId" : "splitPage", "splitPageDiv" : "splitPageDiv"}){} %>
+					</div>
+
+				</div>
+
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+		</div>
+	</div>
+
+</form>

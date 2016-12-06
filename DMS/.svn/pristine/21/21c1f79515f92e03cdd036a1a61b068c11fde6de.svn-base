@@ -1,0 +1,171 @@
+<%if(1==2){%>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">${i18nMap["admin.user.property.department"]}</label>
+		<div class="col-sm-7">
+			<input type="hidden" id="deptId" name="user.departmentids" value="${escapeXml(user.departmentids!)}"/>
+			<input type="text" id="deptName" name="user.departmentnames" value="${escapeXml(user.departmentnames!)}" 
+				class="form-control focused" readonly="readonly" maxlength="100" vMin="1" vType="length" onblur="platform_verify.onblurVali(this);">
+		</div>
+		<span class="help-inline col-sm-2"> 
+			<a href="#" data-toggle="modal" class="ajaxDialog btn btn-blue" 
+				data-url="/jf/platform/dept/toUrl"
+				data-param='{ "toUrl" : "/platform/department/radio.html", "ids" : "${escapeXml(user.departmentids!)}", "deptId" : "deptId", "deptName" : "deptName" }'>
+				${i18nMap["admin.common.choice"]}
+			</a>
+		</span>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-2 control-label">${i18nMap["admin.user.property.station"]}</label>
+		<div class="col-sm-7">
+			<input type="hidden" id="stationId" name="user.stationids" value="${escapeXml(user.stationids!)}"/>
+			<input type="text" id="stationName" name="user.stationnames" value="${escapeXml(user.stationnames!)}" 
+				class="form-control" readonly="readonly" maxlength="100" vMin="1" vType="length" onblur="platform_verify.onblurVali(this);">
+		</div>
+		<span class="help-inline col-sm-2"> 
+			<a href="#" data-toggle="modal" class="ajaxDialog btn btn-blue" 
+				data-url="/jf/platform/station/toUrl"
+				data-param='{ "toUrl" : "/platform/station/radio.html", "ids" : "${escapeXml(user.stationids!)}", "stationId" : "stationId", "stationName" : "stationName" }'>
+				${i18nMap["admin.common.choice"]}
+			</a>
+		</span>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-2 control-label">${i18nMap["admin.user.property.dataAccess"]}</label>
+		<div class="col-sm-7">
+			<input type="hidden" id="deptId2" name="user.deptids" value="${escapeXml(user.deptids!)}" />
+			<input type="hidden" id="deptName2" name="user.deptnames" value="${escapeXml(user.deptnames!)}" />
+			
+			<input type="hidden" id="userId" name="user.userids" value="${escapeXml(user.userids!)}" />
+			<input type="text" id="userName" name="user.usernames" value="${escapeXml(user.usernames!)}" 
+				class="form-control" readonly="readonly" maxlength="10000" vMin="1" vType="length" onblur="platform_verify.onblurVali(this);">
+		</div>
+		<span class="help-inline col-sm-2"> 
+			<a href="#" data-toggle="modal" class="ajaxDialog btn btn-blue" 
+				data-url="/jf/platform/user/toUrl"
+				data-param='{ "toUrl" : "/platform/user/checkbox.html", "checkedDeptIds" : "${escapeXml(user.deptids!)}", "checkedUserIds" : "", "userId" : "userId", "userName" : "userName", "deptIds" : "deptIds", "deptNames" : "deptNames" }'>
+				${i18nMap["admin.common.choice"]}
+			</a>
+		</span>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">${i18nMap["admin.user.property.idcard"]}</label>
+		<div class="col-sm-7">
+			<input type="text" id="idcardId" name="userInfo.idcard" value="${escapeXml(userInfo.idcard!)}" 
+				class="form-control" maxlength="18" vMin="15" vType="idCard" onblur="platform_verify.onblurVali(this);">
+		</div>
+		<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> 15-18位字母数字 </span>
+	</div>
+<%}%>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">养护路段</label>
+	<div class="col-sm-7">
+		<input type="hidden" id="yangHuLuDuanId"  name="userInfo.yangHuLuDuanId" value="${escapeXml(userInfo.yangHuLuDuanId!)}"/>
+		<input type="text" id="yangHuLuDuanName"  value="${escapeXml(userInfoName!)}" 
+			class="form-control focused" readonly="readonly"   maxlength="100" vMin="1" vType="length" onblur="platform_verify.onblurVali(this);">
+	</div>
+	<span class="help-inline col-sm-2"> 
+		<a href="#"  class="btn btn-blue" onclick="chooseYhlDuan()" >选择</a>
+	</span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">姓名</label>
+	<div class="col-sm-7">
+		<input type="text" name="userInfo.names" value="${escapeXml(userInfo.names!)}" 
+			class="form-control" maxlength="10" vMin="2" vType="length" onblur="platform_verify.onblurVali(this);">
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> 2-10位任意字符 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">${i18nMap["admin.user.property.userName"]}</label>
+	<div class="col-sm-7">
+		<input type="text" id="usernameId" name="user.username" value="${escapeXml(user.username!)}" 
+			class="form-control" maxlength="16" vMin="4" vType="letterNumber" onblur="platform_verify.onblurVali(this);">
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> 4-16位字母数字 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">${i18nMap["admin.user.property.password"]}</label>
+	<div class="col-sm-7">
+		<input type="password" id="pass1Id" name="password" class="form-control" autocomplete="off"
+			maxlength="18" value="000000" readonly vMin='<%if(operatorType == "add"){print("6");}else{print("0");}%>' vType="letterNumber" onblur="platform_verify.onblurVali(this);">
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> 6-18位字母数字 </span>
+</div>
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">再次确认密码</label>
+	<div class="col-sm-7">
+		<input type="password" value="000000" readonly="readonly" id="pass2Id" class="form-control" autocomplete="off"
+			maxlength="18" vMin='<%if(operatorType == "add"){print("6");}else{print("0");}%>' vType="letterNumber" onblur="platform_verify.onblurVali(this);">
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> 6-18位字母数字 </span>
+</div>
+
+
+<div class="form-group">
+	<label class="col-sm-2 control-label">${i18nMap["admin.user.property.mobilePhone"]}</label>
+	<div class="col-sm-7">
+		<input type="text" id="mobileId" name="userInfo.mobile" value="${escapeXml(userInfo.mobile!)}" 
+			class="form-control" maxlength="11" vMin="11" vType="phone" onblur="platform_verify.onblurVali(this);">
+	</div>
+	<span class="help-inline col-sm-2"> <i class="fa fa-info-circle"></i> 11位数字 </span>
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript" src="${cxt!}/jsFile/rapido/platform/user/form.js"></script>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		common_form.init();
+	});
+	function chooseYhlDuan(){
+		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + "/jf/manage/yhluduan/choose")),
+			data : {},
+			dataType : "HTML",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			async: false,
+			cache: false,
+			success:function(response){
+				result = response;
+				layer.open({
+				  type: 1, //page层
+				  area: ['900px', '650px'],
+				  title: "选择养护路段",
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  scrollbar: false,
+				  content: result,
+				  btn:["确定"],
+				  btn1:function(index){
+					  var yhluduan ="";
+					  var yhluduanName ="";
+					  $("input[name='yhluduanRadio']:checked").each(function(){ 
+						  yhluduan = yhluduan + $(this).val() + ",";
+						  yhluduanName= yhluduanName + $("#name"+$(this).val()).text()+ ",";
+						  }); 
+					  yhluduan=   yhluduan.substring(0,yhluduan.length-1);
+					  yhluduanName=  yhluduanName.substring(0,yhluduanName.length-1);
+				
+					  $("#yangHuLuDuanId").val(yhluduan);
+					  $("#yangHuLuDuanName").val(yhluduanName);
+					  layer.close(index);
+				  }
+				});
+			}
+		});
+	}
+</script>

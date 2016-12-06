@@ -1,0 +1,352 @@
+<style>
+<!--
+.fix{width:500px; height:200px;position: absolute;top:0;left:0; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+-->
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/rwtask');">任务</a></li>
+			<li class="active">新增任务</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">新增</span></h4>
+			</div>
+			
+			<div class="panel-body">
+				<table class="table table-bordered table-hover" id="dataTable" style="display: none" >
+					<thead>
+						<tr>	
+							<td class="hidden-xs">
+							</td>
+							<td class="hidden-xs">
+								巡查日期
+							</td>
+							<td class="hidden-xs">
+								修补损坏标识
+							</td>
+							<td class="hidden-xs">
+								维修模块
+							</td>
+							<td class="hidden-xs">
+								病害或缺陷类型(病害指标)
+							</td>
+							<td class="hidden-xs">
+								病害或缺陷描述	
+							</td>
+							<td class="hidden-xs">
+								紧急程度
+							</td>
+							<td class="hidden-xs" width="10%" >
+								操作	
+						    </td>
+						</tr>
+					</thead>
+					<tbody id="tbodyDom">
+						
+					</tbody>
+				</table>	
+				<form id="editForm" action="${cxt!}/jf/manage/rwtask/save" method="POST" role="form" class="form-horizontal">
+				<input type="hidden" id="xunChaInfoIds" name="xunChaInfoIds" class="form-control">
+				<input type="hidden" id="xunChaInfoIds_h" name="xunChaInfoIds_h" class="form-control">
+				<input type="hidden" id="taskPre" name="rwTask.taskPre" value="${taskPre}" class="form-control">
+				<input type="hidden" id="taskNum" name="rwTask.taskNum" value="${taskNum}" class="form-control">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">巡查信息</label>
+						<%if(1==2){%>
+							<div class="col-sm-4">
+								<select name="xunChaInofType" id="xunChaInofType" style="width: 100%">
+									<% for(choose in chooseInfo){ %>
+										<option value="${choose.ids }">${choose.name }</option>
+									<% } %>
+								</select>
+							</div>
+						<%}%>
+						<div class="col-sm-2">
+							<!-- <button type="button" onclick="showEditChildrenMenu()" class="btn btn-success add-row">
+								关联巡查信息 <i class="fa fa-plus"></i>
+							</button> -->
+							
+							<a href="#"  class="btn btn-blue" onclick="showEditChildrenMenu()" >点击关联</a>
+						</div>
+					</div>		
+						
+
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">
+							致
+						</label>
+						<div class="col-sm-2"   >
+						<select id="byu" name="rwTask.byu"  maxlength="20" class="form-control">
+								
+						</select>
+						
+						</div> 
+						<label class="col-sm-2 control-label">
+							任务单编号
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="taskNo" name="rwTask.taskNo" readonly="readonly" value="${taskNo!}" class="form-control">
+						</div>
+					</div>		
+						
+
+					
+													
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							预计任务结束时间
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="createTime" name="rwTask.yuJiTaskEndTime"  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"class="form-control" >
+						</div>
+						<label class="col-sm-2 control-label" for="form-field-1">
+							派单日期
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="paidantime" name="rwTask.paiDanDate"  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"class="form-control" >
+						</div>
+						
+					</div>
+					
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							创建时间
+						</label>
+						<div class="col-sm-2">
+							<input type="text" id="createtime" name="rwTask.createTime"  onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"class="form-control" >
+						</div>
+						<label class="col-sm-2 control-label">负责人</label>
+						<div class="col-sm-2">
+							<input type="text" id="fuZeRen" name="rwTask.fuZeRen" class="form-control">
+						</div>
+					</div>
+				
+					
+					
+					
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-6">
+							<textarea rows="4" cols="20" id="remark" name="rwTask.remark" class="form-control"></textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+<!-- 						<div class="col-sm-2 col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<img src="" class='fix' alt="图片损坏,点击返回" style="display: none">
+<script type="text/javascript">
+//管理单位的下拉
+$.ajax({  
+    type:'post',      
+    url:'${cxt}/jf/manage/bycenter/getList',  
+    cache:false,  
+    dataType:'json',  
+    success:function(data){  
+    	var options="";
+    	$.each(data.result,function(i,dataObj){
+    		options+="<option value="+dataObj.name+"  >"+dataObj.name+"</option>";
+    	});
+    	$("#byu").append(options);
+    }
+});	
+	
+	function delMode(id){
+		layer.confirm('确定删除此条数据？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			$(".trDom"+id).remove();
+			//重新设置隐藏域的值
+			resetHidden();
+			layer.closeAll();
+		});
+		//删除
+		
+	}
+	function resetHidden(){
+		var xunChaInfoIds="";
+		var xunChaInfoIds_h="";
+		$(".eachTd").each(function(i,n){
+			xunChaInfoIds+=$(this).attr("p")+"\',\'";
+			xunChaInfoIds_h+=$(this).attr("p")+",";
+		});
+
+		xunChaInfoIds=xunChaInfoIds.substring(0,xunChaInfoIds.length-3);
+		$("#xunChaInfoIds").val(xunChaInfoIds);
+		$("#xunChaInfoIds_h").val(xunChaInfoIds_h);
+	}
+	
+	//显示子级菜单编辑弹出层
+   	function showEditChildrenMenu(){	
+   		var xunChaInfoIds=$("#xunChaInfoIds").val();
+   		var url="/jf/manage/rwtask/bindingXunChaInfo";
+   		//var xunChaInofType=$("#xunChaInofType").val();
+   		//var data={"xunChaInofType":xunChaInofType};
+   		var width=1100;
+   		var height=650;
+   		var title="选择巡查信息";
+   		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + url)),
+			data : {"_query.notInTaskIds":xunChaInfoIds},
+			dataType : "HTML",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			async: false,
+			cache: false,
+			success:function(response){
+				result = response;
+				layer.open({
+				  type: 1, //page层
+				  area: [width+'px', height+'px'],
+				  title: title,
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  content: result,
+				  btn:['确定'],
+				  btn1:function(){
+					  var xunChaInfoIds=window.getXunChaInfoIds.split(",");
+					  /* $("#tbodyDom").html(""); */
+					  for(var i=0;i<xunChaInfoIds.length;i++){
+						  var xunChaInfoId=xunChaInfoIds[i];
+						  var trObj=$(".trDom"+xunChaInfoId);
+						  trObj.find("td:eq(9)").remove();
+						  trObj.find("td:eq(8)").remove(); 
+						  trObj.find("td:eq(1)").remove();
+						  //具体的说不上来，但是不加这句话，会被多次调用（它弹出几次调用几次）
+						  trObj.find("td:eq(0)").find("i").removeClass("td_i").addClass("td_ii");
+						  //将所选的图标换成统一换成想下的（防止在弹出框选中时是展开的状态）
+						  trObj.find("td:eq(0)").find("i").removeClass("fa-arrow-circle-up").addClass("fa-arrow-circle-down");
+						  trObj.append("<td class='eachTd' p='"+xunChaInfoId+"'><button type='button' title='删除' class='btn btn-red delete-row' onClick='delMode(\""+xunChaInfoId+"\")' > <i class='fa fa-trash-o'></i></button></td>");
+						  $("#tbodyDom").html(trObj);
+					  }
+					  //alert(window.getXunChaInfoIds);
+					  //将巡查信息的编号放大隐藏域中
+					  $("#xunChaInfoIds").attr("value",window.getXunChaInfoIds);
+					  $("#viewDiv #dataTable").show();
+					  layer.closeAll();
+					  resetHidden();
+				  }
+				});
+			}
+		});
+   	}
+   	
+	function mySubmit(){
+		var zhi = $("[name='rwTask.byu']").val();
+		if(zhi==""){
+			layer.msg("致信息不能为空");
+			return;
+		}
+		var rwtask = $("[name='rwTask.taskNo']").val();
+		if(rwtask==""){
+			layer.msg("任务单编号不能为空");
+			return;
+		}
+		
+		var yujitime = $("[name='rwTask.yuJiTaskEndTime']").val();
+		if(yujitime==""){
+			layer.msg("预计任务结束时间不能为空");
+			return;
+		}
+		var paidantime = $("[name='rwTask.paiDanDate']").val();
+		if(paidantime==""){
+			layer.msg("派单日期不能为空");
+			return;
+		}
+		var createtime = $("[name='rwTask.createTime']").val();
+		if(createtime==""){
+			layer.msg("创建时间不能为空");
+			return;
+		}
+		
+		var fuzeren = $("[name='rwTask.fuZeRen']").val();
+		if(fuzeren==""){
+			layer.msg("负责人信息不能为空");
+			return;
+		}
+		var xunChaInfoIds_h = $("#xunChaInfoIds_h").val();
+		if(xunChaInfoIds_h==""){
+			layer.msg("请选择关联的巡查信息");
+			return;
+		}
+		
+		
+		
+		
+		
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/rwtask");
+			}
+		}
+	}
+	
+	
+	function getNowFormatDate() {
+	    var date = new Date();
+	    var seperator1 = "-";
+	    var seperator2 = ":";
+	    var month = date.getMonth() + 1;
+	    var strDate = date.getDate();
+	    if (month >= 1 && month <= 9) {
+	        month = "0" + month;
+	    }
+	    if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+	    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+	            + " " + date.getHours() + seperator2 + date.getMinutes()
+	            + seperator2 + date.getSeconds();
+	    
+	    $("#createtime").val(currentdate)
+	    $("#paidantime").val(currentdate)
+	}
+	getNowFormatDate();
+</script>	

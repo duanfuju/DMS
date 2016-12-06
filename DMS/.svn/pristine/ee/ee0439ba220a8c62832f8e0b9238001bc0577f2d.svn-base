@@ -1,0 +1,404 @@
+<script>
+	
+	$(function(){
+		var imgs = '${way.imgs!}';
+		
+		$("#pictureDiv").hide();
+		
+		if( imgs != ""){
+			var arr = imgs.split(',');
+			$.each(arr,function(i,n){
+				$("#pictureDiv").show();
+				$("#imgsDiv").append('<img style="width:200px;height:200px;" src="'+arr[i]+'"><br><br><br>');
+			});
+		}
+	});
+	
+</script>
+
+
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">${i18nMap["admin.common.mainPage"]}</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/xunChaInfo');">查询</a></li>
+			<li class="active">查看</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">查看路面病害</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">	
+			
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+							
+						</tr>
+					</thead>
+					<tbody>
+						
+						<tr id="tbodyTr">
+								<td class="hidden-xs">${wayTask.taskNo!}</td>
+								<td class="hidden-xs">${wayTask.fuZeRen!}</td>
+								<td class="hidden-xs">${wayTask.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${wayTask.wzName!}</td>
+								<td class="hidden-xs">K${wayTask.xunChaStartZHK!}  +  ${wayTask.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${wayTask.xunChaEndZHK!}  +  ${wayTask.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${wayTask.binghaiOrQueXianType }  :  ${wayTask.yuGuGongChengLiang }    (${wayTask.yuGuGongChengLiangDw })</td>
+								
+							</tr>
+						
+					</tbody>
+				</table>	
+			
+			
+				<form role="form" class="form-horizontal">
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="text" id="taskInfoRelate"   value="${wayTask.taskNo!}"
+								class="form-control focused" readonly="readonly"   maxlength="100">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.luXian!}" readonly class="form-control">
+						</div>
+						
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.wzType!}" readonly  class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.wzName!}" readonly class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="way.wzMiaoShu"  value="${way.wzMiaoShu!}" readonly="readonly" class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.weatherState!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.qiWen!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.startZHK!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.startZHM!}" readonly class="form-control">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.endZHK!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px" >+</label>
+						
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.endZHM!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修开始时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.weiXiuStartTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">维修结束时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.weiXiuEndTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">施工机械</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.shiGongJiXie!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">维修人员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.weiXiuRenYuan!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">现场专职安全员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.anQuanYuan!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">现场施工负责人</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.fuZeRen!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">质量评价</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.pingJia!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">路面状况</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.lumianState!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">病害位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.bingHaiWeiZhi!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">病害类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.bingHaiType!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">病害名称</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.bingHaiName!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">病害级别</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.binghaiLevel!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">未及时修补原因</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.wjsxbCause!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">维修工艺</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.wxGongYi!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">修补类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.xiuBuType!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">修补位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.xiuBuWeiZhi!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">表面修补尺寸-长</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.xiuBuchang!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">表面修补尺寸-宽</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.xiuBukuan!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">平整度</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.pingZhengDu!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">病害原因分析类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHM"  value="${way.bhFenXiType!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">病害原因分析</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="luXian.startZHK" value="${way.bhFenXi!}" readonly  class="form-control">
+						</div>
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="lblx" name="way.luBingType" readonly="readonly" class="form-control" value="${way.luBingType}">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="sunHuaiCauseType" name="way.sunHuaiCauseType" class="form-control" value="${way.sunHuaiCauseType}" disabled="disabled">
+								
+							</input>
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea  name="way.remark" class="form-control" readonly rows="4" cols="20">${remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					<div class="form-group" id="pictureDiv">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-2" id="imgsDiv">
+							
+						</div>
+					</div>
+					
+					
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'd.names')">
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'd.names')">
+									尺寸-长(cm)
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'd.names')">
+									尺寸-宽(cm)
+		      					</th>
+								<th class="hidden-xs" width="20%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'userName')">
+									深度(cm)
+		      					</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'names')">
+									修补材料
+								</th>
+								<th class="hidden-xs" width="10%" onclick="common_splitPage.orderbyFun('mainPanel', 'splitPage', 'names')">
+									施工材料温度(℃)
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">上面层</td>
+									<td class="hidden-xs">${ceng0.chiCunChang}</td>
+									<td class="hidden-xs">${ceng0.chiCunKuan}</td>
+									<td class="hidden-xs">${ceng0.shenDu}</td>
+									<td class="hidden-xs">${ceng0.xiuBuCaiLiao}</td>
+									<td class="hidden-xs">${ceng0.caiLiaoWenDu}</td>
+								</tr>
+						</tbody>
+						
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">中面层</td>
+									<td class="hidden-xs">${ceng1.chiCunChang}</td>
+									<td class="hidden-xs">${ceng1.chiCunKuan}</td>
+									<td class="hidden-xs">${ceng1.shenDu}</td>
+									<td class="hidden-xs">${ceng1.xiuBuCaiLiao}</td>
+									<td class="hidden-xs">${ceng1.caiLiaoWenDu}</td>
+								</tr>
+						</tbody>
+						
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">下面层</td>
+									<td class="hidden-xs">${ceng2.chiCunChang}</td>
+									<td class="hidden-xs">${ceng2.chiCunKuan}</td>
+									<td class="hidden-xs">${ceng2.shenDu}</td>
+									<td class="hidden-xs">${ceng2.xiuBuCaiLiao}</td>
+									<td class="hidden-xs">${ceng2.caiLiaoWenDu}</td>
+								</tr>
+						</tbody>
+						
+						<tbody>
+								<tr id="trDom${way.ids}">
+									<td class="hidden-xs">基层</td>
+									<td class="hidden-xs">${ceng3.chiCunChang}</td>
+									<td class="hidden-xs">${ceng3.chiCunKuan}</td>
+									<td class="hidden-xs">${ceng3.shenDu}</td>
+									<td class="hidden-xs">${ceng3.xiuBuCaiLiao}</td>
+									<td class="hidden-xs">${ceng3.caiLiaoWenDu}</td>
+								</tr>
+						</tbody>
+					</table>
+					
+					
+					
+									<div class="form-group">
+						<div class="col-sm-5 col-sm-offset-5">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div> 
+				</form>
+			</div>
+		
+		</div>
+	</div>
+</div>	
+
+					
+				

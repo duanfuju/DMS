@@ -1,0 +1,83 @@
+package com.junl.dms.mvc.checkinfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+
+public class CheckInfoServiceImpl implements CheckInfoService {
+	
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(CheckInfoService.class);
+
+	private static CheckInfoService instance = null;
+	
+	public static CheckInfoService getIntance()
+	{
+		if(instance == null)
+		{
+			instance = new CheckInfoServiceImpl();
+		}
+		return instance;
+	}
+	
+	@Override
+	public List<Map> getParentMenuMap() {
+		
+		List<Map> resultMapList = new ArrayList<Map>();
+		String sql ="  with cte as ";
+		sql += " ( ";
+		sql += " select a.ids,a.name,a.parentId from DMS_PZ_checkInfo a where EXISTS (select * from DMS_PZ_checkInfo ck where a.ids = ck.ids and ck.parentId is NULL and ck.isparent = 1 and ck.isshow = 1 and ck.isdel = 0 )  ";
+		sql += " union all ";
+		sql += " select k.ids,k.name,k.parentId from DMS_PZ_checkInfo k inner join cte c on c.ids = k.parentId and k.parentId is NOT NULL and k.isparent = 1 and k.isshow = 1 and k.isdel = 0 ";
+		sql += " )select * from cte ";
+		
+		List<Record> recordList = Db.find(sql);
+		if(recordList != null && recordList.size() > 0)
+		{
+			for (int i = 0; i < recordList.size(); i++) {
+				Map<String,Object> map = new HashMap<String,Object>();
+				if(recordList.get(i).get("parentId") == null)
+				{
+					map.put("id", recordList.get(i).get("ids"));
+					map.put("pId", 0);
+					map.put("name", recordList.get(i).get("name"));
+				}
+				else
+				{
+					map.put("id", recordList.get(i).get("ids"));
+					map.put("pId", recordList.get(i).get("parentId"));
+					map.put("name", recordList.get(i).get("name"));
+				}
+				map.put("isParent", true);
+				resultMapList.add(map);
+			}
+		}
+		return resultMapList;
+	}
+
+	@Override
+	public List<Map> getTopParentMenuMap() {
+		List<Map> resultMap = new ArrayList<Map>();
+		String sql =" select * from DMS_PZ_checkInfo where parentId is NULL and isparent = 1 and isshow = 1 and isdel = 0 ";
+		List<Record> recordList = Db.find(sql);
+		if(recordList != null && recordList.size() > 0)
+		{
+			for (int i = 0; i < recordList.size(); i++) {
+				Map<String,Object> map = new HashMap<String,Object>();
+				map.put("id", recordList.get(i).get("ids"));
+				map.put("pId", 0);
+				map.put("isParent", true);
+				map.put("name", recordList.get(i).get("name"));
+				resultMap.add(map);
+			}
+		}
+		return resultMap;
+	}
+
+}

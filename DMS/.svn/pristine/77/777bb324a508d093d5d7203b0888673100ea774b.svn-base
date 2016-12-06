@@ -1,0 +1,195 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/jiliang');">计量列表</a></li>
+			<li class="active">计量操作</li>
+		</ol>
+	</div>
+</div>
+	
+<div class="row" style="font-size: 13px;">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">计量操作</span></h4>
+			</div>
+			
+			<div class="panel-body">	
+				<form id="editForm" role="form" class="form-horizontal">	
+					
+					<div class="form-group">
+						<label class="col-sm-1 control-label"style="width: 120px;">维修报验单编号</label>
+						<div class="col-sm-2">
+							<input type="text" width="200px"  value="${jiliang.byNo!}" readonly class="form-control">
+						</div>
+						<label class="col-sm-1 control-label"style="width: 120px;">报验人</label>
+						<div class="col-sm-2">
+							<input type="text"  width="200px"	value="${jiliang.baoYanPeople!}" readonly class="form-control">
+						</div>
+						<label class="col-sm-1 control-label"style="width: 120px;">报验日期</label>
+						<div class="col-sm-2">
+							<input type="text"  width="200px" value="${jiliang.baoYanTime!,dateFormat='yyyy-MM-dd HH:mm:ss'}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label"style="width: 120px;">维修个数</label>
+						<div class="col-sm-1">
+							<input type="text" value="${weiXiuNum!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-1">个</span>
+						<label class="col-sm-1 control-label"style="width: 120px;">退回个数</label>
+						<div class="col-sm-1">
+							<input type="text" value="${jiliang.returnNum!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-1">个</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-1 control-label"style="width: 120px;">计量数量合计</label>
+						<div class="col-sm-1">
+							<input type="text" value="${jiliang.meteringNum!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-1">条</span>
+						<label class="col-sm-1 control-label"style="width: 120px;">计量金额合计</label>
+						<div class="col-sm-1">
+							<input type="text"  width="200px" value="${jiliang.meteringMoney!}" readonly class="form-control">
+						</div>
+						<span class="help-inline col-sm-1">元</span>
+					</div>
+					
+					<table class="table table-bordered table-hover"  >
+					<thead>
+						<tr>	
+							<td class="hidden-xs">
+								任务单序列号
+							</td>
+							<td class="hidden-xs">
+								桩号范围
+							</td>
+							<td class="hidden-xs">
+								设施名称或位置
+							</td>
+							<td class="hidden-xs">
+								病害或缺陷类型
+							</td>
+							<td class="hidden-xs">
+								计量数(个)	
+							</td>
+							<td class="hidden-xs">
+								金额(元)
+							</td>
+							<td class="hidden-xs">
+								操作
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+						 <% for(jl in list){ %>
+							<tr>
+								<td class="hidden-xs">${jl.taskNo!}</td>
+								<td class="hidden-xs">K${jl.startZHK!}+${jl.startZHM!} ~ K${jl.endZHK!}+${jl.endZHM!}</td>
+								<td class="hidden-xs">${jl.luXian!}/${jl.wzType!}/${jl.wzName!}</td>
+								<td class="hidden-xs">${jl.binghaiOrQueXianType! }</td>
+								<td class="hidden-xs">
+									<% if(jl.meteringNum==""||jl.meteringNum==null||jl.meteringNum==0){%>
+										<span class="label label-danger"  onclick="javascript:layer.msg('计量数量为零')" >0</span>
+									<%}else{%>			
+										<span class="label label-success" id="td_meteringNum${jl.ids}" onclick="showJiLiang('${jl.ids}')" >${jl.meteringNum!}</span>
+									<%}%>
+								</td>
+								<td class="hidden-xs">${jl.meteringMoney!}</td>
+								<td class="hidden-xs">
+									<button type="button" title='计量' class="btn btn-red" onclick="meterage('${jl.ids!}')"> 
+										计量
+									</button>
+									<button type="button" title='退回' class="btn btn-green" onclick="returns('${jl.ids!}')"> 
+										退回
+									</button>
+								</td>
+							</tr>
+						<% } %> 
+					</tbody>
+				</table>	
+					<div class="form-group">
+						<div class="col-sm-2 col-sm-offset-3">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								保存
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	
+	function mySubmit(){
+		layer.confirm('是否改变此计量数据的状态？', {
+			  btn: ['确定','取消'] ,//按钮
+			  scrollbar:false
+		}, function(){
+			//ajax设置当前中间计量的状态
+			$.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/jiliang/changeJiLiangState',
+			    cache:false,  
+			    data:{ids:'${jiliang.jlIds}'},
+			    dataType:'json',  
+			    success:function(data){  
+			    	layer.msg(data.result_desc);
+			    	//跳转计量的首页列表
+		    		common_ajax.ajaxMainPanel("/jf/manage/jiliang");
+			    }
+			});
+		})
+		
+		
+	}
+	function returns(ids){
+		var url="/jf/manage/jiliang/toReturn";
+		
+		popup.show(url,{"ids":ids,"jlIds":"${jiliang.jlIds!}"},1100,650,"退回"); 
+	}
+	function meterage(ids){
+		var url="/jf/manage/jiliang/tomItems";
+		popup.show(url,{"ids":ids,"jlIds":"${jiliang.jlIds!}"},1100,650,"计量"); 
+	}
+	function showJiLiang(weiXiuIds){
+		
+		show(weiXiuIds,"/jf/manage/jiliang/getXiMuByJlIdsAndWeiXiuIds","计量细目查看");
+	}
+	function show(weiXiuIds,url,title){
+		var width=850;
+		var height=500;
+		$.ajax({
+			type : "post",
+			url : encodeURI(encodeURI(cxt + url)),
+			data : {"weiXiuIds":weiXiuIds,'jlIds':'${jiliang.jlIds!}'},
+			dataType : "HTML",
+			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+			async: false,
+			cache: false,
+			success:function(response){
+				result = response;
+				layer.open({
+				  type: 1, //page层
+				  area: [width+'px', height+'px'],
+				  title: title,
+				  shade: 0.6, //遮罩透明度
+				  moveType: 1, //拖拽风格，0是默认，1是传统拖动
+				  shift: 0, //0-6的动画形式，-1不开启
+				  content: result,
+				  btn:['确定'],
+				  btn1:function(){
+					  layer.closeAll();
+				  }
+				});
+			}
+		});
+	}	
+</script>	

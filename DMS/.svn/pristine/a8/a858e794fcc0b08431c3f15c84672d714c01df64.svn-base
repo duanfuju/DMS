@@ -1,0 +1,47 @@
+package com.junl.dms.mvc.shenqingzhifubiaolist;
+
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.platform.mvc.base.BaseService;
+
+public class ShenqingzhifubiaoService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(ShenqingzhifubiaoService.class);
+
+	public static final ShenqingzhifubiaoService service = new ShenqingzhifubiaoService();
+
+	public boolean save(Shenqingzhifubiao dayplan) {
+//		dayplan.set("state", 0);
+		dayplan.set("createTime", new Timestamp(System.currentTimeMillis()));
+		return dayplan.save();
+	}
+
+	public boolean delete(String ids) {
+		return Shenqingzhifubiao.dao.deleteById(ids);
+	}
+
+	public Shenqingzhifubiao findById(String ids) {
+		Shenqingzhifubiao dayplan = Shenqingzhifubiao.dao.findById(ids);
+		return dayplan;
+	}
+	
+	public boolean update(Shenqingzhifubiao dayplan){
+		return dayplan.update();
+	}
+/*	public List<Shenqingzhifubiao> findByDate(){
+		List<Shenqingzhifubiao> list = Shenqingzhifubiao.dao.findByDate();
+		return list;
+	}
+
+	public List<Shenqingzhifubiao> findByMonthIds(String ids) {
+		List<Shenqingzhifubiao> list = Shenqingzhifubiao.dao.findByMonthIds(ids);
+		return list;
+	}
+*/
+	
+}

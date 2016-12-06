@@ -1,0 +1,100 @@
+<div class="row">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li>
+				<a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a>
+			</li>
+			<li class="active">
+				路线配置
+			</li>
+		</ol>
+	</div>
+</div>
+<form id="splitPage" action="${cxt}/jf/manage/luxian" method="POST" role="form" class="form-horizontal">
+	<div class="row" style="margin-right:1px;">
+		<div class="col-md-3" style="padding-right:1px;">
+			<div class="panel panel-white" style="height: 100%">
+
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold">地图菜单</span></h4>
+				</div>
+				<div class="tabbable">
+					<ul id="myTab" class="nav nav-tabs">
+						<li class="">
+							<a aria-expanded="false" href="#myTab_example1" data-toggle="tab">  巡查 </a>
+						</li>
+						<li class="active">
+							<a aria-expanded="true" href="#myTab_example2" data-toggle="tab"> 维修 </a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade" id="myTab_example1">
+							<!-- 巡查 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="25%"><b>开始日期：</b></td>
+									<td width="75%"><input id="foundtime" type="text" name="startTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"></td>
+								</tr>
+								<tr>
+									<td><b>结束日期：</b></td>
+									<td><input id="foundtime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><button type="button" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+						</div>
+						<div class="tab-pane fade active in" id="myTab_example2">
+							<!-- 维修 -->
+							<table style="width: 100%;border-collapse:separate;border-spacing:10px;" >
+								<tr>
+									<td width="25%"><b>开始日期：</b></td>
+									<td width="75%"><input id="foundtime" type="text" name="startTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"></td>
+								</tr>
+								<tr>
+									<td><b>结束日期：</b></td>
+									<td><input id="foundtime" type="text" name="endTime" class="form-control" onfocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})"></td>
+								</tr>
+								<tr>
+									<td colspan="2"><button type="button" style="width: 100%;margin-top:10px;"  class="btn btn-light-blue">查询</button></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-9" style="padding-right:1px;padding-left:12px;">
+			<div class="panel panel-white" style="height: 100%">
+				<div class="panel-heading">
+					<h4 class="panel-title"><span class="text-bold"> 地图信息</span></h4>
+				</div>
+				<div id="baiduMapContainer" class="panel-body">
+					<!-- 地图信息 -->
+				</div>
+				<script type="text/javascript">
+						var map = new BMap.Map("baiduMapContainer");  // 创建地图实例  
+						var point = new BMap.Point(120.598272,31.778381);  // 创建点坐标  
+						map.centerAndZoom(point, 11);                 // 初始化地图，设置中心点坐标和地图级别  
+						var tmp = new BMap.Polyline([
+							 new BMap.Point(120.460867,31.482733),
+							 new BMap.Point(120.44017,31.515246),
+							 new BMap.Point(120.622993,31.937862),
+							 new BMap.Point(120.671286,31.948648),
+							 new BMap.Point(120.675885,31.916287),
+							 new BMap.Point(120.541355,31.554642),
+							 new BMap.Point(120.502261,31.496528),
+							 new BMap.Point(120.460867,31.482733)
+						],{strokeColor:"blue",strokeWeight:2,storkeOpacity:0.5});
+						map.addOverlay(tmp);
+				</script>  
+			</div>
+		</div>
+	</div>
+
+</form>
+<style type="text/css">  
+    #baiduMapContainer{
+    		height:705px;
+    }    
+</style>

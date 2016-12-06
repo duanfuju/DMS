@@ -1,0 +1,98 @@
+<div id="childrenPanel">
+<form id="childrenSplitPage" action="" method="POST" role="form" class="form-horizontal">
+			<!-- start: BORDERED TABLE PANEL -->
+			<div class="panel panel-white">
+				<div class="panel-body">
+					<table class="table table-bordered table-hover" id="dataTable">
+						<thead>
+							<tr>
+								<td class="hidden-xs" width="10%" >
+									桩号范围
+								</td>
+								<td class="hidden-xs" width="10%" >
+									位置
+								</td>
+								<td class="hidden-xs" width="5%" >
+									天气状况
+								</td>
+								<td class="hidden-xs" width="5%" >
+									气温 
+								</td>
+								<td class="hidden-xs" width="10%" >
+									施工机械
+								</td>
+								<td class="hidden-xs" width="10%" >
+									维修人员
+								</td>
+								<td class="hidden-xs" width="10%" >
+									现场专职安全员
+								</td>
+								<td class="hidden-xs" width="10%" >
+									现场施工负责人
+								</td>
+								<td class="hidden-xs" width="10%" >
+									质量评价
+								</td>
+								<td class="hidden-xs" width="10%" >
+									损害类型
+								</td>
+								<td class="hidden-xs" width="10%" >
+									图片
+								</td>
+							</tr>
+						</thead>
+						<tbody>
+							<%for(rwtask in byrList){ %>
+								<tr class="trDom${rwtask.ids!}">
+									<td class="hidden-xs">K${rwtask.startZHK!}  +  ${rwtask.startZHM!}		~		K${rwtask.endZHK!}  +  ${rwtask.endZHM!}</td>
+									<td class="hidden-xs">${rwtask.luXian!}/${rwtask.wzType!}/${rwtask.wzName!}/${rwtask.wzMiaoShu!}</td>
+									<td class="hidden-xs">${rwtask.weatherState!}</td>
+									<td class="hidden-xs">${rwtask.qiWen!}℃</td>
+									<td class="hidden-xs">${rwtask.shiGongJiXie!}</td>
+									<td class="hidden-xs">${rwtask.weiXiuRenYuan!}</td>
+									<td class="hidden-xs">${rwtask.anQuanYuan!}</td>
+									<td class="hidden-xs">${rwtask.fuZeRen!}</td>
+									<td class="hidden-xs">${rwtask.pingJia!}</td>
+									<td class="hidden-xs">${rwtask.diseaseType!}</td>
+									<td class="hidden-xs" id="td${rwtask.ids!}"></td>
+									<script type="text/javascript">
+										//图片存在多个
+										var a = "";
+										var img = "${rwtask.imgs!}".split(",");
+										$.each(img, function(i, imgs) {
+											a += '<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\'' + imgs + '\')">图片' + (i + 1) + '</a>';
+										});
+										$("#td${rwtask.ids!}").append(a);
+									</script>
+								</tr>
+							<% } %>
+						</tbody>
+					</table>
+					
+					
+						
+				</div>
+			</div>
+			<!-- end: BORDERED TABLE PANEL -->
+</form>			
+</div>
+<script type="text/javascript">
+function showImg(path){
+	layer.photos({
+	    photos: {
+    	  	"data": [{
+    	      	"src": path//原图地址
+    	    }]
+	    },
+	    tab: function (pic, layero) {
+	    	var css = {
+	    			width: window.width,
+		    		height: window.height
+	    	}
+	    	$(layero.selector).find('img').css(css);
+	    	
+	    }
+	});
+	
+}
+</script>

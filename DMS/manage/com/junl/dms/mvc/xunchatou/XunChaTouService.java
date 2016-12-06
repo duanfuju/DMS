@@ -1,0 +1,107 @@
+package com.junl.dms.mvc.xunchatou;
+
+
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.platform.mvc.base.BaseService;
+
+
+public class XunChaTouService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(XunChaTouService.class);
+
+	public static final XunChaTouService service=new XunChaTouService();
+	
+	
+	/**
+	 * 保存
+	 * @param xunChaTou
+	 * @param userIds 
+	 */
+	public boolean save(XunChaTou xunChaTou, String userIds) {
+		xunChaTou.set("createUserId", userIds);
+		xunChaTou.set("state", 0);
+		xunChaTou.set("createTime", new Timestamp(System.currentTimeMillis()));
+		return xunChaTou.save();
+	}
+	
+	
+	public XunChaTou findById(String ids) {
+		XunChaTou xunChaTou=XunChaTou.dao.findById(ids);
+		return xunChaTou;
+	}
+	
+	/**
+	 * 更新
+	 * @param xunChaTou
+	 */
+	public boolean update(XunChaTou xunChaTou) {
+		 return xunChaTou.update();
+	}
+
+	/**
+	 * 删除
+	 * @param id
+	 */
+	public boolean delete(String id){
+		return XunChaTou.dao.deleteById(id);
+	}
+	/**
+	 * 完结巡查
+	 * @param id
+	 * @return
+	 */
+	public boolean over(String ids){
+		XunChaTou xunChaTou=XunChaTou.dao.findById(ids);
+		xunChaTou.set("state", "2");
+		return xunChaTou.update();
+	}
+	
+	public List<Record> getbinghaiinfo(String ids){
+		String sql = getSql("manage.xunchatou.searchbinhaiinfo");
+		List<Record> list = Db.find(sql, ids);
+		return list;
+	}
+	/**
+	 * 
+	 * @author wlw
+	 * @date 2016年8月2日 下午6:23:11
+	 * @description 查询巡查等记表数据
+	 *		TODO
+	 * @param ids
+	 * @return 
+	 * @return
+	 *
+	 */
+	public XunChaTou serachxunchatoudata(String ids){
+		/*String sql = getSql("manage.xunchatou.serachxunchatoudata");
+		List<Record> list = Db.find(sql, ids);
+		return list;*/
+		return XunChaTou.dao.findById(ids);
+	}
+	public List<Record> serachxunchainfo(String ids){
+		String sql = getSql("manage.xunchatou.serachxunchainfo");
+		List<Record> list = Db.find(sql, ids);
+		
+		
+		return list;
+	}
+	public List<Record> serachfangxiang1(String fangxiang1ids,String ids ){
+		String sql = getSql("manage.xunchatou.serachfangxiang1");
+		List<Record> list = Db.find(sql,fangxiang1ids,ids);
+		return list;
+	}
+	public List<Record> serachfangxiang2(String fangxiang2ids,String ids){
+		String sql = getSql("manage.xunchatou.serachfangxiang2");
+		List<Record> list = Db.find(sql,fangxiang2ids,ids);
+		return list;
+	}
+	
+}

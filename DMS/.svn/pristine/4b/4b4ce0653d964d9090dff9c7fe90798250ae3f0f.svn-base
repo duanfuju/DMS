@@ -1,0 +1,69 @@
+package com.junl.dms.mvc.yanghuyhuizong;
+
+
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.junl.dms.mvc.bycenter.ByCenterService;
+import com.junl.dms.mvc.dayplan.DayPlan;
+import com.junl.dms.mvc.dayplan.DayPlanService;
+import com.junl.dms.mvc.luxian.LuXian;
+import com.junl.dms.mvc.luxian.LuXianService;
+import com.junl.dms.mvc.monthplan.MonthPlan;
+import com.junl.dms.mvc.monthplanlist.ExportWord;
+import com.junl.dms.mvc.yangHuLog.YangHuLog;
+import com.junl.dms.mvc.yanghu.YangHu;
+import com.platform.annotation.Controller;
+import com.platform.constant.ConstantInit;
+import com.platform.mvc.base.BaseController;
+
+
+@Controller(controllerKey = "/jf/manage/yanghuyhuizong")
+public class YangHuHuiZongController extends BaseController {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(YangHuHuiZongController.class);
+	
+	
+	/**
+	 * 首页
+	 */
+	public void index() {
+		paging(ConstantInit.db_dataSource_main, splitPage, YangHuHuiZong.sqlId_splitPageSelect, YangHuHuiZong.sqlId_splitPageFrom);
+		YangHuHuiZong yh = new YangHuHuiZong();
+		
+		String basePath = getRequest().getScheme()+ "://" + getRequest().getServerName() + ":" + getRequest().getServerPort();
+		setAttr("basePath",basePath);
+		render("/manage/yanghuhuizong/list.html");
+	}
+	
+	public void exportword() throws Exception{
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		String ids = getPara("ids");
+		YangHuLog yangHuLog = YangHuLog.dao.findById(ids);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(yangHuLog.getDate("yangHuTime"));
+		dataMap.put("year", cal.get(Calendar.YEAR));
+		dataMap.put("month", cal.get(Calendar.MONTH));
+		dataMap.put("day", cal.get(Calendar.DAY_OF_MONTH));
+		dataMap.put("yangHuLog", yangHuLog);
+		ExportWord exp = new ExportWord();
+		String path = getRequest().getServletContext().getRealPath("");
+		StringBuffer path2 = new StringBuffer(path.substring(0,path.indexOf("webapps")));
+		exp.createDoc(dataMap, path2+"uploadword/"+ids+".doc", "loglist.ftl");
+	}
+	
+
+	
+
+}
+
+

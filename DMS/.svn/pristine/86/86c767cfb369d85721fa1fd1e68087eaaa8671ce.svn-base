@@ -1,0 +1,703 @@
+<style>
+<!--
+#fix{width:500px; height:200px;position: absolute;top:10%;left:30%; z-index: 9999;border:2px solid #eee; text-align:center; line-height:200px; font-size:20px; font-weight:bold; color:#999;}
+.table-hover > tbody > .pad:hover > td{
+    background: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+-->
+</style>
+<script src="${cxt!}/jsFile/webuploader/js/upload.js">
+	
+</script>
+
+<link rel="stylesheet" href="${cxt!}/jsFile/webuploader/css/style.css">
+
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/platform/index/content');">主页</a></li>
+			<li><a href="#" onclick="common_ajax.ajaxMainPanel('/jf/manage/jiaotong');">交通安全设施维修</a></li>
+			<li class="active">修改</li>
+		</ol>
+	</div>
+</div>
+	<img src="" id='fix' alt="图片损坏,点击返回" style="display: none;">	
+<div class="row" style="font-size:13px">
+	<div class="col-md-12">
+		<!-- start: BORDERED TABLE PANEL -->
+		<div class="panel panel-white">
+			
+			<div class="panel-heading">
+				<h4 class="panel-title"><span class="text-bold">修改交通安全设施维修</span></h4>
+				
+			</div>
+			
+			<div class="panel-body">
+				<table class="table table-bordered table-hover" id="dataTable">
+					<thead>
+						<tr>
+							<th class="hidden-xs" width="5%" >
+							<th class="hidden-xs" width="10%" >
+								任务单编号  
+	      					</th>
+	      					<th class="hidden-xs" width="10%" >
+								负责人  	
+	      					</th>
+	      					<td class="hidden-xs" width="10%" >
+								巡查日期
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								位置	
+							</td>
+							
+							<td class="hidden-xs" width="10%" >
+								开始桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								结束桩号	
+							</td>
+							<td class="hidden-xs" width="10%" >
+								病害或缺陷类型	
+						    </td>
+							
+						</tr>
+					</thead>
+					<tbody>
+						
+						<tr id="trDom${jiaoTong.taskInfoRelate!}">
+								<td class="hidden-xs">
+									<i class="fa fa-arrow-circle-down td_i" id="${jiaoTong.taskInfoRelate!}"></i>
+								</td>
+								<td class="hidden-xs">${jiaoTong.taskNo!}</td>
+								<td class="hidden-xs">${jiaoTong.fuZeRen!}</td>
+								<td class="hidden-xs">${jiaoTong.xunChaTime!,dateFormat="yyyy-MM-dd HH:mm:ss"}</td>
+								<td class="hidden-xs">${jiaoTong.wzName!}</td>
+								<td class="hidden-xs">K${jiaoTong.xunChaStartZHK!}  +  ${jiaoTong.xunChaStartZHM!}</td>
+								<td class="hidden-xs">K${jiaoTong.xunChaEndZHK!}  +  ${jiaoTong.xunChaEndZHM!}</td>
+								<td class="hidden-xs">${jiaoTong.binghaiOrQueXianType }  :  ${jiaoTong.yuGuGongChengLiang }    (${jiaoTong.yuGuGongChengLiangDw })</td>
+								
+							</tr>
+						
+					</tbody>
+				</table>	
+				<form id="editForm" action="${cxt!}/jf/manage/jiaotong/update" method="POST" role="form" class="form-horizontal">
+					<input type="hidden" name="jiaoTong.ids" value="${jiaoTong.ids!}" />	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修任务编号</label>
+						<div class="col-sm-7">
+							<input type="text" id="taskInfoRelate"   value="${jiaoTong.taskNo!}"
+								class="form-control focused" readonly="readonly"   maxlength="100">
+						</div>
+					</div>	
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修时间</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.weiXiuTime" class="form-control" onFocus="WdatePicker({lang:'zh-cn',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="${jiaoTong.wxtime!}">
+						</div>
+						<label class="col-sm-2 control-label">维修项目</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.weiXiuProject" class="form-control" value="${jiaoTong.weiXiuProject!}">
+						</div>
+						
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路线</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.luXian" class="form-control" value="${jiaoTong.luxian!}" readonly="readonly">
+						</div>
+						
+						<label class="col-sm-2 control-label">位置</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzType" name="jiaoTong.wzType" class="form-control" value="${jiaoTong.wzType!}" readonly="readonly">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">方向/互通/收费站/服务区</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzName" name="jiaoTong.wzName" class="form-control" value="${jiaoTong.wzName!}" readonly="readonly">
+						</div>
+						
+						<label class="col-sm-2 control-label">车道/匝道/广场</label>
+						<div class="col-sm-2">
+							<input type="text" id="wzMiaoShu" name="jiaoTong.wzMiaoShu" class="form-control" value="${jiaoTong.wzMiaoShu!}" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">开始桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="jiaoTong.startZHK" class="form-control" value="${jiaoTong.startzhk!}"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="jiaoTong.startZHM" class="form-control" value="${jiaoTong.startzhm!}"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<label class="col-sm-2 control-label" style="margin-left:-18px">结束桩号K</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="jiaoTong.endZHK" class="form-control" value="${jiaoTong.endzhk!}"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						
+						<label class="col-sm-1 " style="width:1%;font-size:20px;margin-left:-12px">+</label>
+						<div class="col-sm-1">
+							<input type="text" id="idcardId" name="jiaoTong.endZHM" class="form-control" value="${jiaoTong.endzhm!}"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">天气状况</label>
+						<div class="col-sm-2">
+							<select type="text" id="idcardId" name="jiaoTong.weatherState" class="form-control" value="${jiaoTong.weatherstate!}">
+								<option value="晴">晴</option>
+										<option value="阴">阴</option>
+										<option value="多云">多云</option>
+										<option value="小雨">小雨</option>
+										<option value="中雨">中雨</option>
+										<option value="大雨">大雨</option>
+										<option value="雷阵雨">雷阵雨</option>
+										<option value="小雪">小雪</option>
+										<option value="中雪">中雪</option>
+										<option value="大雪">大雪</option>
+										<option value="冰冻">冰冻</option>
+										<option value="下雪/积雪">下雪/积雪</option>
+							</select>
+						</div>
+						
+						<label class="col-sm-2 control-label">气温</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.qiWen" class="form-control" value="${jiaoTong.qiwen!}"onkeyup="return ValidateFloat($(this),value)">
+						</div>
+						<span class="help-inline col-sm-1"> &#8451;</span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">维修人员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.weiXiuRenYuan" class="form-control" value="${jiaoTong.weixiurenyuan!}">
+						</div>
+						
+						<label class="col-sm-2 control-label">现场专职安全员</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.anQuanYuan" class="form-control" value="${jiaoTong.anquanyuan!}">
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">现场施工负责人</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.fuZeRen" class="form-control" value="${jiaoTong.fuzeren!}">
+						</div>
+						
+						<label class="col-sm-2 control-label">维修质量评价</label>
+						<div class="col-sm-2">
+							<select  id="pingjia" name="jiaoTong.pingJia" class="form-control" >
+								<option value="优">优</option>
+								<option value="良">良</option>
+								<option value="合格">合格</option>
+								<option value="差">差</option>
+							</select>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">其他相关项目维修数量</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.qiTaWeiXiuNum" class="form-control" value="${jiaoTong.qitaweixiunum!}">
+						</div>
+						
+						<label class="col-sm-2 control-label">施工机械</label>
+						<div class="col-sm-2">
+							<input type="text" id="idcardId" name="jiaoTong.shiGongJiXie" class="form-control" value="${jiaoTong.shigongjixie!}">
+						</div>
+							<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">单位</label>
+						<div class="col-sm-2">
+							<input type="text" id="danwei"  name="jiaoTong.danWei" value="${jiaoTong.danWei!}" class="form-control" >
+						</div>
+						<label class="col-sm-2 control-label">数量</label>
+						<div class="col-sm-2">
+							<input type="text" id="num"  name="jiaoTong.num" value="${jiaoTong.num!}" onkeyup="this.value=this.value.replace(/\D/g,'')"onafterpaste="this.value=this.value.replace(/\D/g,'')" class="form-control" >
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">路病类型</label>
+						<div class="col-sm-2">
+							<input type="text" id="diseaseType"  name="jiaoTong.diseaseType"  value="${jiaoTong.diseaseType!}" class="form-control" >
+						</div>
+						
+						<label class="col-sm-2 control-label">损坏原因类型</label>
+						<div class="col-sm-2">
+							<select type="text" id="sunHuaiCauseType" name="jiaoTong.sunHuaiCauseType" class="form-control">
+								<option value="日常损坏">日常损坏</option>
+								<option value="事故损坏">事故损坏</option>
+							</select>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+						
+					</div>
+					
+					
+					
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label">损坏现状描述及原因分析</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="jiaoTong.sunHuaiMiaoShu" class="form-control" rows="4" cols="20" >${jiaoTong.sunhuaimiaoshu!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					
+					<!-- <div class="form-group">
+						<input type="text"  id="jiaoTongRelateListSize" style="display:none" value="${listSize!}">
+						<input type="text"  id="delIds" name="delIds" style="display:none" value="">
+						<table
+							class="table table-striped table-bordered bootstrap-datatable " style="width:56.5%;margin-left:17.6%">
+							<thead>
+								
+								<th width="15%">单位</th>
+								<th width="15%">数量</th>
+								<th width="40%">处理内容</th>
+								<th width="15%"><a  onclick="addlist();">添加</a></th>
+							</thead>
+							
+							<tbody id="tbody-list">
+						<% for(jiaoTongRelate in list){ %>	
+						<tr id="clone-target">
+							
+							
+								
+								<input type="hidden" name="jiaoTongRelateList[${jiaoTongRelateLP.index!}].ids" value="${jiaoTongRelate.ids!}">
+							
+							<td>
+								<input type="text"  name="jiaoTongRelateList[${jiaoTongRelateLP.index!}].danWei" class="form-control danwei" value="${jiaoTongRelate.danwei!}">
+								
+							<td>
+								<input type="text"onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"  name="jiaoTongRelateList[${jiaoTongRelateLP.index!}].num" class="form-control num" value="${jiaoTongRelate.num!}">
+								
+							</td>
+							<td>
+								<input type="text"  name="jiaoTongRelateList[${jiaoTongRelateLP.index!}].weiXiuContent" class="form-control weiXiuContent" value="${jiaoTongRelate.weixiucontent!}">
+								
+							</td>
+							<td><a  onclick="del(this);">删除</a></td>
+						</tr>
+						<% } %>
+					</tbody>
+					
+						</table>
+						<span class="help-inline col-sm-2"> </span>
+					</div> -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-7">
+							<textarea id="idcardId" name="jiaoTong.remark" class="form-control" rows="4" cols="20" >${remark!}</textarea>
+						</div>
+						<span class="help-inline col-sm-2"> </span>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-3" id="imgsDiv">
+						</div>	
+					</div>
+					
+
+					
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="form-field-1">
+							图片
+						</label>
+						<div class="col-sm-9" id="pictureArea">
+							<div id="wrapper">
+						        <div id="container">
+
+						
+						            <div id="uploader">
+						                <div class="queueList">
+						                    <div id="dndArea" class="placeholder">
+						                        <div id="filePicker"></div>
+						                        <p>或将照片拖到这里，单次最多可选3张</p>
+						                    </div>
+						                </div>
+						                <div class="statusBar" style="display:none;">
+						                    <div class="progress">
+						                        <span class="text">0%</span>
+						                        <span class="percentage"></span>
+						                    </div><div class="info"></div>
+						                    <div class="btns">
+						                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+						                    </div>
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+						</div>
+					</div>
+					<div class="form-group">
+<!-- 						<div class="col-sm-2s col-sm-offset-3"> -->
+						<div class="col-sm-5 col-sm-offset-5">
+							<button type="button" class="btn btn-red" onclick="mySubmit()">
+								提交<i class="fa fa-arrow-circle-right"></i>
+							</button>
+
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button type="button" class="btn btn-blue" onclick="common_ajax.ajaxReturnBack();">
+								返回	<i class="fa fa-arrow-circle-left"></i>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+//设置维修的类型(为弹出框插入行选择合适的表)
+var weixiu_type_table="DMS_WX_jtaqssWeiXiu";
+$('.td_i').on('click', function () {
+	var expandId=$(this).attr("id");
+	var tr=$("#trDom"+expandId);
+	if($(this).hasClass("fa-arrow-circle-down")){
+		$(this).removeClass("fa-arrow-circle-down");
+		$(this).addClass("fa-arrow-circle-up");
+		
+		if(!tr.next().hasClass('pad')){
+			  $.ajax({  
+			    type:'post',      
+			    url:'${cxt}/jf/manage/rwtask/getWeiXiuJiLuByTaskId',
+			    cache:false,  
+			    data:{table:weixiu_type_table,tirIds:expandId},
+			    dataType:'json',  
+			    success:function(entity){
+			    	if(!entity.flag){
+			    		layer.msg("维修记录不存在或被删除");
+			    		return;
+			    	}
+			       html=' <table style="width:100%;border:1px">';
+			       var _tr="";
+			       $.each(entity.result,function(i,data){
+			    	   //图片存在多个
+				    	var a="";
+				    	var img=data.imgs.split(",");
+				    	$.each(img,function(i,imgs){
+				    		a+='<a href="javascript:void(0)" style="text-align:left" onclick="showImg(\''+imgs+'\')">附件'+(i+1)+'</a>';
+				    	});
+			    	  _tr+=' <tr>'+
+			    		   		'<td rowspan=3>'+(i+1)+'</td>'+
+					            ' <td style="text-align:right">桩号范围  ：  </td>'+
+					            ' <td> K'+data.startZHK+' + ' +data.startZHM+'  ~  K  '+ data. endZHK+' + ' +data.endZHM+'</td>'+
+					            ' <td style="text-align:right">位置  ：  </td>'+
+					            ' <td> '+data. luXian +'/'+data.wzType +'/'+ data. wzName +'/'+ data. wzMiaoShu+'</td>'+
+					            ' <td style="text-align:right">天气  ：  </td>'+
+					            ' <td>'+data.weatherState+'</td>'+
+					            ' <td style="text-align:right">气温  ：  </td>'+
+					            ' <td>'+data.qiWen+'℃</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">施工机械  ：  </td>'+
+					            ' <td>'+ data.shiGongJiXie+'</td>'+
+					            ' <td style="text-align:right">维修人员  ：  </td>'+
+					            ' <td>'+  data.weiXiuRenYuan+'</td>'+
+					            ' <td style="text-align:right">现场专职安全员  ：  </td>'+
+					            ' <td>'+ data.anQuanYuan+'</td>'+
+					            ' <td style="text-align:right">现场施工负责人  ：  </td>'+
+					            ' <td>'+ data.fuZeRen+'</td>'+
+					        ' </tr>'+
+					        ' <tr>'+
+					            ' <td style="text-align:right">质量评价  ：  </td>'+
+					            ' <td> '+ data.pingJia+'</td>'+
+					            ' <td style="text-align:right">图片  ：  </td><td>'+a+'</td>'+
+					        ' </tr>';
+		        	});
+			       
+			       html	+= _tr+' </table>';
+			       tr.after("<tr class='pad'><td colspan='10'>"+html+"</td></tr>");
+			    }
+			});  
+		}else{
+			tr.next().show();
+		}
+	}else{
+		$(this).addClass("fa-arrow-circle-down");
+		$(this).removeClass("fa-arrow-circle-up");
+		if(tr.next().hasClass("pad")){
+			tr.next().hide();
+		}
+	}
+});
+
+$("#fix").click(function(){
+	$("#fix").hide();
+});
+function showImg(path){
+	$("#fix").attr("src",path);
+	$("#fix").show();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	function mySubmit(){
+		var weixiutime = $("[name='jiaoTong.weiXiuTime']").val();
+		if(weixiutime==""){
+			layer.msg("维修时间不能为空");
+			return;
+		}
+		var yanghuproject = $("[name='jiaoTong.weiXiuProject']").val();
+		
+		if(yanghuproject==""){
+			layer.msg("维修项目名称不能为空");
+			return;
+		}
+		
+		var startzhk=$("[name='jiaoTong.startZHK']").val();
+		if(startzhk==""){
+			layer.msg("开始桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhk)){
+				if(startzhk<=0){
+					layer.msg("开始桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var startzhm=$("[name='jiaoTong.startZHM']").val();
+		if(startzhm==""){
+			layer.msg("开始桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(startzhm)){
+				if(startzhm<=0){
+					layer.msg("开始桩号M不能小于等于零！");
+					return false;
+				}else if(startzhm>999){
+					layer.msg("开始桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("开始桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+
+		var endzhk = $("[name='jiaoTong.endZHK']").val();
+		if(endzhk==""){
+			layer.msg("结束桩号K不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhk)){
+				if(endzhk<=0){
+					layer.msg("结束桩号K不能小于等于零！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号K请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var endzhm = $("[name='jiaoTong.endZHM']").val();
+		if(endzhm==""){
+			layer.msg("结束桩号M不能为空！");
+			return false;
+		}else{
+			if(!isNaN(endzhm)){
+				if(endzhm<=0){
+					layer.msg("结束桩号M不能小于等于零！");
+					return false;
+				}else if(endzhm>999){
+					layer.msg("结束桩号M不能大于999！");
+					return false;
+				}
+			}else{
+				layer.msg("结束桩号M请填写正确的数值类型！");
+				return false;
+			}
+		}
+		var weather = $("[name='jiaoTong.weatherState']").val();
+		if(weather==""){
+			layer.msg("天气状况信息不能为空");
+			return;
+		}
+		var qiwen = $("[name='jiaoTong.qiWen']").val();
+		if(qiwen==""){
+			layer.msg("气温信息不能为空");
+			return;
+		}
+		var weixiurenyuan =$("[name='jiaoTong.weiXiuRenYuan']").val();
+		if(weixiurenyuan==""){
+			layer.msg("维修人员信息不能为空");
+			return;
+		}
+		var anquanyuan=$("[name='jiaoTong.anQuanYuan']").val();
+		if(anquanyuan==""){
+			layer.msg("现场专职安全员信息不能为空");
+			return;
+		}
+		var fuzeren=$("[name='jiaoTong.fuZeRen']").val();
+		if(fuzeren==""){
+			layer.msg("现场施工负责人信息不能为空");
+			return;
+		}
+		var pingjia = $("[name='jiaoTong.pingJia']").val();
+		if(pingjia==""){
+			layer.msg("维修质量评价信息不能为空");
+			return;
+		}
+		var count = $("[name='jiaoTong.qiTaWeiXiuNum']").val();
+		if(count==""){
+			layer.msg("其他相关项目维修数量");
+			return
+		}
+		var shigongjixie = $("[name='jiaoTong.shiGongJiXie']").val();
+		if(shigongjixie==""){
+			layer.msg("施工机械信息不能为空");
+			return;
+		}
+		var danwei = $("#danwei").val();
+		if(danwei==""){
+			layer.msg("单位信息不能为空");
+			return;
+		}
+		if($("#num").val()==""){
+			layer.msg("数量信息不能为空");
+			return;
+		}
+		if($("#diseaseType").val()==""){
+			layer.msg("路病类型信息不能为空");
+			return;
+		}
+		
+		var sunhuaimiaoshu = $("[name='jiaoTong.sunHuaiMiaoShu']").val();
+		if(sunhuaimiaoshu==""){
+			layer.msg("损坏现状描述及原因分析信息不能为空");
+			return;
+		}
+		
+		
+		var remark = $("[name='jiaoTong.remark']").val();
+		if(remark==""){
+			layer.msg("备注信息不能为空");
+			return;
+		}
+		var resultData=common_ajax.ajaxForm("editForm","JSON");
+		if(resultData==""){
+			layer.msg("请求失败！")
+		}else{
+			layer.msg(resultData.result_desc);
+			if(resultData.result){
+				common_ajax.ajaxMainPanel("/jf/manage/jiaotong",{"pageNumber":2});
+			}
+		}
+		
+	}
+	
+	
+	function addlist(){
+		var temp = $('#clone-target').clone();
+		temp.find('input').val('');
+		var lfrlSize =parseInt($("#jiaoTongRelateListSize").val());
+		temp.find('input').each(function(){
+		    var name = $(this).prop('name');
+		    var newNameIndex = lfrlSize+1;
+		    $(this).attr("name",name.replace("1",newNameIndex));
+		    if($(this).attr("type") == "hidden"){
+		    	$(this).val("");
+		    }
+		  });
+		$("#jiaoTongRelateListSize").val(lfrlSize+1);
+		$('#tbody-list').append(temp);
+	}
+	function del(me){
+		var obj = $(me).parent().parent();
+		var delIds = $("#delIds").val();
+		obj.find('input').each(function(){
+		    if($(this).attr("type") == "hidden"){
+		    	delIds = $(this).val()==""?delIds:delIds+$(this).val()+",";
+		    }
+		  });
+		var delIds = $("#delIds").val(delIds);
+		obj.remove();
+	}
+	
+	$(function(){
+		$("#pingjia").val("${jiaoTong.pingJia!}");
+		$("select[name='jiaoTong.weatherState']").val("${jiaoTong.weatherstate!}");
+		$("#sunHuaiCauseType").val("${jiaotong.sunHuaiCauseType}");
+		//循环遍历图片
+		var imgs = '${jiaoTong.imgs!}';
+		
+		if(imgs == '' || imgs == null) return;
+		var arr = imgs.split(',');
+		$.each(arr,function(i,n){
+			
+			var imgobj = $('<img style="width:200px;height:200px;" src="'+arr[i]+'"><br>'
+					+'<div id="delbtn'+i+'"><button type="button" style="margin-left:60px;margin-top:10px;" class="fa fa-trash-o delimg-btn">删除</button></div><br>'
+					+'<input type="hidden" value="' + arr[i] + '" name="youwuImgs"/>');
+			$("#imgsDiv").append(imgobj);
+			imgobj.find('.delimg-btn').on('click', function () {
+				layer.confirm('确定删除此条数据？', {
+					  btn: ['确定','取消'] ,//按钮
+					  scrollbar:false
+				}, function(){
+					imgobj.remove();
+					layer.closeAll();
+				});
+			});
+			//$("#imgsDiv").append('<img style="width:200px;height:200px;float:left;" src="'+arr[i]+'"><br>'+'<div id="delbtn'+i+'"><button type="button" style="margin-left:60px;margin-top:10px;" onclick="del('+i+')" class="fa fa-trash-o delimg-btn">删除</button></div><br>');
+// 			$("#imgsDiv").append('<img style="width:200px;height:200px;float:left;" src="'+arr[i]+'"><br>'+'<div id="delbtn'+i+'"><button type="button" onclick="delImg(this);" style="margin-left:40px;margin-top:10px;" class="fa fa-trash-o">删除</button></div>');
+		})	
+	})
+</script>	

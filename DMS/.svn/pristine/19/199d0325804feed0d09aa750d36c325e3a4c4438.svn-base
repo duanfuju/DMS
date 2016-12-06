@@ -1,0 +1,58 @@
+package com.junl.dms.mvc.fangzhl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.platform.mvc.base.BaseService;
+
+public class FangZHLService extends BaseService {
+
+	@SuppressWarnings("unused")
+	private static Logger log = Logger.getLogger(FangZHLService.class);
+
+	public static final FangZHLService service = new FangZHLService();
+
+	public boolean save(FangZHL fangZHL) {
+
+		return fangZHL.save();
+	}
+
+	public boolean delete(String ids) {
+		return FangZHL.dao.deleteById(ids);
+	}
+
+	public FangZHL findById(String ids) {
+		FangZHL fangZHL = FangZHL.dao.findById(ids);
+		return fangZHL;
+	}
+
+	public boolean update(FangZHL fangZHL) {
+		return fangZHL.update();
+	}
+
+	public List<Map<String, Object>> findList() {
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		List<FangZHL> fzList = FangZHL.dao.findList();
+		for (FangZHL fangZHL : fzList) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("name", fangZHL.getStr("name"));
+			String type = fangZHL.getStr("type");
+			if (type == null) {
+				type = "";
+			}
+			map.put("types", type.split("\\/"));
+			String danWei = fangZHL.getStr("danWei");
+			if (danWei == null) {
+				danWei = "";
+			}
+			map.put("danWeis", danWei.split("\\/"));
+			list.add(map);
+		}
+		return list;
+	}
+
+}

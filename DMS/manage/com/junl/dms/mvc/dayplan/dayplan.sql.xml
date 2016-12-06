@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.dayplan">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_luXian order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_luXian) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_luXian where ids not in ( select top {1, number, #.#} ids from DMS_PZ_luXian )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_luXian ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				*
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_LH_yangHuDay day
+			where 1=1
+				<% if(!(isEmpty(planMonth))){ %>
+					and convert(varchar(7),planTime,120)= #'$planMonth$'# 
+				<% } %>		
+				<% if(!(isEmpty(sdate))){ 
+				%>
+						and day.planTime  between #'$sdate$'# 
+						<% if(!(isEmpty(edate))){ 
+						%>
+							and #'$edate$'#
+						<% } %>
+						<% if((isEmpty(edate))){ 
+						%>
+							and getdate()
+						<% } %>
+				<% } %>		
+    	]]>
+	</sql>
+	
+	
+	
+	<!-- 根据主键获取外建表信息 -->
+	<sql id="findByDate">
+		<![CDATA[ 
+			select ids,luXian,wzType,wzName,wzMiaoShu,startZHK,startZHM,endZHK,endZHM,content,fuZePeople,jiXieSheBei,remarks,planTime 
+				from DMS_LH_yangHuDay
+				where state=0  and datediff(month,planTime,getdate())=0
+    	]]>
+	</sql>
+	
+	<sql id="findByDate1">
+		<![CDATA[ 
+			select ids,luXian,wzType,wzName,wzMiaoShu,startZHK,startZHM,endZHK,endZHM,content,fuZePeople,jiXieSheBei,remarks,planTime 
+				from DMS_LH_yangHuDay
+				where  state=0  and convert(varchar(7),planTime,120)= ?
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect_findByDate">
+		<![CDATA[ 
+			select ids,luXian,wzType,wzName,wzMiaoShu,startZHK,startZHM,endZHK,endZHM,content,fuZePeople,jiXieSheBei,remarks,planTime 
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom_findByDate">
+		<![CDATA[ 
+        	from DMS_LH_yangHuDay 
+				where 1=1 
+					and state=0 
+				
+			<% if(!isEmpty(planMonth)){ %>
+					and  convert(varchar(7),planTime,120)=  #'$planMonth$'#
+			<% }%>
+			<% if(!isEmpty(notInIds)){ %>
+					and ids not in ('${notInIds}')
+			<% } %>
+    	]]>
+	</sql>
+	
+	<sql id="findByMonthIds">
+		<![CDATA[ 
+			SELECT
+				d.ids,
+				d.content,
+				d.fuZePeople,
+				d.jiXieSheBei,
+				d.remarks,
+				d.planTime,
+				d.workPlace   
+		from
+				DMS_LH_yangHuDay d,DMS_LH_yangHuMonth m,DMS_LH_yangHuMonth_day_relate mdr
+		where d.ids=mdr.dayIds and m.ids=mdr.monthIds
+				and m.ids=?
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+	
+	
+	
+</sql-statement>

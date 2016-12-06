@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<sql-statement namespace="manage.choujian">
+	<!-- 分页查询用户 -->
+	<sql id="paging">
+		<![CDATA[ 
+        	<% if(db_type == "mysql" || db_type == "postgresql"){ %>
+        	
+        		select * from DMS_PZ_luXian order by ids asc limit ? offset ? 
+        	
+        	<% } else if(db_type == "oracle"){ %>
+        	
+        		select * from ( select a.*, rownum rn from (select * from DMS_PZ_luXian) a where rownum < ? ) where rn >= ?
+        	
+        	<% } else if(db_type == "sqlserver"){ %>
+        		
+        		select top {0, number, #.#} * from DMS_PZ_luXian where ids not in ( select top {1, number, #.#} ids from DMS_PZ_luXian )
+        		
+        	<% } else if(db_type == "db2"){ %>
+        		
+        		select * from ( select b.*, rownumber() over() as rn from ( select * from DMS_PZ_luXian ) as b ) as a where a.rn < ? and a.rn >= ?
+        		
+        	<% } %>
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageSelect">
+		<![CDATA[ 
+			SELECT
+				byan.ids byanIds,
+				byan.byNo byNo,
+				jl.ids jlIds,
+				jl.returnNum returnNum,
+				jl.state state,
+				jl.confirmTime confirmTime,
+				cj.state cjstate,
+				cj.samplingTime samplingTime,
+				cj.ids cjIds
+				
+    	]]>
+	</sql>
+	<!-- 动态SQL处理 -->
+	<sql id="splitPageFrom">
+		<![CDATA[ 
+        	FROM
+				DMS_CJ_chouJian cj
+				LEFT JOIN DMS_JL_jiLing jl ON cj.jiLingIds=jl.ids
+				LEFT JOIN DMS_BY_weiXiuBaoYanP byan ON jl.byIds=byan.ids
+			where 1=1
+			<% if(!isEmpty(_state)){ %>
+					and cj.state > #$_state$#
+			<% }else if(!isEmpty(state)){ %>
+					and cj.state like #'%$state$%'#
+			<% } %>
+    	]]>
+	</sql>
+	
+	
+	
+	<sql id="findByIds">
+		<![CDATA[ 
+		SELECT
+				byan.ids byanIds,
+				byan.byNo byNo,
+				byan.baoYanPeople baoYanPeople,
+				byan.baoYanTime baoYanTime,
+				jl.ids jlIds,
+				jl.returnNum returnNum,
+				jl.state state,
+				jl.confirmTime confirmTime,
+				jl.meteringNum meteringNum,
+				jl.meteringMoney meteringMoney
+        	FROM
+				DMS_CJ_chouJian cj
+				LEFT JOIN DMS_JL_jiLing jl ON cj.jiLingIds=jl.ids
+				LEFT JOIN DMS_BY_weiXiuBaoYanP byan ON jl.byIds=byan.ids
+			where 
+				jl.ids=?
+    	]]>
+	</sql>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</sql-statement>
